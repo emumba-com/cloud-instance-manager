@@ -14,115 +14,124 @@
 <body>
 
 
-    <div class="container">
-        <div class="dropdown pull-right">
-            <button class="btn btn-primary dropdown-toggle mt-auto" type="button" data-toggle="dropdown">Select Region
-                <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                <li><a href="#">HTML</a></li>
-                <li><a href="#">CSS</a></li>
-                <li><a href="#">JavaScript</a></li>
-            </ul>
-        </div>
+<div class="container">
+    <div class="dropdown pull-right">
+        <button class="btn btn-primary dropdown-toggle mt-auto" type="button" data-toggle="dropdown">Select Region
+            <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            {% for region in region_list %}
+            <li><a href="#"> {{ region }} </a></li>
+            {% endfor %}
+        </ul>
     </div>
+</div>
 
-    <div class="container">
-        <div class="container-fluid">
-            <div class="row">
+<div class="container">
+    <div class="container-fluid">
+        <div class="row">
 
-                <section class="container">
-                    <h1>Instance Management</h1>
-                    <div class="">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="pull-right">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-success btn-filter"
-                                            onclick="allinstances()">All Instances</button>
-                                        <button type="button" class="btn btn-warning btn-filter"
-                                            onclick="assignedInstances()">Assigned Instance</button>
-                                        <button type="button" class="btn btn-filter btn-filter"
-                                            onclick="assignedInstances()">Assign to </button>
+            <section class="container">
+                <h1>Instance Management</h1>
+                <div class="">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-success btn-filter"
+                                            onclick="allinstances()">All Instances
+                                    </button>
+                                    <button type="button" class="btn btn-warning btn-filter"
+                                            onclick="assignedInstances()">Assigned Instance
+                                    </button>
+                                    <button type="button" class="btn btn-filter btn-filter"
+                                            onclick="assignedInstances()">Assign to
+                                    </button>
 
-                                        <button type="button" class="btn btn-default btn-filter"
-                                            onclick="deleteUser">Remove</button>
-                                    </div>
+                                    <button type="button" class="btn btn-default btn-filter"
+                                            onclick="deleteUser">Remove
+                                    </button>
                                 </div>
-                                <div class="table-container">
-                                    <table class="table table-filter" id="mytable">
-                                        <thead>
-                                            <th><input type="checkbox" id="checkinstance" /></th>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Public IP</th>
-                                            <th>Private IP</th>
-                                            <th>Owner</th>
-                                        </thead>
-                                        <tbody>
+                            </div>
+                            <div class="table-container">
+                                <table class="table table-filter" id="instancetable">
+                                    <thead>
+                                    <th><input type="checkbox" id="checkinstance"/></th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Public IP</th>
+                                    <th>Private IP</th>
+                                    <th>Owner</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for instance in instances %}
+                                    <tr>
+                                        <td><input type="checkbox" class="checkthis"/></td>
+                                        <td>{{ instance['Id'] }}</td>
+                                        <td>{{ instance['Name'] }}</td>
+                                        <td>{{ instance['PublicIP'] }}</td>
+                                        <td>{{ instance['PrivateIP'] }}</td>
+                                        <td>{{ instance['Owner'] }}</td>
+                                    </tr>
+                                    {% endfor %}
 
-                                            <tr>
-                                                <td><input type="checkbox" class="checkthis" /></td>
-                                                <td>Mohsin</td>
-                                                <td>Irshad</td>
-                                                <td>isometric.mohsin@gmail.com</td>
-                                                <td>+923335586757</td>
-                                                <td>Imtiaz</td>
-                                            </tr>
-
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
+        </div>
 
-            <div class="row">
+        <div class="row">
 
-                <section class="container">
-                    <h1>Users Management</h1>
-                    <div class="">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="pull-right">
-                                    <div class="btn-group">
+            <section class="container">
+                <h1>Users Management</h1>
+                <div class="">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-success btn-filter" data-title="Edit" data-toggle="modal"
+                                            data-target="#edit">Add User
+                                    </button>
 
-                                        <button class="btn btn-success btn-filter" data-title="Edit" data-toggle="modal"
-                                            data-target="#edit">Add User</button>
-
-                                        <button type="button" class="btn btn-warning btn-filter"
-                                            onclick="deleteUser()">Delete User</button>
-                                    </div>
+                                    <button type="button" class="btn btn-warning btn-filter"
+                                            onclick="deleteUser()">Delete User
+                                    </button>
                                 </div>
-                                <div class="table-container" id="mytable">
-                                    <table class="table table-filter">
-                                        <thead>
-                                            <th><input type="checkbox" id="checkuser" /></th>
-                                            <th>ID</th>
-                                            <th>User Name</th>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><input type="checkbox" class="checkthis" /></td>
-                                                <td>123465</td>
-                                                <td>Irshad</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            </div>
+                            <div class="table-container" id="usertable">
+                                <table class="table table-filter">
+                                    <thead>
+                                    <th><input type="checkbox" id="checkuser"/></th>
+                                    <th>ID</th>
+                                    <th>User Name</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td><input type="checkbox" class="checkthis"/></td>
+                                        <td>{{ user['ID'] }}</td>
+                                        <td>{{ user['Name'] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
         </div>
-
     </div>
 
-    <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+</div>
+
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" href="/add">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
                             class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
@@ -130,94 +139,97 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input class="form-control " type="text" placeholder="Username">
+                        <input id="username" name="username"  required class="form-control " type="text" placeholder="Username">
                     </div>
                     <div class="form-group">
 
-                        <input class="form-control " type="text" placeholder="Password">
+                        <input class="form-control " type="password"  name="password" id="password" placeholder="Password">
                     </div>
 
                 </div>
                 <div class="modal-footer ">
-                    <button type="button" class="btn btn-warning btn-lg" style="width: 100%;"><span
-                            class="glyphicon glyphicon-ok-sign"></span>ADD</button>
+                    <button type="submit" class="btn btn-warning btn-lg" style="width: 100%;"><span
+                            class="glyphicon glyphicon-ok-sign"></span>ADD
+                    </button>
                 </div>
-            </div>
+            </form>
 
         </div>
+
     </div>
+</div>
 
 
-    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
-    <script src="../static/jquery/jquery-1.11.1.min.js"></script>
-    <script src="../static/jquery/1.9.1/jquery.min.js"></script>
-    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+<script src="../static/3.3.0/js/bootstrap.min.js"></script>
+<script src="../static/jquery/jquery-1.11.1.min.js"></script>
+<script src="../static/jquery/1.9.1/jquery.min.js"></script>
+<script src="../static/3.3.0/js/bootstrap.min.js"></script>
 
-    <script>
+<script>
 
 
-        function allinstances() {
-            var x = document.getElementById("myDIV");
-            alert("asdasf");
+    function allinstances() {
+        var x = document.getElementById("myDIV");
+        alert("asdasf");
 
-        }
+    }
 
-        function assignedInstances() {
-            var x = document.getElementById("myDIV");
-            alert("assigned instances click");
+    function assignedInstances() {
+        var x = document.getElementById("myDIV");
+        alert("assigned instances click");
 
-        }
+    }
 
-        function deleteUser() {
-            var x = confirm("Are you sure you want to delete?");
-            if (x)
-                alert("User delted");
+    function deleteUser() {
+        var x = confirm("Are you sure you want to delete?");
+        if (x)
+            alert("User delted");
 
-            else
-                alert("delete cancel");
-        }
+        else
+            alert("delete cancel");
+    }
 
-        $(document).ready(function () {
+    $(document).ready(function () {
 
-            $("#mytable #checkinstance").click(function () {
-                if ($("#mytable #checkinstance").is(':checked')) {
-                    $("#mytable input[type=checkbox]").each(function () {
-                        $(this).prop("checked", true);
-                    });
+        $("#instancetable #checkinstance").click(function () {
+            if ($("#instancetable #checkinstance").is(':checked')) {
+                $("#instancetable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                });
 
-                } else {
-                    $("#mytable input[type=checkbox]").each(function () {
-                        $(this).prop("checked", false);
-                    });
-                }
-            });
+            } else {
+                $("#instancetable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
 
-            $("#mytable #checkuser").click(function () {
-                if ($("#mytable #checkuser").is(':checked')) {
-                    $("#mytable input[type=checkbox]").each(function () {
-                        $(this).prop("checked", true);
-                    });
+        $("#usertable #checkuser").click(function () {
+            if ($("#usertable #checkuser").is(':checked')) {
+                $("#usertable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                });
 
-                } else {
-                    $("#mytable input[type=checkbox]").each(function () {
-                        $(this).prop("checked", false);
-                    });
-                }
-            });
+            } else {
+                $("#usertable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
 
-            $('.btn-filter').on('click', function () {
-                var $target = $(this).data('target');
-                if ($target != 'all') {
-                    $('.table tr').css('display', 'none');
-                    $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
-                } else {
-                    $('.table tr').css('display', 'none').fadeIn('slow');
-                }
-
-            });
+        $('.btn-filter').on('click', function () {
+            var $target = $(this).data('target');
+            if ($target != 'all') {
+                $('.table tr').css('display', 'none');
+                $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+            } else {
+                $('.table tr').css('display', 'none').fadeIn('slow');
+            }
 
         });
-    </script>
+
+    });
+</script>
 
 </body>
 

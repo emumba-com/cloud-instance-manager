@@ -16,6 +16,68 @@
       background-color: #DA4F49;
       color: white;
     }
+
+    .switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 25px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #428bca;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(27px);
+            -ms-transform: translateX(27px);
+            transform: translateX(27px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+
   </style>
 
 </head>
@@ -28,7 +90,7 @@
 
 
       <div class="col-md-12">
-        <h4>User's Instances</h4>
+        <h3>User's Instances</h3>
         <div class="table-responsive">
 
 
@@ -48,46 +110,23 @@
             </thead>
             <tbody>
 
-
+            {% for instance in instances %}
               <tr>
                 <td><input type="checkbox" class="checkthis" /></td>
-                <td>Mohsin</td>
-                <td>Irshad</td>
-                <td>CB 106/107 Street # 11 Wah Cantt Islamabad Pakistan</td>
-                <td>isometric.mohsin@gmail.com</td>
-                <td>OFF</td>
+                <td id="insID">{{ instance['Id'] }}</td>
+                <td>{{ instance['Name'] }}</td>
+                <td>{{ instance['PublicIP'] }}</td>
+                <td>{{ instance['PrivateIP'] }}</td>
+                <td id="state">{{ instance['State'] }}</td>
                 <td>
-                  <p data-placement="top" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs"
-                      data-title="Edit" data-toggle="modal" data-target="#edit"><span
-                        class="glyphicon glyphicon-pencil"></span></button></p>
-                </td>
-                <!-- <td>
-                  <p data-placement="top" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs"
-                      data-title="Delete" data-toggle="modal" data-target="#delete"><span
-                        class="glyphicon glyphicon-trash"></span></button></p>
-                </td> -->
-                <td>
-                  <label data-placement="top" data-toggle="tooltip" title="Delete"><input type="checkbox"
-                      data-title="Delete" data-toggle="modal" data-target="#delete"> <span class="slider round"></span>
+                  <label data-placement="top" data-toggle="tooltip"  class="switch">
+                      <input type="checkbox"  data-toggle="modal" data-target="#delete">
+                      <span class="slider round"></span>
                   </label>
                 </td>
-                <td>
-
-                  <!-- <div class="btn-group" id="status" data-toggle="buttons">
-                    <label class="btn btn-default btn-on btn-xs active">
-                      <input type="radio" value="1" name="multifeatured_module[module_id][status]"
-                        checked="checked">ON</label>
-                    <label class="btn btn-default btn-off btn-xs ">
-                      <input type="radio" value="0" name="multifeatured_module[module_id][status]">OFF</label>
-                  </div> -->
-                </td>
-
 
               </tr>
-
-
-
-
+            {% endfor %}
 
             </tbody>
 
@@ -111,42 +150,13 @@
   </div>
 
 
-   <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-              class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-          <h4 class="modal-title custom_align" id="Heading">Edit Your Detail</h4>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <input class="form-control " type="text" placeholder="Mohsin">
-          </div>
-          <div class="form-group">
-
-            <input class="form-control " type="text" placeholder="Irshad">
-          </div>
-          
-        </div>
-        <div class="modal-footer ">
-          <button type="button" class="btn btn-warning btn-lg" style="width: 100%;"><span
-              class="glyphicon glyphicon-ok-sign"></span> Update</button>
-        </div>
-      </div>
-      
-  </div>
-  </div>
-
-
-
   <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
               class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-          <h4 class="modal-title custom_align" id="Heading">Delete this entry</h4>
+          <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
         </div>
         <div class="modal-body">
 
@@ -155,7 +165,7 @@
 
         </div>
         <div class="modal-footer ">
-          <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Yes</button>
+          <button type="button" class="btn btn-success" id="changeState" data-dismiss="modal"><span class="glyphicon glyphicon-ok-sign"></span>Yes</button>
           <button type="button" class="btn btn-default" data-dismiss="modal"><span
               class="glyphicon glyphicon-remove"></span> No</button>
         </div>
@@ -175,6 +185,8 @@
   <script>
 
     $(document).ready(function () {
+
+
       $("#mytable #checkall").click(function () {
         if ($("#mytable #checkall").is(':checked')) {
           $("#mytable input[type=checkbox]").each(function () {
@@ -191,6 +203,13 @@
       $("[data-toggle=tooltip]").tooltip();
     });
 
+    $("#changeState").click( function (){
+      console.log("yes clicked...")
+      // get state and instance ID
+      // stop instance by ID.
+      var ins_state = document.getElementById("#state");
+      console.log(ins_state.firstChild.nodeValue);
+    });
 
   </script>
 
