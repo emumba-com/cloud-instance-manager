@@ -5,10 +5,81 @@
     <title>admin</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" type="text/css" href="../static/3.3.0/css/custom.css">
+    <style>
+        .btn-default.btn-on.active {
+            background-color: #5BB75B;
+            color: white;
+        }
 
+        .btn-default.btn-off.active {
+            background-color: #DA4F49;
+            color: white;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 25px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #428bca;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(27px);
+            -ms-transform: translateX(27px);
+            transform: translateX(27px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+
+    </style>
 </head>
 
 <body>
@@ -28,60 +99,86 @@
 
 <div class="container">
     <div class="container-fluid">
-        <div class="row">
+        <form method="post" action="">
 
-            <section class="container">
-                <h1>Instance Management</h1>
-                <div class="">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-success btn-filter"
-                                            onclick="allinstances()">All Instances
-                                    </button>
-                                    <button type="button" class="btn btn-warning btn-filter"
-                                            onclick="assignedInstances()">Assigned Instance
-                                    </button>
-                                    <button type="button" class="btn btn-filter btn-filter"
-                                            onclick="assignedInstances()">Assign to
-                                    </button>
+            <div class="row">
 
-                                    <button type="button" class="btn btn-default btn-filter"
-                                            onclick="deleteUser">Remove
-                                    </button>
+                <section class="container">
+                    <h1>Instance Management</h1>
+                    <div class="">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="pull-right">
+                                    <div class="btn-group">
+
+                                        <!-- hidden form-->
+                                        <div hidden>
+                                            <input id="instance" name="instance" type="text">
+                                        </div>
+
+                                        <button type="submit" name="ins_btn" id="all_ins" value="all_ins"
+                                                class="btn btn-success btn-filter"
+                                        >All Instances
+                                        </button>
+
+                                        <button type="submit" name="ins_btn" id="assign_ins" value="assign_ins"
+                                                class="btn btn-warning btn-filter"
+                                        >Assigned Instance
+                                        </button>
+                                        <label data-placement="top" data-toggle="tooltip">
+                                            <button type="button" data-toggle="modal"
+                                                    data-target="#assign"
+                                                    class="btn btn-filter btn-filter"
+                                            >Assign TO
+                                            </button>
+                                        </label>
+                                        <label data-placement="top" data-toggle="tooltip">
+                                            <button type="button" data-toggle="modal"
+                                                    data-target="#remove"
+                                                    class="btn btn-filter btn-filter"
+                                            >Remove
+                                            </button>
+                                        </label>
+
+
+<!--                                        <button type="submit" class="btn btn-default btn-filter"-->
+<!--                                                value="remove_user">Remove-->
+<!--                                        </button>-->
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="table-container">
-                                <table class="table table-filter" id="instancetable">
-                                    <thead>
-                                    <th><input type="checkbox" id="checkinstance"/></th>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Public IP</th>
-                                    <th>Private IP</th>
-                                    <th>Owner</th>
-                                    </thead>
-                                    <tbody>
-                                    {% for instance in instances %}
-                                    <tr>
-                                        <td><input type="checkbox" class="checkthis"/></td>
-                                        <td>{{ instance['Id'] }}</td>
-                                        <td>{{ instance['Name'] }}</td>
-                                        <td>{{ instance['PublicIP'] }}</td>
-                                        <td>{{ instance['PrivateIP'] }}</td>
-                                        <td>{{ instance['Owner'] }}</td>
-                                    </tr>
-                                    {% endfor %}
+                                <div class="table-container">
+                                    <table class="table table-filter" id="mytable">
+                                        <thead>
+                                        <th><input type="checkbox" id="checkinstance"/></th>
 
-                                    </tbody>
-                                </table>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Public IP</th>
+                                        <th>Private IP</th>
+                                        <th>Owner</th>
+                                        </thead>
+                                        <tbody>
+                                        {% for instance in instances %}
+                                        <tr>
+                                            <td><input type="checkbox" id="instance_id" class="checkthis"/></td>
+                                            <td>{{ instance['Id'] }}</td>
+                                            <td>{{ instance['Name'] }}</td>
+                                            <td>{{ instance['PublicIP'] }}</td>
+                                            <td>{{ instance['PrivateIP'] }}</td>
+                                            <td>{{ instance['Owner'] }}</td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-        </div>
+                </section>
+            </div>
+        </form>
+
 
         <div class="row">
 
@@ -92,27 +189,35 @@
                         <div class="panel-body">
                             <div class="pull-right">
                                 <div class="btn-group">
-                                    <button class="btn btn-success btn-filter" data-title="Edit" data-toggle="modal"
-                                            data-target="#edit">Add User
-                                    </button>
+                                    <label data-placement="top" data-toggle="tooltip">
+                                        <button class="btn btn-success btn-filter" data-title="Add User"
+                                                data-toggle="modal"
+                                                data-target="#edit">Add User
+                                        </button>
+                                    </label>
 
-                                    <button type="button" class="btn btn-warning btn-filter"
-                                            onclick="deleteUser()">Delete User
-                                    </button>
+                                    <label data-placement="top" data-toggle="tooltip">
+                                        <button type="button" id="delete_user"
+                                                class="btn btn-warning btn-filter" data-toggle="modal"
+                                                name="delete_user"
+                                                data-target="#ins_state">Delete User
+                                        </button>
+                                    </label>
+
                                 </div>
                             </div>
-                            <div class="table-container" id="usertable">
-                                <table class="table table-filter">
+                            <div class="table-container">
+                                <table class="table table-filter" id="usertable">
                                     <thead>
-                                    <th><input type="checkbox" id="checkuser"/></th>
+                                    <th><input type="checkbox" id="checkall"/></th>
                                     <th>ID</th>
                                     <th>User Name</th>
                                     </thead>
                                     <tbody>
                                     {% for user in users %}
                                     <tr>
-                                        <td><input type="checkbox" class="checkthis"/></td>
-                                        <td>{{ user['ID'] }}</td>
+                                        <td><input type="checkbox" id="checkuser"/></td>
+                                        <td>{{ user['Id'] }}</td>
                                         <td>{{ user['Name'] }}</td>
                                     </tr>
                                     {% endfor %}
@@ -128,22 +233,60 @@
 
 </div>
 
-<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+
+<div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" href="/add">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title custom_align" id="Heading">Delete User</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
+                    you want
+                    to delete this User?
+                </div>
+            </div>
+            <form method="post" action="{{ url_for('admin.delete_user') }}">
+                <div class="modal-footer ">
+                    <div>
+                        <input id="user_id" name="user_id" type="text">
+                        <input id="user_name" name="user_name" type="text">
+                    </div>
+                    <button type="submit" class="btn btn-success"
+                            id="btn_yes"><span
+                            class="glyphicon glyphicon-ok-sign"></span>Yes
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
+                            class="glyphicon glyphicon-remove"></span> No
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" action="{{ url_for('admin.register_user') }}">
+            <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
                             class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                    <h4 class="modal-title custom_align" id="Heading">Register new user</h4>
+                    <h4 class="modal-title custom_align">Register new user</h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <input id="username" name="username"  required class="form-control " type="text" placeholder="Username">
+                        <input class="form-control " type="text" id="username" name="username" placeholder="Username">
                     </div>
                     <div class="form-group">
 
-                        <input class="form-control " type="password"  name="password" id="password" placeholder="Password">
+                        <input class="form-control " id="password" name="password" type="password"
+                               placeholder="Password">
                     </div>
 
                 </div>
@@ -152,11 +295,71 @@
                             class="glyphicon glyphicon-ok-sign"></span>ADD
                     </button>
                 </div>
-            </form>
+            </div>
+        </form>
 
-        </div>
 
     </div>
+</div>
+
+
+<div class="modal fade" id="assign" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+<!--                <h4 class="modal-title custom_align">All Users</h4>-->
+            </div>
+
+            <form method="post" action="">
+
+                <select id="myList">
+                    <option value="1">one</option>
+                    <option value="2">two</option>
+                    <option value="3">three</option>
+                    <option value="4">four</option>
+                    <option value="1">one</option>
+                    <option value="2">two</option>
+                    <option value="3">three</option>
+                    <option value="4">four</option>
+                </select>
+
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+<!--                <h4 class="modal-title custom_align">All Users</h4>-->
+            </div>
+
+            <form method="post" action="">
+
+                <select id="remove">
+                    <option value="1">one</option>
+                    <option value="2">two</option>
+                    <option value="3">three</option>
+                    <option value="4">four</option>
+                    <option value="1">one</option>
+                    <option value="2">two</option>
+                    <option value="3">three</option>
+                    <option value="4">four</option>
+                </select>
+
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
 
 
@@ -167,27 +370,6 @@
 
 <script>
 
-
-    function allinstances() {
-        var x = document.getElementById("myDIV");
-        alert("asdasf");
-
-    }
-
-    function assignedInstances() {
-        var x = document.getElementById("myDIV");
-        alert("assigned instances click");
-
-    }
-
-    function deleteUser() {
-        var x = confirm("Are you sure you want to delete?");
-        if (x)
-            alert("User delted");
-
-        else
-            alert("delete cancel");
-    }
 
     $(document).ready(function () {
 
@@ -204,12 +386,11 @@
             }
         });
 
-        $("#usertable #checkuser").click(function () {
-            if ($("#usertable #checkuser").is(':checked')) {
+        $("#usertable #checkall").click(function () {
+            if ($("#usertable #checkall").is(':checked')) {
                 $("#usertable input[type=checkbox]").each(function () {
                     $(this).prop("checked", true);
                 });
-
             } else {
                 $("#usertable input[type=checkbox]").each(function () {
                     $(this).prop("checked", false);
@@ -228,7 +409,41 @@
 
         });
 
+
+        // changing individual instance state
+        $("#usertable #checkuser").click(function () {
+
+            var id = $(this).closest("tr").find('td:eq(1)').text();
+            var name = $(this).closest("tr").find('td:eq(2)').text();
+            console.log(id);
+            console.log(name);
+
+            var s = document.getElementById("user_id");
+            s.value = id;
+            var s = document.getElementById("user_name");
+            s.value = name;
+
+            if ($("#btn_cancel").click(function () {
+                console.log("no button clicked");
+                console.log(name);
+            })) {
+                //ifbody
+
+            }
+
+        });
+
     });
+    // changing individual instance state
+    $("#mytable #instance_id").click(function () {
+        var id = $(this).closest("tr").find('td:eq(1)').text();
+        console.log(id);
+
+        var s = document.getElementById("instance");
+        s.value = id;
+    });
+
+
 </script>
 
 </body>

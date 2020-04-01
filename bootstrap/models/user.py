@@ -14,9 +14,6 @@ class User(db.Model):
     user = relationship('Instance', backref=backref('users', cascade='save-update, merge, delete, delete-orphan'))
 
 
-    def __init__(self):
-        pass
-
     def get_all_users(self):
         userList = []
         all_users = db.session.query(User)
@@ -44,15 +41,8 @@ class User(db.Model):
         db.session.commit()
 
     def deleteUser(self, userId):
-            db.session.query(User).filter(User.id == userId).delete()
-            db.session.commit()
-
-    @staticmethod
-    def get_all_users():
-        return User.query.all()
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
+        db.session.query(User).filter(User.id == userId).delete()
+        db.session.commit()
 
 
 db.create_all()

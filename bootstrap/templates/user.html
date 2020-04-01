@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 
 <head>
-  <title>Login</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <style>
-    .btn-default.btn-on.active {
-      background-color: #5BB75B;
-      color: white;
-    }
+    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <style>
+        .btn-default.btn-on.active {
+            background-color: #5BB75B;
+            color: white;
+        }
 
-    .btn-default.btn-off.active {
-      background-color: #DA4F49;
-      color: white;
-    }
+        .btn-default.btn-off.active {
+            background-color: #DA4F49;
+            color: white;
+        }
 
-    .switch {
+        .switch {
             position: relative;
             display: inline-block;
             width: 56px;
@@ -78,140 +78,205 @@
         }
 
 
-  </style>
+    </style>
 
 </head>
 
 <body>
 
-
-  <div class="container">
+<div class="container">
     <div class="row">
 
 
-      <div class="col-md-12">
-        <h3>User's Instances</h3>
-        <div class="table-responsive">
+        <div class="col-md-12">
+            <h3>User's Instances</h3>
+            <div class="table-responsive">
 
 
-          <table id="mytable" class="table table-bordred table-striped">
+                <table id="mytable" class="table table-bordred table-striped">
 
-            <thead>
+                    <thead>
 
-              <th><input type="checkbox" id="checkall" /></th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Public IP</th>
-              <th>Private IP</th>
-              <th>State</th>
-              <!-- <th>Edit</th> -->
+                    <!--                        <th><input type="checkbox" id="checkall"/></th>-->
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Public IP</th>
+                    <th>Private IP</th>
+                    <th>State</th>
+                    <!-- <th>Edit</th> -->
 
-              <th>ON/OFF</th>
-            </thead>
-            <tbody>
+                    <th>ON/OFF</th>
+                    </thead>
+                    <tbody>
 
-            {% for instance in instances %}
-              <tr>
-                <td><input type="checkbox" class="checkthis" /></td>
-                <td id="insID">{{ instance['Id'] }}</td>
-                <td>{{ instance['Name'] }}</td>
-                <td>{{ instance['PublicIP'] }}</td>
-                <td>{{ instance['PrivateIP'] }}</td>
-                <td id="state">{{ instance['State'] }}</td>
-                <td>
-                  <label data-placement="top" data-toggle="tooltip"  class="switch">
-                      <input type="checkbox"  data-toggle="modal" data-target="#delete">
-                      <span class="slider round"></span>
-                  </label>
-                </td>
+                    {% for instance in instances %}
+                    <tr>
+                        <!--                            <td><input type="checkbox" class="checkthis"/></td>-->
+                        <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
+                        <td name="">{{ instance['Name'] }}</td>
+                        <td>{{ instance['PublicIP'] }}</td>
+                        <td>{{ instance['PrivateIP'] }}</td>
+                        <td class="text-info" id="state">{{ instance['State'] }}</td>
+                        <td>
+                            <label data-placement="top" data-toggle="tooltip" class="switch">
+                                <input class="round" type="checkbox" data-toggle="modal" name="ins_chk"
+                                       value="{{ instance['Id'] }}" id="ins_checkbox"
+                                       data-target="#ins_state">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
 
-              </tr>
-            {% endfor %}
+                    </tr>
+                    {% endfor %}
 
-            </tbody>
+                    </tbody>
 
-          </table>
+                </table>
 
-          <div class="clearfix"></div>
-          <ul class="pagination pull-right">
-            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-            <li class="active"><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-          </ul>
+
+                <div class="clearfix"></div>
+                <ul class="pagination pull-right">
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+
+            </div>
 
         </div>
-
-      </div>
     </div>
-  </div>
+</div>
 
 
-  <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+<div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-              class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-          <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
-        </div>
-        <div class="modal-body">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
+            </div>
+            <div class="modal-body">
 
-          <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want
-            to change the State?</div>
+                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
+                    you want
+                    to change the State?
+                </div>
 
+            </div>
+            <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                <div class="modal-footer ">
+                    <div hidden>
+                        <input id="instance_id" name="instance_id" type="text">
+                        <input id="instance_state" name="instance_state" type="text">
+                        <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                    </div>
+
+                    <button type="submit" class="btn btn-success"
+                            id="btn_yes"><span
+                            class="glyphicon glyphicon-ok-sign"></span>Yes
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
+                            class="glyphicon glyphicon-remove"></span> No
+                    </button>
+
+                </div>
+            </form>
         </div>
-        <div class="modal-footer ">
-          <button type="button" class="btn btn-success" id="changeState" data-dismiss="modal"><span class="glyphicon glyphicon-ok-sign"></span>Yes</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal"><span
-              class="glyphicon glyphicon-remove"></span> No</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
+        <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-  </div>
+</div>
 
-  <script src="../static/3.3.0/js/bootstrap.min.js"></script>
-  <script src="../static/jquery/jquery-1.11.1.min.js"></script>
-  <!------ Include the above in your HEAD tag ---------->
 
-  <script src="../static/jquery/1.9.1/jquery.min.js"></script>
-  <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+<script src="../static/3.3.0/js/bootstrap.min.js"></script>
+<script src="../static/jquery/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
 
-  <script>
+<script src="../static/jquery/1.9.1/jquery.min.js"></script>
+<script src="../static/3.3.0/js/bootstrap.min.js"></script>
+
+<script>
 
     $(document).ready(function () {
 
 
-      $("#mytable #checkall").click(function () {
-        if ($("#mytable #checkall").is(':checked')) {
-          $("#mytable input[type=checkbox]").each(function () {
-            $(this).prop("checked", true);
-          });
+        $("#mytable #checkall").click(function () {
+            if ($("#mytable #checkall").is(':checked')) {
+                $("#mytable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                });
 
-        } else {
-          $("#mytable input[type=checkbox]").each(function () {
-            $(this).prop("checked", false);
-          });
-        }
-      });
+            } else {
+                $("#mytable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
 
-      $("[data-toggle=tooltip]").tooltip();
+
+        // changing individual instance state
+        $("#mytable #ins_checkbox").click(function () {
+            var state = $(this).closest("tr").find('td:eq(4)').text();
+            var id = $(this).closest("tr").find('td:eq(0)').text();
+            console.log(state);
+            console.log(id);
+
+            var s = document.getElementById("instance_id");
+            s.value = id;
+            var s = document.getElementById("instance_state");
+            s.value = state;
+
+            if ($("#btn_cancel").click(function () {
+                console.log("no button clicked");
+                console.log(state);
+                if (state === 'stopped') {
+                    console.log(state);
+                    // revert checkbox state
+
+                    $("#ins_checkbox").prop("checked", false);
+
+
+                } else if (state === 'running') {
+                    // revert checkbox state
+                    $("#ins_checkbox").prop("checked", true);
+                }
+            })) {
+                //ifbody
+
+            }
+
+        });
+
+        // onclick cancel button
+
+
+        $("[data-toggle=tooltip]").tooltip();
+
+        // set checkboxes correct check state
+        $('#mytable tr').each(function () {
+            var state_value = $(this).find(".text-info").html();
+            if (state_value === 'stopped') {
+                console.log($(this).find(".text-primary").html());
+                console.log(state_value);
+                $(this).find(".round").prop("checked", false);
+            } else {
+                $(this).find(".round").prop("checked", true);
+            }
+        });
+
+
     });
 
-    $("#changeState").click( function (){
-      console.log("yes clicked...")
-      // get state and instance ID
-      // stop instance by ID.
-      var ins_state = document.getElementById("#state");
-      console.log(ins_state.firstChild.nodeValue);
-    });
 
-  </script>
+
+
+
+</script>
 
 
 </body>

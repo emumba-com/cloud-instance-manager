@@ -10,8 +10,6 @@ db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
-    # user_instance = User()
-    # user_instance.addUser("User2", "test123")
     return render_template('login.html')
 
 
