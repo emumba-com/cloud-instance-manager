@@ -22,27 +22,26 @@ def login():
         print(admin, "admin checkbox")
         print(username, password)
         try:
-            # get auth_token, decode it and fetch user id
-            my_token = request.cookies.get('auth_token')
-            # decode it
-            resp = User.decode_auth_token(my_token)
-            if not isinstance(resp, str):
-                # get user from db
-                user = User.query.filter_by(id=resp).first()
+            # get user from db
+            user = User.query.filter_by(user.name=username).first()
+            # TODO if condition for user existance
 
-                auth_token = user_obj.encode_auth_token(user.id)
+            auth_token = user_obj.encode_auth_token(user.id)
 
-                if auth_token == my_token and user.name == username and bcrypt.check_password_hash(user.password, password):
-                    if user.admin == 'true' and admin == 'on':
-                        resp = make_response(render_template('admin.html'))
-                        return resp
-                    resp = make_response(render_template('user.html'))
+            if bcrypt.check_password_hash(user.password, password):
+                #TODO: Add generated token to cockies
+                if user.admin == 'true' and admin == 'on':
+                    resp = make_response(render_template('admin.html'))
                     return resp
+                resp = make_response(render_template('user.html'))
+                return resp
+            # TODO
             # else:
             #     # need to generate new token for that user...
             #     resp = make_response(render_template('login.html'))
             #     return resp
         except Exception as e:
+            # TODO: Add internal server error message incase of exception.
             print(e)
             resp = make_response(render_template('login.html'))
             return resp
