@@ -1,22 +1,35 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, request
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
-import os
+from .config import *
 
 app = Flask(__name__)
+#
+# app_settings = os.getenv(
+#     'APP_SETTINGS',
+#     'DevelopmentConfig'
+#     #'project.server.config.DevelopmentConfig'
+# )
+# app.config.from_object(app_settings)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+
 
 
 @app.route('/')
 def index():
+    # print())
     return render_template('login.html')
 
 
 # Importing blueprints
 from .auth import auth_bp
 from .admin import admin_bp
-from .user import user_bp
+from .user_blueprint import user_bp
 
 # Registring blueprints
 app.register_blueprint(auth_bp)

@@ -40,7 +40,7 @@
 					</span>
 				</div>
 
-				<form class="login100-form validate-form" method="post" action="/auth/signin">
+				<form class="login100-form validate-form" method="post" action="{{ url_for('auth.login') }}">
 					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
 						<span class="label-input100">Username</span>
 						<input class="input100" type="text" name="username" id="username" required placeholder="Enter username">
@@ -58,6 +58,12 @@
 							<input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
 							<label class="label-checkbox100" for="ckb1">
 								Remember me
+							</label>
+						</div>
+						<div class="contact100-form-checkbox">
+							<input class="input-checkbox100" id="admin" type="checkbox" name="admin">
+							<label class="label-checkbox100" >
+								Are you admin?
 							</label>
 						</div>
 

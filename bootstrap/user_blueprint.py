@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, jsonify, json, redirect, request, url_for
 from .server.boto3 import *
-from .models.user import User
 from .models.instance import Instance
 
 from .server.boto3 import stop_instance
@@ -10,7 +9,6 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 region_name = os.getenv('REGION_NAME')
 
 instance_obj = Instance()
-
 
 @user_bp.route('/')
 def user():

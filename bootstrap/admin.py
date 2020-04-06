@@ -3,7 +3,7 @@ from .server.boto3 import *
 from .models.instance import Instance
 from .models.user import User
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
-from .user import User
+# from .user_blueprint import User
 
 region_name = os.getenv('REGION_NAME')
 
@@ -45,14 +45,17 @@ def admin():
     return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
 
 
-@admin_bp.route('/register', methods=['GET', 'POST'])
+@admin_bp.route('/adduser', methods=['GET', 'POST'])
 def register_user():
     if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
-        print(username, password)
+        username = request.form.get('username')
+        password = request.form.get('password')
+        admin = request.form.get('admin')
+        if admin == 'on':
+            madmin = True
+        print(username, password, admin)
         # store them into db
-        user_obj.addUser(username=username, password=password)
+        user_obj.addUser(username=username, password=password, admin=madmin)
         return redirect(url_for('admin.admin'))
     else:
         return redirect(url_for('admin.admin'))
