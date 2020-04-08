@@ -96,15 +96,12 @@
                 <table id="mytable" class="table table-bordred table-striped">
 
                     <thead>
-
-                    <!--                        <th><input type="checkbox" id="checkall"/></th>-->
                     <th>ID</th>
                     <th>Name</th>
                     <th>Public IP</th>
                     <th>Private IP</th>
                     <th>State</th>
-                    <!-- <th>Edit</th> -->
-
+                    <th>Region</th>
                     <th>ON/OFF</th>
                     </thead>
                     <tbody>
@@ -117,6 +114,7 @@
                         <td>{{ instance['PublicIP'] }}</td>
                         <td>{{ instance['PrivateIP'] }}</td>
                         <td class="text-info" id="state">{{ instance['State'] }}</td>
+                        <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
                         <td>
                             <label data-placement="top" data-toggle="tooltip" class="switch">
                                 <input class="round" type="checkbox" data-toggle="modal" name="ins_chk"

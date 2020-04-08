@@ -1,24 +1,24 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship, backref
-
 from ..app import db
-from .user import User
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+from ..models.user import User
+
 
 class Instance(db.Model):
     __tablename__ = 'instances'
 
     id = db.Column(db.String, primary_key=True)
     name = db.Column(db.String())
+    state = db.Column(db.String())
     public_ip = db.Column(db.String())
     private_ip = db.Column(db.String())
-    state = db.Column(db.String())
     key_name = db.Column(db.String())
-    region_name = db.Column(db.String())
-
     user_ids = db.Column(db.ARRAY(db.Integer), ForeignKey('users.id'))
-
+    region_name = db.Column(db.String())
     # defining relationships
-    instance = relationship('User', backref=backref('users', cascade='save-update, merge, delete, delete-orphan'))
+    user = relationship('User')
+
+    # , backref = backref('users', cascade='save-update, merge, delete, delete-orphan'
 
     def __init__(self):
         pass
@@ -31,24 +31,28 @@ class Instance(db.Model):
         self.private_ip = private_ip
         self.key_name = key_name
         self.region_name = region_name
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception as e:
+            pass
 
-    # get all instance based on region name
-    def get_all_instances(self):
+
+    # get all instance based on region name from db
+    def get_all_instances(self, region_name):
         instanceList = []
         all_instance = db.session.query(Instance)
-
         for instance in all_instance:
-            instanceDict = {
-                "Id": instance.id,
-                "Name": instance.name,
-                "State": instance.state,
-                "PublicIP": instance.public_ip,
-                "PrivateIP": instance.private_ip,
-                "KeyName": instance.key_name,
-            }
-            instanceList.append(instanceDict)
+            if instance.region_name == region_name:
+                instanceDict = {
+                    "Id": instance.id,
+                    "Name": instance.name,
+                    "State": instance.state,
+                    "PublicIP": instance.public_ip,
+                    "PrivateIP": instance.private_ip,
+                    "KeyName": instance.key_name,
+                }
+                instanceList.append(instanceDict)
         return instanceList
 
     def get_instances_with_owner(self):
@@ -60,7 +64,7 @@ class Instance(db.Model):
         instanceList = []
         for user in all_users:
             for instance in all_instances:
-                if instance.id == user.ins_id:
+                if instance.id == user.id:
                     instanceDict = {
                         "Id": instance.id,
                         "Name": instance.name,
@@ -73,11 +77,32 @@ class Instance(db.Model):
                     instanceList.append(instanceDict)
         return instanceList
 
-    #
-    # def assign_instance_to_user(self, username, ins_id):
-    #     db.session.query(User).filter(User.name == username).update({User.ins_id : ins_id})
-    #     db.session.commit()
+    def get_user_instances(self, user_id):
+        instance_detail = []
+        instances = db.session.query(Instance)
+        for instance in instances:
+            users = instance['user_ids']
+            for user in len(users):
+                if user_id == user:
+                    instanceDict = {
+                        "Id": ['id'],
+                        "Name": instance['name'],
+                        "State": ['state'],
+                        "PublicIP": ['public_ip'],
+                        "PrivateIP": ['private_ip'],
+                        "KeyName": ['key_name'],
+                        "RegionName": ['region_name'],
+                    }
+                    instance_detail.append(instanceDict)
 
+        return instance_detail
+
+    def assign_instance_to_user(slef, userId, ins_Id):
+        print(userId, "userid")
+        instance = db.session.query(Instance).filter(Instance.id == ins_Id)
+        typeof(instance.user_ids)
+        db.session.query(Instance).filter(Instance.id == ins_Id).update({Instance.user_ids: Instance.user_ids.insert(0, userId)})
+        db.session.commit()
 
     def __repr__(self):
         return '<id {}>'.format(self.id)

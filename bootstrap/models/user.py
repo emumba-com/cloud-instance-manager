@@ -1,9 +1,7 @@
-from flask import make_response, jsonify, render_template, redirect, url_for
 from ..app import db, bcrypt
 from ..config import DevelopmentConfig
 import jwt
 import datetime
-
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -11,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
     password = db.Column(db.String(), nullable=False)
-    admin = db.Column(db.Boolean, nullable=False, default=False)
+    admin = db.Column(db.Boolean, default=False)
 
     def __init__(self):
         pass
@@ -29,40 +27,28 @@ class User(db.Model):
         return userList
 
     def addUser(self, username, password, admin=False):
+        print(username, password)
+        try:
+            self.name = username
+            self.password = bcrypt.generate_password_hash(
+                password, DevelopmentConfig().BCRYPT_LOG_ROUNDS
+            ).decode('utf-8')
+            self.admin = admin
+            # insert the user
+            db.session.add(self)
+            db.session.commit()
 
-        user = db.session.query(User).filter(User.name == username).first()
+        except Exception as e:
+            print(e)
 
-        if not user:
-            try:
-                self.name = username
-                self.password = bcrypt.generate_password_hash(
-                    password, DevelopmentConfig().BCRYPT_LOG_ROUNDS
-                ).decode('utf-8')
-                self.admin = admin
-                # insert the user
-                db.session.add(self)
-                db.session.commit()
-                # user = User.query.filter_by(name=username).first()
-                #
-                # # generate the auth token
-                # auth_token = user.encode_auth_token(user.id)
-                # print(auth_token, "auth token")
-                # # responseObject = {
-                # #     'status': 'success',
-                # #     'message': 'Successfully registered.',
-                # #     'auth_token': auth_token.decode()
-                # # }
-                # resp = make_response(render_template('admin.html'))
-                # resp.set_cookie("auth_token", auth_token, max_age=60*60*24)
-                # return resp
-            except Exception as e:
-                # responseObject = {
-                #     'status': 'fail',
-                #     'message': 'Some error occurred. Please try again.'
-                # }
-                print(e)
-        else:
-            print("user already exist...")
+    def unassign_instance_from_user(self, userId):
+        db.session.query(User).filter(User.ins_id == userId).delete()
+        db.session.commit()
+
+    def deleteUser(self, userId):
+        db.session.query(User).filter(User.id == userId).delete()
+        db.session.commit()
+
 
     def encode_auth_token(self, user_id):
         """
@@ -102,17 +88,14 @@ class User(db.Model):
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
 
-    def unassign_instance_from_user(self, userId):
-        db.session.query(User).filter(User.ins_id == userId).delete()
-        db.session.commit()
+    @staticmethod
+    def validate_token(token, uid):
+        id = User.decode_auth_token(token)
+        if uid == id:
+            return True
+        else:
+            return False
 
-    def deleteUser(self, userId):
-        db.session.query(User).filter(User.id == userId).delete()
-        db.session.commit()
-
-    def get_user_instances(self, user_name):
-        ins_list = db.session.query(User).filter(User.name == user_name)
-        return ins_list
 
 
 class BlacklistToken(db.Model):

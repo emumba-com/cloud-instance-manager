@@ -20,6 +20,7 @@ def get_instances_details(region_name):
     ec2 = boto3.client('ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key,
                        region_name=region_name)
     ec2_instances = ec2.describe_instances()
+    print(ec2_instances)
     for i in range(len(ec2_instances['Reservations'])):
         for j in range(len(ec2_instances['Reservations'][i]['Instances'])):
             print("for i", i, " J is ", j)
@@ -40,6 +41,7 @@ def get_instances_details(region_name):
                 "PublicIP": publicIp,
                 "PrivateIP": privateIp,
                 "KeyName": keyName,
+                "RegionName": region_name
             }
             instance_detail.append(instanceDict)
     return instance_detail

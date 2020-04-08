@@ -2,8 +2,9 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from .server.boto3 import *
 from .models.instance import Instance
 from .models.user import User
+from .app import db
+
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
-# from .user_blueprint import User
 
 region_name = os.getenv('REGION_NAME')
 
@@ -14,35 +15,37 @@ ins_obj = Instance()
 instanceList = []
 userList = []
 
+
 @admin_bp.route('/')
-# @admin_bp.route('/region/<reg_name>')
 def admin():
-    # query data from aws
-    instanceList = get_instances_details(region_name)
-
-    # ins_obj = Instance()
-    # instanceList = ins_obj.get_instances_with_owner()
-    # print(instanceList)
-
-    # user_obj = User()
-    # user_obj.deleteUser('i-09f4e6463b38c943e')
-    # user_obj.addUser('Imtiaz', 'i-09f4e6463b38c943e')
-    # user_obj.assign_instance_to_user("Imtiaz", "i-09f4e6463b38c943e")
-    #
-    # ##
-    # # Unique key constraints...
-    ##
-
-    # Store/update latest data into database
-    # store_instance_into_db(instanceList)
-
-    # # # fetch data from database
-    # instanceList = get_instance_from_db()
-    # print(instanceList)
-    # creating users list
-    # userList = []
+    # if is_valid_request():
+    instanceList = ins_obj.get_all_instances(region_name)
     userList = user_obj.get_all_users()
     return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+
+def get_admin_id():
+    users = db.session.query(User)
+    for admin in users:
+        print(admin.id)
+        if admin.admin:
+            print(admin.admin)
+            return admin.id
+    return "None"
+
+
+@admin_bp.route('/region', methods=['GET', 'POST'])
+def get_aws_instances():
+    if request.method == "POST":
+        reg = request.form.get('reg')
+        if is_valid_request():
+            # get aws instances
+            ins_list = get_instances_details(reg)
+            store_instance_into_db(ins_list)
+            # userList = user_obj.get_all_users()
+            return redirect(url_for('admin.admin'))
+        return redirect(url_for('auth.auth'))
+    else:
+        return redirect(url_for('admin.admin'))
 
 
 @admin_bp.route('/adduser', methods=['GET', 'POST'])
@@ -53,27 +56,67 @@ def register_user():
         admin = request.form.get('admin')
         if admin == 'on':
             madmin = True
+        else:
+            madmin = False
         print(username, password, admin)
-        # store them into db
-        user_obj.addUser(username=username, password=password, admin=madmin)
-        return redirect(url_for('admin.admin'))
+        if is_valid_request():
+            # store them into db
+            user_obj.addUser(username=username, password=password, admin=madmin)
+            return redirect(url_for('admin.admin'))
+        return redirect(url_for('auth.auth'))
     else:
         return redirect(url_for('admin.admin'))
 
+
+def is_valid_request():
+    utoken = request.cookies.get('auth_token')
+    print(utoken)
+    # get current uid
+    uid = get_admin_id()
+    print("admin", uid)
+    if not isinstance(uid, str):
+        if User.validate_token(utoken, uid):
+            print('request is valid')
+            return True
+        return False
+    return False
+
+
+@admin_bp.route('/assignInstance', methods=['GET', 'POST'])
+def assign_instance_to_user():
+    if request.method == "POST":
+        uid = request.form.get('u_id')
+        insid = request.form.get('ins_id')
+        uname = request.form.get('u_name')
+        print(uid, ins_obj, uname)
+        if is_valid_request():
+            print(get_user_id_from_db(uid), "returned userid")
+            uid = get_user_id_from_db(uid)
+            # store them into db
+            ins_obj.assign_instance_to_user(userId=uid, ins_Id=insid)
+            return redirect(url_for('admin.admin'))
+        return redirect(url_for('auth.auth'))
+    else:
+        return redirect(url_for('admin.admin'))
+
+
 @admin_bp.route('/', methods=['GET', 'POST'])
 def instance_management():
+    instanceList = []
     userList = user_obj.get_all_users()
     if request.method == "POST":
-        if request.form['ins_btn'] == 'all_ins':
-            # get instances data from db
-            instanceList = ins_obj.get_all_instances()
-        elif request.form['ins_btn'] == 'assign_ins':
-            instanceList = ins_obj.get_instances_with_owner()
-        elif request.form['ins_btn'] == 'assign_to':
-            instanceList = ins_obj.get_all_instances()
-        elif request.form['ins_btn'] == 'remove_user':
-            instanceList = ins_obj.get_all_instances()
-        return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+        if is_valid_request():
+            if request.form['ins_btn'] == 'all_ins':
+                # get instances data from db
+                instanceList = ins_obj.get_all_instances(region_name)
+            elif request.form['ins_btn'] == 'assign_ins':
+                instanceList = ins_obj.get_instances_with_owner()
+            elif request.form['ins_btn'] == 'assign_to':
+                instanceList = ins_obj.get_all_instances()
+            elif request.form['ins_btn'] == 'remove_user':
+                instanceList = ins_obj.get_all_instances()
+            return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+        return redirect(url_for('auth.auth'))
     else:
         return redirect(url_for('admin.admin'))
 
@@ -84,20 +127,27 @@ def delete_user():
         user_name = request.form['user_name']
         user_id = request.form['user_id']
         print(user_id, user_name)
-        # delete user method call
-        user_obj.deleteUser(user_id)
-        print("user deleted successfully....")
-        return redirect(url_for('admin.admin'))
+        if is_valid_request():
+            # delete user method call
+            user_obj.deleteUser(user_id)
+            print("user deleted successfully....")
+            return redirect(url_for('admin.admin'))
+        return redirect(url_for('auth.auth'))
     return redirect(url_for('admin.admin'))
-
 
 
 def store_instance_into_db(instanceList):
     for i in instanceList:
         ins_obj = Instance()
-        ins_obj.add_instance(i['Id'], i['Name'], i['State'], i['PublicIP'], i['PrivateIP'], i['KeyName'])
+        ins_obj.add_instance(i['Id'], i['Name'], i['State'], i['PublicIP'], i['PrivateIP'], i['KeyName'], i['RegionName'])
 
 
 def get_instance_from_db():
     return Instance().get_all_instances()
 
+def get_user_id_from_db(username):
+    userobj = db.session.query(User)
+    for user in userobj:
+        if user.name == username:
+            print(user.id)
+            return user.id

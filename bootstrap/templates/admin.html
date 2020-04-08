@@ -7,94 +7,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" type="text/css" href="../static/3.3.0/css/custom.css">
-    <style>
-        .btn-default.btn-on.active {
-            background-color: #5BB75B;
-            color: white;
-        }
-
-        .btn-default.btn-off.active {
-            background-color: #DA4F49;
-            color: white;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 56px;
-            height: 25px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #428bca;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(27px);
-            -ms-transform: translateX(27px);
-            transform: translateX(27px);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
-
-    </style>
 </head>
 
 <body>
 
 
 <div class="container">
-    <div class="dropdown pull-right">
-        <button class="btn btn-primary dropdown-toggle mt-auto" type="button" data-toggle="dropdown">Select Region
-            <span class="caret"></span></button>
-        <ul class="dropdown-menu">
-            {% for region in region_list %}
-            <li><a href="#"> {{ region }} </a></li>
+    <form method="post" action="{{ url_for('admin.get_aws_instances') }}">
+        <div class="pull-right">
+            <button class="btn btn-primary mt-auto" type="submit">Update
+            </button>
+        </div>
+
+        <input class="pull-left" id="reg" name="reg">
+
+        <select name="regions" class="list-group pull-right"
+                id="all_regions" onchange="get_region()">
+            <option value="none" selected disabled hidden>
+                {% for region in region_list %}
+            <option id="region" value="{{ region }}">
+                {{ region }}
+            </option>
             {% endfor %}
-        </ul>
-    </div>
+        </select>
+
+
+        <!--        <div class="dropdown pull-right">-->
+        <!--            <button class="btn btn-primary dropdown-toggle mt-auto" type="button" data-toggle="dropdown">Select Region-->
+        <!--                <span class="caret"></span></button>-->
+        <!--            <ul class="dropdown-menu" id="all_regions">-->
+        <!--                {% for region in region_list %}-->
+        <!--                <li class="text-info" id="region" onclick="get_region()"><a href="#"> {{ region }} </a></li>-->
+        <!--                {% endfor %}-->
+        <!--            </ul>-->
+        <!--        </div>-->
+    </form>
+
 </div>
 
 <div class="container">
@@ -126,19 +74,25 @@
                                         >Assigned Instance
                                         </button>
                                         <label data-placement="top" data-toggle="tooltip">
-                                            <button type="button" data-toggle="modal"
-                                                    data-target="#assign"
-                                                    class="btn btn-filter btn-filter"
-                                            >Assign TO
-                                            </button>
+                                            <select data-toggle="modal" data-target="#assign_to" name="ins_btn"
+                                                    id="assign_ins_to" onchange="assignUser()">
+                                                <option value="none" selected disabled hidden>
+                                                    {% for user in users %}
+                                                <option id="{{ user['Id'] }}" value="{{ user['Name'] }}">
+                                                    {{ user['Name'] }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
                                         </label>
-                                        <label data-placement="top" data-toggle="tooltip">
-                                            <button type="button" data-toggle="modal"
-                                                    data-target="#remove"
-                                                    class="btn btn-filter btn-filter"
-                                            >Remove
-                                            </button>
-                                        </label>
+
+
+                                        <!--                                        <label data-placement="top" data-toggle="tooltip">-->
+                                        <!--                                            <button type="button" data-toggle="modal"-->
+                                        <!--                                                    data-target="#remove"-->
+                                        <!--                                                    class="btn btn-filter btn-filter"-->
+                                        <!--                                            >Remove-->
+                                        <!--                                            </button>-->
+                                        <!--                                        </label>-->
 
 
                                         <!--                                        <button type="submit" class="btn btn-default btn-filter"-->
@@ -147,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="table-container">
-                                    <table class="table table-filter" id="mytable">
+                                    <table class="table table-filter" id="instanceTable">
                                         <thead>
                                         <th><input type="checkbox" id="checkinstance"/></th>
 
@@ -270,6 +224,7 @@
     <!-- /.modal-dialog -->
 </div>
 
+
 <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
         <form method="post" action="{{ url_for('admin.register_user') }}">
@@ -304,33 +259,40 @@
             </div>
         </form>
 
-
     </div>
 </div>
 
-
-<div class="modal fade" id="assign" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+<!--# assign instances-->
+<div class="modal fade" id="assign_to" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
                         class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <!--                <h4 class="modal-title custom_align">All Users</h4>-->
+                <h4 class="modal-title custom_align" id="Heading1">Assign Instance</h4>
             </div>
+            <div class="modal-body">
 
-            <form method="post" action="">
-
-                <select id="myList">
-                    <option value="1">one</option>
-                    <option value="2">two</option>
-                    <option value="3">three</option>
-                    <option value="4">four</option>
-                    <option value="1">one</option>
-                    <option value="2">two</option>
-                    <option value="3">three</option>
-                    <option value="4">four</option>
-                </select>
-
+                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
+                    you want
+                    to assign this Instance to User?
+                </div>
+            </div>
+            <form method="post" action="{{ url_for('admin.assign_instance_to_user') }}">
+                <div class="modal-footer ">
+                    <div>
+                        <input id="uid" name="u_id" type="text">
+                        <input id="ins_id" name="ins_id" type="text">
+                        <input id="uname" name="u_name" type="text">
+                    </div>
+                    <button type="submit" class="btn btn-success"
+                            id="ins_btn_yes"><span
+                            class="glyphicon glyphicon-ok-sign"></span>Yes
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ins_btn_cancel"><span
+                            class="glyphicon glyphicon-remove"></span> No
+                    </button>
+                </div>
             </form>
         </div>
         <!-- /.modal-content -->
@@ -338,14 +300,12 @@
     <!-- /.modal-dialog -->
 </div>
 
-
 <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
                         class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <!--                <h4 class="modal-title custom_align">All Users</h4>-->
             </div>
 
             <form method="post" action="">
@@ -376,6 +336,32 @@
 
 <script>
 
+    function myFunction() {
+        if (confirm("Are you sure to assign this instance?")) {
+            return "OK";
+        } else {
+            return "Cancel";
+        }
+    }
+
+    function assignUser() {
+        var selectBox = document.getElementById("assign_ins_to");
+        var uid = selectBox.options[selectBox.selectedIndex].value;
+        var s = document.getElementById("uid");
+        s.value = uid;
+        var s = document.getElementById("uname");
+        s.value = uid;
+
+    }
+
+    function get_region() {
+        var selectBox = document.getElementById("all_regions");
+        var region = selectBox.options[selectBox.selectedIndex].value;
+        document.getElementById("reg").value = "ap-northeast-1";
+        alert(region)
+        // document.getElementById('all_regions').closest('form').submit();
+
+    }
 
     $(document).ready(function () {
 
@@ -440,12 +426,33 @@
         });
 
     });
-    // changing individual instance state
-    $("#mytable #instance_id").click(function () {
+
+    // assigning instance to user.
+    $("#instanceTable #checkinstance").click(function () {
         var id = $(this).closest("tr").find('td:eq(1)').text();
         console.log(id);
 
-        var s = document.getElementById("instance");
+        var s = document.getElementById("ins_id");
+        s.value = id;
+
+        if ($("#ins_btn_cancel").click(function () {
+            document.getElementById("assign_ins_to").value = "";
+            console.log("no button clicked");
+            console.log(name);
+        })) {
+            //ifbody
+
+        }
+
+    });
+
+
+    // changing individual instance state
+    $("#instanceTable #instance_id").click(function () {
+        var id = $(this).closest("tr").find('td:eq(1)').text();
+        console.log(id);
+
+        var s = document.getElementById("ins_id");
         s.value = id;
     });
 
