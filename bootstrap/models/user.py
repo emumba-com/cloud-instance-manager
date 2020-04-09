@@ -1,23 +1,24 @@
-from ..app import db, bcrypt
-from ..config import DevelopmentConfig
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+
+from settings import db, bcrypt
+from config import DevelopmentConfig
 import jwt
 import datetime
 
 class User(db.Model):
     __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
     password = db.Column(db.String(), nullable=False)
     admin = db.Column(db.Boolean, default=False)
 
-    def __init__(self):
-        pass
-
     def get_all_users(self):
         userList = []
         all_users = db.session.query(User)
-        print(all_users)
         for user in all_users:
             userDict = {
                 "Id": user.id,
@@ -27,15 +28,15 @@ class User(db.Model):
         return userList
 
     def addUser(self, username, password, admin=False):
-        print(username, password)
-        try:
-            self.name = username
-            self.password = bcrypt.generate_password_hash(
+        new_user = User(
+            name =username,
+            password = bcrypt.generate_password_hash(
                 password, DevelopmentConfig().BCRYPT_LOG_ROUNDS
-            ).decode('utf-8')
-            self.admin = admin
-            # insert the user
-            db.session.add(self)
+            ).decode('utf-8'),
+            admin = admin
+            )
+        try:
+            db.session.add(new_user)
             db.session.commit()
 
         except Exception as e:
@@ -103,7 +104,8 @@ class BlacklistToken(db.Model):
     Token Model for storing JWT tokens
     """
     __tablename__ = 'blacklist_tokens'
-
+    __table_args__ = {'extend_existing': True}
+    
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(db.String(500), unique=True, nullable=False)
     blacklisted_on = db.Column(db.DateTime, nullable=False)

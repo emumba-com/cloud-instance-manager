@@ -1,11 +1,17 @@
-from ..app import db
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+
+
+from settings import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
-from ..models.user import User
+from models.user import User
 
 
 class Instance(db.Model):
     __tablename__ = 'instances'
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.String, primary_key=True)
     name = db.Column(db.String())
@@ -13,10 +19,10 @@ class Instance(db.Model):
     public_ip = db.Column(db.String())
     private_ip = db.Column(db.String())
     key_name = db.Column(db.String())
-    user_ids = db.Column(db.ARRAY(db.Integer), ForeignKey('users.id'))
+    user_ids = db.Column(db.ARRAY(db.Integer))
     region_name = db.Column(db.String())
     # defining relationships
-    user = relationship('User')
+
 
     # , backref = backref('users', cascade='save-update, merge, delete, delete-orphan'
 
@@ -73,36 +79,36 @@ class Instance(db.Model):
                         "PrivateIP": instance.private_ip,
                         "Owner": user.name,
                     }
-                    print(instanceDict)
                     instanceList.append(instanceDict)
         return instanceList
 
     def get_user_instances(self, user_id):
         instance_detail = []
-        instances = db.session.query(Instance)
+        instances = Instance.query.filter(Instance.user_ids.any(user_id)).all()
+        
         for instance in instances:
-            users = instance['user_ids']
-            for user in len(users):
-                if user_id == user:
-                    instanceDict = {
-                        "Id": ['id'],
-                        "Name": instance['name'],
-                        "State": ['state'],
-                        "PublicIP": ['public_ip'],
-                        "PrivateIP": ['private_ip'],
-                        "KeyName": ['key_name'],
-                        "RegionName": ['region_name'],
-                    }
-                    instance_detail.append(instanceDict)
+            instanceDict = {
+                "Id": instance.id,
+                "Name": instance.name,
+                "State": instance.state,
+                "PublicIP": instance.public_ip,
+                "PrivateIP": instance.private_ip,
+                "KeyName": instance.key_name,
+                "RegionName": instance.region_name,
+            }
+            instance_detail.append(instanceDict)
 
         return instance_detail
 
-    def assign_instance_to_user(slef, userId, ins_Id):
-        print(userId, "userid")
-        instance = db.session.query(Instance).filter(Instance.id == ins_Id)
-        typeof(instance.user_ids)
-        db.session.query(Instance).filter(Instance.id == ins_Id).update({Instance.user_ids: Instance.user_ids.insert(0, userId)})
+    def assign_instance_to_user(self, userId, ins_Id):
+        # instance = db.session.query(Instance).filter(Instance.id == ins_Id)
+        # db.session.query(Instance).filter(Instance.id == ins_Id).update(Instance.user_ids.insert(0, userId))
+        row = Instance.query.filter_by(id=ins_Id).first()
+        if row.user_ids is not None:
+            row.user_ids.append(userId)
+        else:
+            row.user_ids = [userId]
+        Instance.query.filter_by(id=ins_Id).update({Instance.user_ids: row.user_ids})
         db.session.commit()
-
     def __repr__(self):
         return '<id {}>'.format(self.id)
