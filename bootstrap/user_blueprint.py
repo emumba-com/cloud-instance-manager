@@ -1,10 +1,15 @@
-from flask import Blueprint, render_template, jsonify, json, redirect, request, url_for
-from .server.boto3 import *
-from .models.instance import Instance
-from .models.user import User
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
-from .server.boto3 import stop_instance
-from .server.boto3 import start_instance
+from flask import Blueprint, render_template, jsonify, json, redirect, request, url_for
+from server.boto3 import *
+from models.instance import Instance
+from models.user import User
+
+from server.boto3 import stop_instance
+from server.boto3 import start_instance
+
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 region_name = os.getenv('REGION_NAME')
@@ -37,9 +42,7 @@ def change_ins_state():
             if User.validate_token(uid):
                 if state == 'stopped':
                     start_instance(id, region_name)
-                    print("instance started")
                 elif state == 'running':
-                    print("instance started")
                     stop_instance(id, region_name)
                 return redirect(url_for('user.user'))
 

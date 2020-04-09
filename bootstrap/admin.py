@@ -1,8 +1,12 @@
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+
 from flask import Blueprint, render_template, request, redirect, url_for
-from .server.boto3 import *
-from .models.instance import Instance
-from .models.user import User
-from .app import db
+from server.boto3 import *
+from models.instance import Instance
+from models.user import User
+from settings import db
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -28,9 +32,7 @@ def admin():
 def get_admin_id():
     users = db.session.query(User)
     for admin in users:
-        print(admin.id)
         if admin.admin:
-            print(admin.admin)
             return admin.id
     return "None"
 
@@ -73,7 +75,6 @@ def register_user():
             madmin = True
         else:
             madmin = False
-        print(username, password, admin)
         if is_valid_request():
             # store them into db
             user_obj.addUser(username=username, password=password, admin=madmin)
@@ -85,13 +86,10 @@ def register_user():
 
 def is_valid_request():
     utoken = request.cookies.get('auth_token')
-    print(utoken)
     # get current uid
     uid = get_admin_id()
-    print("admin", uid)
     if not isinstance(uid, str):
         if User.validate_token(utoken, uid):
-            print('request is valid')
             return True
         return False
     return False
@@ -103,9 +101,7 @@ def assign_instance_to_user():
         uid = request.form.get('u_id')
         insid = request.form.get('ins_id')
         uname = request.form.get('u_name')
-        print(uid, ins_obj, uname)
         if is_valid_request():
-            print(get_user_id_from_db(uid), "returned userid")
             uid = get_user_id_from_db(uid)
             # store them into db
             ins_obj.assign_instance_to_user(userId=uid, ins_Id=insid)
@@ -141,13 +137,11 @@ def delete_user():
     if request.method == "POST":
         user_name = request.form['user_name']
         user_id = request.form['user_id']
-        print(user_id, user_name)
         if is_valid_request():
             # delete user method call
             user_obj.deleteUser(user_id)
-            print("user deleted successfully....")
             return redirect(url_for('admin.admin'))
-        return redirect(url_for('auth.auth'))
+        return redireBlueprintct(url_for('auth.auth'))
     return redirect(url_for('admin.admin'))
 
 
@@ -165,5 +159,4 @@ def get_user_id_from_db(username):
     userobj = db.session.query(User)
     for user in userobj:
         if user.name == username:
-            print(user.id)
             return user.id

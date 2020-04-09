@@ -9,7 +9,8 @@ all_regions = []
 regions_list = []
 
 # Getting all regions at the start..
-ec2 = boto3.client('ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
+
+ec2 = boto3.client(service_name='ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
 all_regions = ec2.describe_regions()
 for region in all_regions['Regions']:
     regions_list.append(region['RegionName'])
@@ -20,10 +21,8 @@ def get_instances_details(region_name):
     ec2 = boto3.client('ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key,
                        region_name=region_name)
     ec2_instances = ec2.describe_instances()
-    print(ec2_instances)
     for i in range(len(ec2_instances['Reservations'])):
         for j in range(len(ec2_instances['Reservations'][i]['Instances'])):
-            print("for i", i, " J is ", j)
             id = ec2_instances['Reservations'][i]['Instances'][j]['InstanceId']
             privateIp = ec2_instances['Reservations'][i]['Instances'][j]['PrivateIpAddress']
             state = ec2_instances['Reservations'][i]['Instances'][j]['State']['Name']
@@ -58,7 +57,6 @@ def start_instance(instance_id, region_name):
         # Dry run succeeded, run start_instances without dryrun
     try:
         response = ec2.start_instances(InstanceIds=[instance_id], DryRun=False)
-        print(response)
     except ClientError as e:
         print(e)
 
@@ -74,7 +72,6 @@ def stop_instance(instance_id, region_name):
     # Dry run succeeded, call stop_instances without dryrun
     try:
         response = ec2.stop_instances(InstanceIds=[instance_id], DryRun=False)
-        print(response)
     except ClientError as e:
         print(e)
 
@@ -84,5 +81,4 @@ def get_all_regions():
     all_regions = ec2.describe_regions()
     for region in all_regions['Regions']:
         all_regions.append[region['RegionName']]
-        # print(region['RegionName'])
     return all_regions
