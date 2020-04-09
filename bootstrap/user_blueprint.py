@@ -20,7 +20,7 @@ def user():
     uid = get_uid()
     if not isinstance(uid, str):
         if User.validate_token(utoken, uid):
-            instanceList = user_obj.get_user_instances(uid)
+            instanceList = instance_obj.get_user_instances(uid)
     return render_template('user.html', instances=instanceList, region_list=all_regions)
 
 

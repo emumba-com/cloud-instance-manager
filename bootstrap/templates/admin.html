@@ -15,16 +15,19 @@
 <div class="container">
     <form method="post" action="{{ url_for('admin.get_aws_instances') }}">
         <div class="pull-right">
-            <button class="btn btn-primary mt-auto" type="submit">Update
+            <button name="update" value="aws_call" id="aws_call" class="btn btn-primary mt-auto" type="submit">AWS Call
             </button>
         </div>
-
+        <div class="pull-right">
+            <button name="update" value="db_call" id="db_call" class="btn btn-primary mt-auto" type="submit">DB Call
+            </button>
+        </div>
         <input class="pull-left" id="reg" name="reg">
 
-        <select name="regions" class="list-group pull-right"
+        <select name="update" class="list-group pull-right"
                 id="all_regions" onchange="get_region()">
-            <option value="none" selected disabled hidden>
-                {% for region in region_list %}
+            <option value="None" selected disabled hidden>Select Region</option>
+            {% for region in region_list %}
             <option id="region" value="{{ region }}">
                 {{ region }}
             </option>
@@ -76,8 +79,8 @@
                                         <label data-placement="top" data-toggle="tooltip">
                                             <select data-toggle="modal" data-target="#assign_to" name="ins_btn"
                                                     id="assign_ins_to" onchange="assignUser()">
-                                                <option value="none" selected disabled hidden>
-                                                    {% for user in users %}
+                                                <option value="none" selected disabled hidden>Assign to User</option>
+                                                {% for user in users %}
                                                 <option id="{{ user['Id'] }}" value="{{ user['Name'] }}">
                                                     {{ user['Name'] }}
                                                 </option>
@@ -104,7 +107,6 @@
                                     <table class="table table-filter" id="instanceTable">
                                         <thead>
                                         <th><input type="checkbox" id="checkinstance"/></th>
-
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Public IP</th>
@@ -114,7 +116,7 @@
                                         <tbody>
                                         {% for instance in instances %}
                                         <tr>
-                                            <td><input type="checkbox" id="instance_id" class="checkthis"/></td>
+                                            <td><input type="checkbox" id="instance_id"/></td>
                                             <td>{{ instance['Id'] }}</td>
                                             <td>{{ instance['Name'] }}</td>
                                             <td>{{ instance['PublicIP'] }}</td>
@@ -146,7 +148,7 @@
                                     <label data-placement="top" data-toggle="tooltip">
                                         <button class="btn btn-success btn-filter" data-title="Add User"
                                                 data-toggle="modal"
-                                                data-target="#edit">Add User
+                                                data-target="#adduser">Add User
                                         </button>
                                     </label>
 
@@ -154,7 +156,7 @@
                                         <button type="button" id="delete_user"
                                                 class="btn btn-warning btn-filter" data-toggle="modal"
                                                 name="delete_user"
-                                                data-target="#ins_state">Delete User
+                                                data-target="#deleteuser">Delete User
                                         </button>
                                     </label>
 
@@ -188,7 +190,7 @@
 </div>
 
 
-<div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+<div class="modal fade" id="deleteuser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -225,7 +227,7 @@
 </div>
 
 
-<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+<div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
         <form method="post" action="{{ url_for('admin.register_user') }}">
             <div class="modal-content">
@@ -300,33 +302,33 @@
     <!-- /.modal-dialog -->
 </div>
 
-<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-            </div>
+<!--<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">-->
+<!--    <div class="modal-dialog">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span-->
+<!--                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>-->
+<!--            </div>-->
 
-            <form method="post" action="">
+<!--            <form method="post" action="">-->
 
-                <select id="">
-                    <option value="1">one</option>
-                    <option value="2">two</option>
-                    <option value="3">three</option>
-                    <option value="4">four</option>
-                    <option value="1">one</option>
-                    <option value="2">two</option>
-                    <option value="3">three</option>
-                    <option value="4">four</option>
-                </select>
+<!--                <select id="">-->
+<!--                    <option value="1">one</option>-->
+<!--                    <option value="2">two</option>-->
+<!--                    <option value="3">three</option>-->
+<!--                    <option value="4">four</option>-->
+<!--                    <option value="1">one</option>-->
+<!--                    <option value="2">two</option>-->
+<!--                    <option value="3">three</option>-->
+<!--                    <option value="4">four</option>-->
+<!--                </select>-->
 
-            </form>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
+<!--            </form>-->
+<!--        </div>-->
+<!--        &lt;!&ndash; /.modal-content &ndash;&gt;-->
+<!--    </div>-->
+<!--    &lt;!&ndash; /.modal-dialog &ndash;&gt;-->
+<!--</div>-->
 
 
 <script src="../static/3.3.0/js/bootstrap.min.js"></script>
@@ -355,6 +357,9 @@
     }
 
     function get_region() {
+        document.getElementById('db_call').disabled = false;
+        document.getElementById('aws_call').disabled = false;
+
         var selectBox = document.getElementById("all_regions");
         var region = selectBox.options[selectBox.selectedIndex].value;
         document.getElementById("reg").value = "ap-northeast-1";
@@ -365,30 +370,17 @@
 
     $(document).ready(function () {
 
-        $("#instancetable #checkinstance").click(function () {
-            if ($("#instancetable #checkinstance").is(':checked')) {
-                $("#instancetable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", true);
-                });
+        // document.getElementById("reg").value = "ap-northeast-1";
 
-            } else {
-                $("#instancetable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", false);
-                });
-            }
-        });
+        document.getElementById('assign_ins_to').disabled = true;
+        document.getElementById('delete_user').disabled = true;
 
-        $("#usertable #checkall").click(function () {
-            if ($("#usertable #checkall").is(':checked')) {
-                $("#usertable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", true);
-                });
-            } else {
-                $("#usertable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", false);
-                });
-            }
-        });
+        document.getElementById('db_call').disabled = true;
+        document.getElementById('aws_call').disabled = true;
+
+        //
+        // ********************* changing state of db-call/aws-call button **********
+
 
         $('.btn-filter').on('click', function () {
             var $target = $(this).data('target');
@@ -401,59 +393,107 @@
 
         });
 
+        // ********************************************************
+        // buttons state on/off
+        // *
+        // ******************** Instances *************************
 
-        // changing individual instance state
-        $("#usertable #checkuser").click(function () {
+        $("#instanceTable #checkinstance").click(function () {
+            if ($("#instanceTable #checkinstance").is(':checked')) {
+                $("#instanceTable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+                    document.getElementById('assign_ins_to').disabled = true;
+                });
 
-            var id = $(this).closest("tr").find('td:eq(1)').text();
-            var name = $(this).closest("tr").find('td:eq(2)').text();
-            console.log(id);
-            console.log(name);
+            } else {
+                $("#instanceTable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
 
-            var s = document.getElementById("user_id");
-            s.value = id;
-            var s = document.getElementById("user_name");
-            s.value = name;
+        // assigning instance to user.
+        $("#instanceTable #instance_id").click(function () {
 
-            if ($("#btn_cancel").click(function () {
-                console.log("no button clicked");
-                console.log(name);
-            })) {
-                //ifbody
+            if ($("#instanceTable #instance_id").is(':checked')) {
+                document.getElementById('assign_ins_to').disabled = false;
 
+                var id = $(this).closest("tr").find('td:eq(1)').text();
+                console.log(id);
+
+                var s = document.getElementById("ins_id");
+                s.value = id;
+                if ($("#ins_btn_cancel").click(function () {
+                    document.getElementById("assign_ins_to").value = "";
+                    console.log("no button clicked");
+                    console.log(name);
+                })) {
+                    //ifbody
+
+                }
+
+            } else if ($("#instanceTable #instance_id").prop("checked") == false) {
+                document.getElementById("ins_id").value = "";
+                document.getElementById('assign_ins_to').disabled = true;
             }
 
         });
 
-    });
+        // changing individual instance state
+        $("#instanceTable #instance_id").click(function () {
+            var id = $(this).closest("tr").find('td:eq(1)').text();
+            console.log(id);
 
-    // assigning instance to user.
-    $("#instanceTable #checkinstance").click(function () {
-        var id = $(this).closest("tr").find('td:eq(1)').text();
-        console.log(id);
-
-        var s = document.getElementById("ins_id");
-        s.value = id;
-
-        if ($("#ins_btn_cancel").click(function () {
-            document.getElementById("assign_ins_to").value = "";
-            console.log("no button clicked");
-            console.log(name);
-        })) {
-            //ifbody
-
-        }
-
-    });
+            var s = document.getElementById("ins_id");
+            s.value = id;
+        });
 
 
-    // changing individual instance state
-    $("#instanceTable #instance_id").click(function () {
-        var id = $(this).closest("tr").find('td:eq(1)').text();
-        console.log(id);
+        // ********************************************************
+        // buttons state on/off
+        // *
+        // ******************** Users *************************
 
-        var s = document.getElementById("ins_id");
-        s.value = id;
+        $("#usertable #checkall").click(function () {
+            if ($("#usertable #checkall").is(':checked')) {
+                $("#usertable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", true);
+
+                });
+            } else {
+                $("#usertable input[type=checkbox]").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+
+        // changing individual instance state
+        $("#usertable #checkuser").click(function () {
+            if ($("#usertable #checkuser").is(':checked')) {
+                document.getElementById('delete_user').disabled = false;
+
+                var id = $(this).closest("tr").find('td:eq(1)').text();
+                var name = $(this).closest("tr").find('td:eq(2)').text();
+                console.log(id);
+                console.log(name);
+
+                var s = document.getElementById("user_id");
+                s.value = id;
+                var s = document.getElementById("user_name");
+                s.value = name;
+
+                if ($("#btn_cancel").click(function () {
+                    console.log("no button clicked");
+                    console.log(name);
+                })) {
+                }
+            } else if ($("#usertable #checkuser").prop("checked") == false) {
+                document.getElementById('delete_user').disabled = true;
+                document.getElementById("user_id").value = "";
+                document.getElementById("user_name").value = "";
+            }
+        });
+
     });
 
 

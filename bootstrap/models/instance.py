@@ -35,8 +35,8 @@ class Instance(db.Model):
             db.session.add(self)
             db.session.commit()
         except Exception as e:
+            db.session.rollback()
             pass
-
 
     # get all instance based on region name from db
     def get_all_instances(self, region_name):
@@ -81,28 +81,38 @@ class Instance(db.Model):
         instance_detail = []
         instances = db.session.query(Instance)
         for instance in instances:
-            users = instance['user_ids']
-            for user in len(users):
-                if user_id == user:
-                    instanceDict = {
-                        "Id": ['id'],
-                        "Name": instance['name'],
-                        "State": ['state'],
-                        "PublicIP": ['public_ip'],
-                        "PrivateIP": ['private_ip'],
-                        "KeyName": ['key_name'],
-                        "RegionName": ['region_name'],
-                    }
-                    instance_detail.append(instanceDict)
+            users = instance.user_ids
+            try:
+                for user in len(users):
+                    if user_id == user:
+                        instanceDict = {
+                            "Id": instance['id'],
+                            "Name": instance['name'],
+                            "State": instance['state'],
+                            "PublicIP": instance['public_ip'],
+                            "PrivateIP": instance['private_ip'],
+                            "KeyName": instance['key_name'],
+                            "RegionName": instance['region_name'],
+                        }
+                        instance_detail.append(instanceDict)
 
+            except Exception as e:
+                pass
         return instance_detail
 
     def assign_instance_to_user(slef, userId, ins_Id):
         print(userId, "userid")
         instance = db.session.query(Instance).filter(Instance.id == ins_Id)
-        typeof(instance.user_ids)
-        db.session.query(Instance).filter(Instance.id == ins_Id).update({Instance.user_ids: Instance.user_ids.insert(0, userId)})
-        db.session.commit()
+        for i in instance:
+            if i.id == ins_Id:
+                db.session.execute
+                print(i.key_name)
+                db.session.query(Instance).filter(Instance.id == ins_Id).update({Instance.user_ids: Instance.user_ids.insert(0, userId)})
+                db.session.commit()
+        # typeof(instance.user_ids)
+        # db.session.query(Instance).filter(Instance.id == ins_Id).update(
+        #     {Instance.user_ids: instance.user_ids.insert(0, userId)})
+        # db.session.commit()
 
     def __repr__(self):
         return '<id {}>'.format(self.id)

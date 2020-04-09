@@ -19,9 +19,11 @@ userList = []
 @admin_bp.route('/')
 def admin():
     # if is_valid_request():
-    instanceList = ins_obj.get_all_instances(region_name)
-    userList = user_obj.get_all_users()
-    return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+    return show_instances(region_name)
+    # instanceList = ins_obj.get_all_instances(region_name)
+    # userList = user_obj.get_all_users()
+    # return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+
 
 def get_admin_id():
     users = db.session.query(User)
@@ -36,16 +38,29 @@ def get_admin_id():
 @admin_bp.route('/region', methods=['GET', 'POST'])
 def get_aws_instances():
     if request.method == "POST":
-        reg = request.form.get('reg')
         if is_valid_request():
-            # get aws instances
-            ins_list = get_instances_details(reg)
-            store_instance_into_db(ins_list)
-            # userList = user_obj.get_all_users()
-            return redirect(url_for('admin.admin'))
+            print("requrest is valid")
+            if request.form['update'] == 'aws_call':
+                reg = request.form.get('reg')
+                # get aws instances
+                ins_list = get_instances_details(reg)
+                store_instance_into_db(ins_list)
+                print("aws call")
+                # userList = user_obj.get_all_users()
+                return show_instances(reg)
+            elif request.form['update'] == 'db_call':
+                print("db call")
+                reg = request.form.get('reg')
+                return show_instances(reg)
         return redirect(url_for('auth.auth'))
     else:
         return redirect(url_for('admin.admin'))
+
+
+def show_instances(region):
+    instanceList = ins_obj.get_all_instances(region)
+    userList = user_obj.get_all_users()
+    return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
 
 
 @admin_bp.route('/adduser', methods=['GET', 'POST'])
@@ -139,7 +154,8 @@ def delete_user():
 def store_instance_into_db(instanceList):
     for i in instanceList:
         ins_obj = Instance()
-        ins_obj.add_instance(i['Id'], i['Name'], i['State'], i['PublicIP'], i['PrivateIP'], i['KeyName'], i['RegionName'])
+        ins_obj.add_instance(i['Id'], i['Name'], i['State'], i['PublicIP'], i['PrivateIP'], i['KeyName'],
+                             i['RegionName'])
 
 
 def get_instance_from_db():

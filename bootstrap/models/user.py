@@ -37,7 +37,6 @@ class User(db.Model):
             # insert the user
             db.session.add(self)
             db.session.commit()
-
         except Exception as e:
             print(e)
 
@@ -46,6 +45,7 @@ class User(db.Model):
         db.session.commit()
 
     def deleteUser(self, userId):
+        print("user id is ", userId)
         db.session.query(User).filter(User.id == userId).delete()
         db.session.commit()
 
