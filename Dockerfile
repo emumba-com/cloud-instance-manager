@@ -4,6 +4,10 @@ WORKDIR /app
 # Install requirements
 ADD bootstrap/requirement.txt .
 RUN pip install -r requirement.txt
+# Add default zone
+RUN mkdir ~/.aws \
+    && echo [default] > ~/.aws/config \
+    && echo "region = us-east-1" >> ~/.aws/config
 # Copy code
 COPY . .
 # RUN Application
