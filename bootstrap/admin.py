@@ -37,7 +37,7 @@ def get_admin_id():
     return "None"
 
 
-@admin_bp.route('/region', methods=['GET', 'POST'])
+@admin_bp.route('/region', methods=['POST'])
 def get_aws_instances():
     if request.method == "POST":
         if is_valid_request():

@@ -57,6 +57,7 @@ def start_instance(instance_id, region_name):
         # Dry run succeeded, run start_instances without dryrun
     try:
         response = ec2.start_instances(InstanceIds=[instance_id], DryRun=False)
+        print(response)
     except ClientError as e:
         print(e)
 
@@ -72,6 +73,7 @@ def stop_instance(instance_id, region_name):
     # Dry run succeeded, call stop_instances without dryrun
     try:
         response = ec2.stop_instances(InstanceIds=[instance_id], DryRun=False)
+        print(response)
     except ClientError as e:
         print(e)
 

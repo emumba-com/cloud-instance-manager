@@ -50,7 +50,7 @@
 
 <div class="container">
     <div class="container-fluid">
-        <form method="post" action="">
+        <form method="post" action="{{url_for ('admin.instance_management')}}">
 
             <div class="row">
 
@@ -362,7 +362,7 @@
 
         var selectBox = document.getElementById("all_regions");
         var region = selectBox.options[selectBox.selectedIndex].value;
-        document.getElementById("reg").value = "ap-northeast-1";
+        document.getElementById("reg").value = region;
         alert(region)
         // document.getElementById('all_regions').closest('form').submit();
 

@@ -37,12 +37,13 @@ class Instance(db.Model):
         self.private_ip = private_ip
         self.key_name = key_name
         self.region_name = region_name
-        try:
+        row = Instance.query.filter_by(id=id).first()
+        if row:
+            db.session.merge(self)
+            db.session.commit()
+        else:
             db.session.add(self)
             db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            pass
 
     # get all instance based on region name from db
     def get_all_instances(self, region_name):
@@ -97,9 +98,6 @@ class Instance(db.Model):
                 "RegionName": instance.region_name,
             }
             instance_detail.append(instanceDict)
-
-            except Exception as e:
-                pass
         return instance_detail
 
     def assign_instance_to_user(self, userId, ins_Id):
