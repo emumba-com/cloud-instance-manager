@@ -19,14 +19,27 @@ ins_obj = Instance()
 instanceList = []
 userList = []
 
-
 @admin_bp.route('/')
+def admin1():
+    # if is_valid_request():
+    return render_template('test.html')
+    # instanceList = ins_obj.get_all_instances(region_name)
+    # userList = user_obj.get_all_users()
+    # return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+
+
+@admin_bp.route('/instances')
 def admin():
     # if is_valid_request():
     return show_instances(region_name)
     # instanceList = ins_obj.get_all_instances(region_name)
     # userList = user_obj.get_all_users()
     # return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+
+@admin_bp.route('/users')
+def user():
+    userList = user_obj.get_all_users()
+    return render_template('user-management.html', users=userList)
 
 
 def get_admin_id():
@@ -78,10 +91,10 @@ def register_user():
         if is_valid_request():
             # store them into db
             user_obj.addUser(username=username, password=password, admin=madmin)
-            return redirect(url_for('admin.admin'))
+            return redirect(url_for('user-management.admin'))
         return redirect(url_for('auth.auth'))
     else:
-        return redirect(url_for('admin.admin'))
+        return redirect(url_for('user-management.admin'))
 
 
 def is_valid_request():
@@ -98,9 +111,8 @@ def is_valid_request():
 @admin_bp.route('/assignInstance', methods=['GET', 'POST'])
 def assign_instance_to_user():
     if request.method == "POST":
-        uid = request.form.get('u_id')
-        insid = request.form.get('ins_id')
-        uname = request.form.get('u_name')
+        uid = request.form.get('uid')
+        insid = request.form.get('inst_id')
         if is_valid_request():
             uid = get_user_id_from_db(uid)
             # store them into db
@@ -111,7 +123,7 @@ def assign_instance_to_user():
         return redirect(url_for('admin.admin'))
 
 
-@admin_bp.route('/', methods=['GET', 'POST'])
+@admin_bp.route('/', methods=['POST'])
 def instance_management():
     instanceList = []
     userList = user_obj.get_all_users()
@@ -132,7 +144,7 @@ def instance_management():
         return redirect(url_for('admin.admin'))
 
 
-@admin_bp.route('/delete', methods=['GET', 'POST'])
+@admin_bp.route('/users/delete', methods=['GET', 'POST'])
 def delete_user():
     if request.method == "POST":
         user_name = request.form['user_name']
@@ -140,9 +152,9 @@ def delete_user():
         if is_valid_request():
             # delete user method call
             user_obj.deleteUser(user_id)
-            return redirect(url_for('admin.admin'))
+            return redirect(url_for('admin.user'))
         return redireBlueprintct(url_for('auth.auth'))
-    return redirect(url_for('admin.admin'))
+    return redirect(url_for('admin.user'))
 
 
 def store_instance_into_db(instanceList):

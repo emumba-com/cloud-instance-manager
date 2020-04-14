@@ -1,7 +1,7 @@
 from flask import Flask
 from dotenv import load_dotenv
-from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 from config import *
 
 load_dotenv()
