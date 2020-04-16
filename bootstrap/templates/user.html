@@ -232,14 +232,14 @@
             if ($("#btn_cancel").click(function () {
                 console.log("no button clicked");
                 console.log(state);
-                if (state === 'stopped') {
+                if (state === 'stopped' || state == 'stopping') {
                     console.log(state);
                     // revert checkbox state
 
                     $("#ins_checkbox").prop("checked", false);
 
 
-                } else if (state === 'running') {
+                } else if (state === 'running' || state == 'pending') {
                     // revert checkbox state
                     $("#ins_checkbox").prop("checked", true);
                 }

@@ -11,9 +11,17 @@
 
 <body>
 
-
 <div class="container">
-    <form method="post" action="{{ url_for('admin.get_aws_instances') }}">
+    <div class="container">
+        <form method="get" action="{{ url_for('admin.user') }}">
+            <div class="pull-right">
+                <button name="user" value="user" id="user" class="btn btn-primary mt-auto" type="submit">Manage Users
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- <form method="post" action="{{ url_for('admin.get_aws_instances') }}">
         <div class="pull-right">
             <button name="update" value="aws_call" id="aws_call" class="btn btn-primary mt-auto" type="submit">AWS Call
             </button>
@@ -22,8 +30,6 @@
             <button name="update" value="db_call" id="db_call" class="btn btn-primary mt-auto" type="submit">DB Call
             </button>
         </div>
-        <input class="pull-left" id="reg" name="reg">
-
         <select name="update" class="list-group pull-right"
                 id="all_regions" onchange="get_region()">
             <option value="None" selected disabled hidden>Select Region</option>
@@ -33,25 +39,13 @@
             </option>
             {% endfor %}
         </select>
-
-
-        <!--        <div class="dropdown pull-right">-->
-        <!--            <button class="btn btn-primary dropdown-toggle mt-auto" type="button" data-toggle="dropdown">Select Region-->
-        <!--                <span class="caret"></span></button>-->
-        <!--            <ul class="dropdown-menu" id="all_regions">-->
-        <!--                {% for region in region_list %}-->
-        <!--                <li class="text-info" id="region" onclick="get_region()"><a href="#"> {{ region }} </a></li>-->
-        <!--                {% endfor %}-->
-        <!--            </ul>-->
-        <!--        </div>-->
-    </form>
+    </form> -->
 
 </div>
 
 <div class="container">
     <div class="container-fluid">
         <form method="post" action="{{url_for ('admin.instance_management')}}">
-
             <div class="row">
 
                 <section class="container">
@@ -72,196 +66,112 @@
                                         >All Instances
                                         </button>
 
-                                        <button type="submit" name="ins_btn" id="assign_ins" value="assign_ins"
+                                        <button type="button" onclick="change_table()" name="ins_btn" id="assigned_ins" value="assigned_ins"
                                                 class="btn btn-warning btn-filter"
                                         >Assigned Instance
                                         </button>
-                                        <label data-placement="top" data-toggle="tooltip">
-                                            <select data-toggle="modal" data-target="#assign_to" name="ins_btn"
-                                                    id="assign_ins_to" onchange="assignUser()">
-                                                <option value="none" selected disabled hidden>Assign to User</option>
-                                                {% for user in users %}
-                                                <option id="{{ user['Id'] }}" value="{{ user['Name'] }}">
-                                                    {{ user['Name'] }}
-                                                </option>
-                                                {% endfor %}
-                                            </select>
-                                        </label>
-
-
-                                        <!--                                        <label data-placement="top" data-toggle="tooltip">-->
-                                        <!--                                            <button type="button" data-toggle="modal"-->
-                                        <!--                                                    data-target="#remove"-->
-                                        <!--                                                    class="btn btn-filter btn-filter"-->
-                                        <!--                                            >Remove-->
-                                        <!--                                            </button>-->
-                                        <!--                                        </label>-->
-
-
-                                        <!--                                        <button type="submit" class="btn btn-default btn-filter"-->
-                                        <!--                                                value="remove_user">Remove-->
-                                        <!--                                        </button>-->
                                     </div>
                                 </div>
+
+
                                 <div class="table-container">
                                     <table class="table table-filter" id="instanceTable">
                                         <thead>
-                                        <th><input type="checkbox" id="checkinstance"/></th>
+                                        <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
                                         <th>ID</th>
                                         <th>Name</th>
+                                        <th>State</th>
                                         <th>Public IP</th>
                                         <th>Private IP</th>
-                                        <th>Owner</th>
+                                        <th>Region</th>
+                                        <th>Assign Instance</th>
                                         </thead>
                                         <tbody>
                                         {% for instance in instances %}
                                         <tr>
-                                            <td><input type="checkbox" id="instance_id"/></td>
+                                            <!-- <td><input type="checkbox" id="instance_id"/></td> -->
                                             <td>{{ instance['Id'] }}</td>
                                             <td>{{ instance['Name'] }}</td>
+                                            <td>{{ instance['State'] }}</td>
                                             <td>{{ instance['PublicIP'] }}</td>
                                             <td>{{ instance['PrivateIP'] }}</td>
-                                            <td>{{ instance['Owner'] }}</td>
+                                            <td>{{ instance['RegionName'] }}</td>
+                                            <!-- <td>{{ instance['Owner'] }}</td> -->
+                                            <td> 
+                                                    <label data-placement="top"  data-toggle="tooltip" >
+                                                            <select data-toggle="modal" data-target="#assign_to" name="ins_btn"
+                                                                    id="assign_ins_to" >
+                                                                <option value="none" selected disabled hidden>Assign</option>
+                                                                {% for user in users %}
+                                                                <option id="{{ user['Id'] }}" value="{{ user['Name'] }}">
+                                                                    {{ user['Name'] }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </label>    
+                                            </td>
                                         </tr>
                                         {% endfor %}
-
                                         </tbody>
                                     </table>
+
                                 </div>
+
+
+                                <div class="table-container">
+                                    <table class="table table-filter" id="instanceTable2">
+                                        <thead>
+                                        <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>State</th>
+                                        <th>Public IP</th>
+                                        <th>Private IP</th>
+                                        <th>Region</th>
+                                        <th>Owner</th>
+                                        <th>Un-Assign Instance</th>
+                                        </thead>
+                                        <tbody>
+                                        {% for instance in assignedInstances %}
+                                        <tr>
+                                            <!-- <td><input type="checkbox" id="instance_id"/></td> -->
+                                            <td>{{ instance['Id'] }}</td>
+                                            <td>{{ instance['Name'] }}</td>
+                                            <td>{{ instance['State'] }}</td>
+                                            <td>{{ instance['PublicIP'] }}</td>
+                                            <td>{{ instance['PrivateIP'] }}</td>
+                                            <td>{{ instance['RegionName'] }}</td>
+                                            <!-- Show owners in the table c -->
+                                            <td>{{ instance['Owner'] }}</td>
+                                            <!-- <td>{{ instance['Owner'] }}</td> -->
+                                            <td> 
+                                                    <label data-placement="top"  data-toggle="tooltip" >
+                                                            <select data-toggle="modal" data-target="#un_assign" name="ins_btn"
+                                                                    id="un_assign_ins_to" >
+                                                                <option value="none" selected disabled hidden>Un Assign</option>
+                                                                {% for user in instance['Owner'] %}
+                                                                <option id="{{ user }}" value="{{ user }}">
+                                                                    {{ user }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </label>    
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                
                             </div>
                         </div>
                     </div>
                 </section>
             </div>
         </form>
-
-
-        <div class="row">
-
-            <section class="container">
-                <h1>Users Management</h1>
-                <div class="">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="pull-right">
-                                <div class="btn-group">
-                                    <label data-placement="top" data-toggle="tooltip">
-                                        <button class="btn btn-success btn-filter" data-title="Add User"
-                                                data-toggle="modal"
-                                                data-target="#adduser">Add User
-                                        </button>
-                                    </label>
-
-                                    <label data-placement="top" data-toggle="tooltip">
-                                        <button type="button" id="delete_user"
-                                                class="btn btn-warning btn-filter" data-toggle="modal"
-                                                name="delete_user"
-                                                data-target="#deleteuser">Delete User
-                                        </button>
-                                    </label>
-
-                                </div>
-                            </div>
-                            <div class="table-container">
-                                <table class="table table-filter" id="usertable">
-                                    <thead>
-                                    <th><input type="checkbox" id="checkall"/></th>
-                                    <th>ID</th>
-                                    <th>User Name</th>
-                                    </thead>
-                                    <tbody>
-                                    {% for user in users %}
-                                    <tr>
-                                        <td><input type="checkbox" id="checkuser"/></td>
-                                        <td>{{ user['Id'] }}</td>
-                                        <td>{{ user['Name'] }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
     </div>
 
-</div>
-
-
-<div class="modal fade" id="deleteuser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title custom_align" id="Heading">Delete User</h4>
-            </div>
-            <div class="modal-body">
-
-                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
-                    you want
-                    to delete this User?
-                </div>
-            </div>
-            <form method="post" action="{{ url_for('admin.delete_user') }}">
-                <div class="modal-footer ">
-                    <div>
-                        <input id="user_id" name="user_id" type="text">
-                        <input id="user_name" name="user_name" type="text">
-                    </div>
-                    <button type="submit" class="btn btn-success"
-                            id="btn_yes"><span
-                            class="glyphicon glyphicon-ok-sign"></span>Yes
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
-                            class="glyphicon glyphicon-remove"></span> No
-                    </button>
-                </div>
-            </form>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-
-<div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="post" action="{{ url_for('admin.register_user') }}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-                            class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                    <h4 class="modal-title custom_align">Register new user</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input class="form-control " type="text" id="username" name="username" placeholder="Username">
-                    </div>
-                    <div class="form-group">
-
-                        <input class="form-control " id="password" name="password" type="password"
-                               placeholder="Password">
-                    </div>
-                    <div class="contact100-form-checkbox">
-                        <input class="input-checkbox100" id="admin" type="checkbox" name="admin">
-                        <label class="label-checkbox100">
-                            Are you admin?
-                        </label>
-                    </div>
-
-                </div>
-                <div class="modal-footer ">
-                    <button type="submit" class="btn btn-warning btn-lg" style="width: 100%;"><span
-                            class="glyphicon glyphicon-ok-sign"></span>ADD
-                    </button>
-                </div>
-            </div>
-        </form>
-
-    </div>
 </div>
 
 <!--# assign instances-->
@@ -283,9 +193,8 @@
             <form method="post" action="{{ url_for('admin.assign_instance_to_user') }}">
                 <div class="modal-footer ">
                     <div>
-                        <input id="uid" name="u_id" type="text">
-                        <input id="ins_id" name="ins_id" type="text">
-                        <input id="uname" name="u_name" type="text">
+                        <input id="uid" name="uid" type="text">
+                        <input id="inst_id" name="inst_id" type="text">
                     </div>
                     <button type="submit" class="btn btn-success"
                             id="ins_btn_yes"><span
@@ -301,6 +210,43 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
+<!-- Un assign instance from user -->
+<div class="modal fade" id="un_assign" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                            class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <h4 class="modal-title custom_align" id="Heading1">Assign Instance</h4>
+                </div>
+                <div class="modal-body">
+    
+                    <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
+                        you want
+                        to un assign this Instance to User?
+                    </div>
+                </div>
+                <form method="post" action="{{ url_for('admin.un_assign_instance_to_user') }}">
+                    <div class="modal-footer ">
+                        <div>
+                            <input id="un_uid" name="un_uid" type="text">
+                            <input id="un_inst_id" name="un_inst_id" type="text">
+                        </div>
+                        <button type="submit" class="btn btn-success"
+                                id="un_ins_btn_yes"><span
+                                class="glyphicon glyphicon-ok-sign"></span>Yes
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="un_ins_btn_cancel"><span
+                                class="glyphicon glyphicon-remove"></span> No
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 
 <!--<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">-->
 <!--    <div class="modal-dialog">-->
@@ -346,15 +292,64 @@
         }
     }
 
-    function assignUser() {
-        var selectBox = document.getElementById("assign_ins_to");
-        var uid = selectBox.options[selectBox.selectedIndex].value;
-        var s = document.getElementById("uid");
-        s.value = uid;
-        var s = document.getElementById("uname");
-        s.value = uid;
+    function change_table() {
 
+        var t1 = document.getElementById("instanceTable");
+        var t2 = document.getElementById("instanceTable2");
+
+        t1.style.display = 'none';
+        t2.style.display = '';
     }
+
+
+    $(function () {
+        $("#instanceTable #assign_ins_to").change(function () {
+            var user = $(this).find("option:selected").val();
+            // var user = $(this).options[selectBox.selectedIndex].value;
+            var ins_id = $(this).closest("tr").find('td:eq(0)').text();
+            console.log(user);
+            var u = document.getElementById("uid");
+            u.value = user;
+            var s = document.getElementById("inst_id");
+            s.value = ins_id;
+
+            if ($("#ins_btn_cancel").click(function () {
+                var u = document.getElementById("uid");
+                u.value = "";
+                var s = document.getElementById("inst_id");
+                s.value = "";
+            })) {
+                //ifbody
+
+            }
+
+        });
+    });
+
+    $(function () {
+        $("#instanceTable2 #un_assign_ins_to").change(function () {
+            var user = $(this).find("option:selected").val();
+            // var user = $(this).options[selectBox.selectedIndex].value;
+            var ins_id = $(this).closest("tr").find('td:eq(0)').text();
+            console.log(user);
+            var u = document.getElementById("un_uid");
+            u.value = user;
+            var s = document.getElementById("un_inst_id");
+            s.value = ins_id;
+
+            if ($("#un_ins_btn_cancel").click(function () {
+                var u = document.getElementById("un_uid");
+                u.value = "";
+                var s = document.getElementById("un_inst_id");
+                s.value = "";
+            })) {
+                //ifbody
+
+            }
+
+        });
+    });
+
 
     function get_region() {
         document.getElementById('db_call').disabled = false;
@@ -370,10 +365,7 @@
 
     $(document).ready(function () {
 
-        // document.getElementById("reg").value = "ap-northeast-1";
-
-        document.getElementById('assign_ins_to').disabled = true;
-        document.getElementById('delete_user').disabled = true;
+        document.getElementById("instanceTable2").style.display = 'none';
 
         document.getElementById('db_call').disabled = true;
         document.getElementById('aws_call').disabled = true;
@@ -398,101 +390,49 @@
         // *
         // ******************** Instances *************************
 
-        $("#instanceTable #checkinstance").click(function () {
-            if ($("#instanceTable #checkinstance").is(':checked')) {
-                $("#instanceTable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", true);
-                    document.getElementById('assign_ins_to').disabled = true;
-                });
+        // $("#instanceTable #checkinstance").click(function () {
+        //     if ($("#instanceTable #checkinstance").is(':checked')) {
+        //         $("#instanceTable input[type=checkbox]").each(function () {
+        //             $(this).prop("checked", true);
+        //             document.getElementById('assign_ins_to').disabled = true;
+        //         });
 
-            } else {
-                $("#instanceTable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", false);
-                });
-            }
-        });
+        //     } else {
+        //         $("#instanceTable input[type=checkbox]").each(function () {
+        //             $(this).prop("checked", false);
+        //         });
+        //     }
+        // });
 
         // assigning instance to user.
-        $("#instanceTable #instance_id").click(function () {
+        // $("#instanceTable #instance_id").click(function () {
 
-            if ($("#instanceTable #instance_id").is(':checked')) {
-                document.getElementById('assign_ins_to').disabled = false;
+        //     if ($("#instanceTable #instance_id").is(':checked')) {
+        //         document.getElementById('assign_ins_to').disabled = false;
 
-                var id = $(this).closest("tr").find('td:eq(1)').text();
-                console.log(id);
+        //         var id = $(this).closest("tr").find('td:eq(1)').text();
+        //         console.log(id);
 
-                var s = document.getElementById("ins_id");
-                s.value = id;
-                if ($("#ins_btn_cancel").click(function () {
-                    document.getElementById("assign_ins_to").value = "";
-                    console.log("no button clicked");
-                    console.log(name);
-                })) {
-                    //ifbody
+        //         var s = document.getElementById("ins_id");
+        //         s.value = id;
+        //         if ($("#ins_btn_cancel").click(function () {
+        //             document.getElementById("assign_ins_to").value = "";
+        //             console.log("no button clicked");
+        //             console.log(name);
+        //         })) {
+        //             //ifbody
 
-                }
+        //         }
 
-            } else if ($("#instanceTable #instance_id").prop("checked") == false) {
-                document.getElementById("ins_id").value = "";
-                document.getElementById('assign_ins_to').disabled = true;
-            }
+        //     } else if ($("#instanceTable #instance_id").prop("checked") == false) {
+        //         document.getElementById("ins_id").value = "";
+        //         // document.getElementById('assign_ins_to').disabled = true;
+        //     }
 
-        });
-
-        // changing individual instance state
-        $("#instanceTable #instance_id").click(function () {
-            var id = $(this).closest("tr").find('td:eq(1)').text();
-            console.log(id);
-
-            var s = document.getElementById("ins_id");
-            s.value = id;
-        });
-
-
-        // ********************************************************
-        // buttons state on/off
-        // *
-        // ******************** Users *************************
-
-        $("#usertable #checkall").click(function () {
-            if ($("#usertable #checkall").is(':checked')) {
-                $("#usertable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", true);
-
-                });
-            } else {
-                $("#usertable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", false);
-                });
-            }
-        });
+        // });
 
         // changing individual instance state
-        $("#usertable #checkuser").click(function () {
-            if ($("#usertable #checkuser").is(':checked')) {
-                document.getElementById('delete_user').disabled = false;
-
-                var id = $(this).closest("tr").find('td:eq(1)').text();
-                var name = $(this).closest("tr").find('td:eq(2)').text();
-                console.log(id);
-                console.log(name);
-
-                var s = document.getElementById("user_id");
-                s.value = id;
-                var s = document.getElementById("user_name");
-                s.value = name;
-
-                if ($("#btn_cancel").click(function () {
-                    console.log("no button clicked");
-                    console.log(name);
-                })) {
-                }
-            } else if ($("#usertable #checkuser").prop("checked") == false) {
-                document.getElementById('delete_user').disabled = true;
-                document.getElementById("user_id").value = "";
-                document.getElementById("user_name").value = "";
-            }
-        });
+        
 
     });
 
