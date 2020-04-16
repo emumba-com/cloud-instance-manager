@@ -12,4 +12,5 @@ RUN mkdir ~/.aws \
 COPY . .
 # RUN Application
 ENV FLASK_APP bootstrap/app.py
+EXPOSE 5000
 CMD flask run

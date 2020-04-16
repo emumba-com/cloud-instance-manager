@@ -1,9 +1,21 @@
 version: '3.5'
 services:
-  webapp_service:
-    container_name: webapp_container
+  webapp:
+    container_name: webapp
     restart: always
     image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    build: .
     ports:
-     - "127.0.0.1:5000:5000"
+     - 5000:5000
     env_file: .env
+
+  database:
+    image: "postgres"
+    env_file: .env
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data/
+
+volumes:
+  postgres-data:
