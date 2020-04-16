@@ -17,5 +17,21 @@ services:
         source: postgres-data
         target: /var/lib/postgresql/data/
 
+  migration:
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    env_file: .env
+    command: /bin/bash -c "python manage.py db init && python manage.py db migrate && python manage.py db upgrade"
+    depends_on: 
+      - database
+
+  dumpAdminData:
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    env_file: .env
+    command: python bootstrap/dump_admin_record.py
+    depends_on: 
+      - database
+      - migration
+
+
 volumes:
   postgres-data:
