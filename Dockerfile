@@ -13,4 +13,4 @@ COPY . .
 # RUN Application
 ENV FLASK_APP bootstrap/app.py
 EXPOSE 5000
-CMD flask run
+CMD flask run --host=0.0.0.0
