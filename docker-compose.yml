@@ -27,7 +27,7 @@ services:
   dumpAdminData:
     image: registry.gitlab.com/emumba/devops/aws-bootcloud
     env_file: .env
-    command: python bootstrap/dump_admin_record.py
+    command: python dump_admin_record.py
     depends_on: 
       - database
       - migration
