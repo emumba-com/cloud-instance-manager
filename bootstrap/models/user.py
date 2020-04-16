@@ -7,6 +7,7 @@ from config import DevelopmentConfig
 import jwt
 import datetime
 
+
 class User(db.Model):
     __tablename__ = 'users'
     __table_args__ = {'extend_existing': True}
@@ -45,10 +46,7 @@ class User(db.Model):
         db.session.query(User).filter(User.ins_id == userId).delete()
         db.session.commit()
 
-    def deleteUser(self, userId):
-        print("user id is ", userId)
-        db.session.query(User).filter(User.id == userId).delete()
-        db.session.commit()
+    
 
 
     def encode_auth_token(self, user_id):

@@ -11,18 +11,17 @@
 
 <body>
 
-
 <div class="container">
     <div class="container">
         <form method="get" action="{{ url_for('admin.user') }}">
-            <div class="pull-left">
+            <div class="pull-right">
                 <button name="user" value="user" id="user" class="btn btn-primary mt-auto" type="submit">Manage Users
                 </button>
             </div>
         </form>
     </div>
     
-    <form method="post" action="{{ url_for('admin.get_aws_instances') }}">
+    <!-- <form method="post" action="{{ url_for('admin.get_aws_instances') }}">
         <div class="pull-right">
             <button name="update" value="aws_call" id="aws_call" class="btn btn-primary mt-auto" type="submit">AWS Call
             </button>
@@ -40,14 +39,13 @@
             </option>
             {% endfor %}
         </select>
-    </form>
+    </form> -->
 
 </div>
 
 <div class="container">
     <div class="container-fluid">
         <form method="post" action="{{url_for ('admin.instance_management')}}">
-
             <div class="row">
 
                 <section class="container">
@@ -68,31 +66,36 @@
                                         >All Instances
                                         </button>
 
-                                        <button type="button"  onclick="change_table()" name="ins_btn" id="assign_ins" value="assign_ins"
+                                        <button type="button" onclick="change_table()" name="ins_btn" id="assigned_ins" value="assigned_ins"
                                                 class="btn btn-warning btn-filter"
                                         >Assigned Instance
                                         </button>
                                     </div>
                                 </div>
+
+
                                 <div class="table-container">
-                                    <table class="table table-filter" id="instanceTable" style="display: block" >
+                                    <table class="table table-filter" id="instanceTable">
                                         <thead>
                                         <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
                                         <th>ID</th>
                                         <th>Name</th>
+                                        <th>State</th>
                                         <th>Public IP</th>
                                         <th>Private IP</th>
-                                        <!-- <th>Owner</th> -->
+                                        <th>Region</th>
                                         <th>Assign Instance</th>
                                         </thead>
                                         <tbody>
                                         {% for instance in instances %}
                                         <tr>
                                             <!-- <td><input type="checkbox" id="instance_id"/></td> -->
-                                            <td id="instance-id" >{{ instance['Id'] }}</td>
+                                            <td>{{ instance['Id'] }}</td>
                                             <td>{{ instance['Name'] }}</td>
+                                            <td>{{ instance['State'] }}</td>
                                             <td>{{ instance['PublicIP'] }}</td>
                                             <td>{{ instance['PrivateIP'] }}</td>
+                                            <td>{{ instance['RegionName'] }}</td>
                                             <!-- <td>{{ instance['Owner'] }}</td> -->
                                             <td> 
                                                     <label data-placement="top"  data-toggle="tooltip" >
@@ -102,6 +105,53 @@
                                                                 {% for user in users %}
                                                                 <option id="{{ user['Id'] }}" value="{{ user['Name'] }}">
                                                                     {{ user['Name'] }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </label>    
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+
+                                <div class="table-container">
+                                    <table class="table table-filter" id="instanceTable2">
+                                        <thead>
+                                        <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>State</th>
+                                        <th>Public IP</th>
+                                        <th>Private IP</th>
+                                        <th>Region</th>
+                                        <th>Owner</th>
+                                        <th>Un-Assign Instance</th>
+                                        </thead>
+                                        <tbody>
+                                        {% for instance in assignedInstances %}
+                                        <tr>
+                                            <!-- <td><input type="checkbox" id="instance_id"/></td> -->
+                                            <td>{{ instance['Id'] }}</td>
+                                            <td>{{ instance['Name'] }}</td>
+                                            <td>{{ instance['State'] }}</td>
+                                            <td>{{ instance['PublicIP'] }}</td>
+                                            <td>{{ instance['PrivateIP'] }}</td>
+                                            <td>{{ instance['RegionName'] }}</td>
+                                            <!-- Show owners in the table c -->
+                                            <td>{{ instance['Owner'] }}</td>
+                                            <!-- <td>{{ instance['Owner'] }}</td> -->
+                                            <td> 
+                                                    <label data-placement="top"  data-toggle="tooltip" >
+                                                            <select data-toggle="modal" data-target="#un_assign" name="ins_btn"
+                                                                    id="un_assign_ins_to" >
+                                                                <option value="none" selected disabled hidden>Un Assign</option>
+                                                                {% for user in instance['Owner'] %}
+                                                                <option id="{{ user }}" value="{{ user }}">
+                                                                    {{ user }}
                                                                 </option>
                                                                 {% endfor %}
                                                             </select>
@@ -161,6 +211,43 @@
     <!-- /.modal-dialog -->
 </div>
 
+<!-- Un assign instance from user -->
+<div class="modal fade" id="un_assign" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                            class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <h4 class="modal-title custom_align" id="Heading1">Assign Instance</h4>
+                </div>
+                <div class="modal-body">
+    
+                    <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
+                        you want
+                        to un assign this Instance to User?
+                    </div>
+                </div>
+                <form method="post" action="{{ url_for('admin.un_assign_instance_to_user') }}">
+                    <div class="modal-footer ">
+                        <div>
+                            <input id="un_uid" name="un_uid" type="text">
+                            <input id="un_inst_id" name="un_inst_id" type="text">
+                        </div>
+                        <button type="submit" class="btn btn-success"
+                                id="un_ins_btn_yes"><span
+                                class="glyphicon glyphicon-ok-sign"></span>Yes
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="un_ins_btn_cancel"><span
+                                class="glyphicon glyphicon-remove"></span> No
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
 <!--<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">-->
 <!--    <div class="modal-dialog">-->
 <!--        <div class="modal-content">-->
@@ -205,23 +292,13 @@
         }
     }
 
-    var visible = 1; //var that keeps track of which table is visible (1 or 2)
     function change_table() {
-        // alert("changing table");
-        var t1 = document.getElementById("instanceTable");
-        // var t2 = document.getElementById("instanceTable2");
-        if(visible == 1) {
-            // alert("table 1");
-            visible = 2;
-            t1.style.display = "none";
-            // t2.style.display = "inline-block";
 
-        } else {
-            alert("table 2");
-            visible = 1;
-            t1.style.display = "block";
-            // t2.style.display = "none";
-        }
+        var t1 = document.getElementById("instanceTable");
+        var t2 = document.getElementById("instanceTable2");
+
+        t1.style.display = 'none';
+        t2.style.display = '';
     }
 
 
@@ -249,6 +326,31 @@
         });
     });
 
+    $(function () {
+        $("#instanceTable2 #un_assign_ins_to").change(function () {
+            var user = $(this).find("option:selected").val();
+            // var user = $(this).options[selectBox.selectedIndex].value;
+            var ins_id = $(this).closest("tr").find('td:eq(0)').text();
+            console.log(user);
+            var u = document.getElementById("un_uid");
+            u.value = user;
+            var s = document.getElementById("un_inst_id");
+            s.value = ins_id;
+
+            if ($("#un_ins_btn_cancel").click(function () {
+                var u = document.getElementById("un_uid");
+                u.value = "";
+                var s = document.getElementById("un_inst_id");
+                s.value = "";
+            })) {
+                //ifbody
+
+            }
+
+        });
+    });
+
+
     function get_region() {
         document.getElementById('db_call').disabled = false;
         document.getElementById('aws_call').disabled = false;
@@ -262,6 +364,8 @@
     }
 
     $(document).ready(function () {
+
+        document.getElementById("instanceTable2").style.display = 'none';
 
         document.getElementById('db_call').disabled = true;
         document.getElementById('aws_call').disabled = true;
