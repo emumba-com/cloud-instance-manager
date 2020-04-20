@@ -21,11 +21,12 @@ class User(db.Model):
         userList = []
         all_users = db.session.query(User)
         for user in all_users:
-            userDict = {
-                "Id": user.id,
-                "Name": user.name,
-            }
-            userList.append(userDict)
+            if user.admin == False:
+                userDict = {
+                    "Id": user.id,
+                    "Name": user.name,
+                }
+                userList.append(userDict)
         return userList
 
     def addUser(self, username, password, admin=False):

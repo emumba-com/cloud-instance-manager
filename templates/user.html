@@ -54,15 +54,15 @@
             transition: .4s;
         }
 
-        input:checked + .slider {
+        input:checked+.slider {
             background-color: #428bca;
         }
 
-        input:focus + .slider {
+        input:focus+.slider {
             box-shadow: 0 0 1px #2196F3;
         }
 
-        input:checked + .slider:before {
+        input:checked+.slider:before {
             -webkit-transform: translateX(27px);
             -ms-transform: translateX(27px);
             transform: translateX(27px);
@@ -76,63 +76,70 @@
         .slider.round:before {
             border-radius: 50%;
         }
-
-
     </style>
 
 </head>
 
 <body>
 
-<div class="container">
-    <div class="row">
+    <div class="container">
+        <form method="get" action="{{ url_for('user.logout') }}">
+            <div class="pull-right">
+                <button name="logout" value="logout" id="logout" class="btn btn-primary mt-auto" type="submit">Logout
+                </button>
+            </div>
+        </form>
+    </div>
 
 
-        <div class="col-md-12">
-            <h3>User's Instances</h3>
-            <div class="table-responsive">
+    <div class="container">
+        <div class="row">
 
 
-                <table id="mytable" class="table table-bordred table-striped">
-
-                    <thead>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Public IP</th>
-                    <th>Private IP</th>
-                    <th>State</th>
-                    <th>Region</th>
-                    <th>ON/OFF</th>
-                    </thead>
-                    <tbody>
-
-                    {% for instance in instances %}
-                    <tr>
-                        <!--                            <td><input type="checkbox" class="checkthis"/></td>-->
-                        <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
-                        <td name="">{{ instance['Name'] }}</td>
-                        <td>{{ instance['PublicIP'] }}</td>
-                        <td>{{ instance['PrivateIP'] }}</td>
-                        <td class="text-info" id="state">{{ instance['State'] }}</td>
-                        <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
-                        <td>
-                            <label data-placement="top" data-toggle="tooltip" class="switch">
-                                <input class="round" type="checkbox" data-toggle="modal" name="ins_chk"
-                                       value="{{ instance['Id'] }}" id="ins_checkbox"
-                                       data-target="#ins_state">
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
-
-                    </tr>
-                    {% endfor %}
-
-                    </tbody>
-
-                </table>
+            <div class="col-md-12">
+                <h3>User's Instances</h3>
+                <div class="table-responsive">
 
 
-                <div class="clearfix"></div>
+                    <table id="mytable" class="table table-bordred table-striped">
+
+                        <thead>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Public IP</th>
+                            <th>Private IP</th>
+                            <th>State</th>
+                            <th>Region</th>
+                            <th>ON/OFF</th>
+                        </thead>
+                        <tbody>
+
+                            {% for instance in instances %}
+                            <tr>
+                                <!--                            <td><input type="checkbox" class="checkthis"/></td>-->
+                                <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
+                                <td name="">{{ instance['Name'] }}</td>
+                                <td>{{ instance['PublicIP'] }}</td>
+                                <td>{{ instance['PrivateIP'] }}</td>
+                                <td class="text-info" id="state">{{ instance['State'] }}</td>
+                                <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
+                                <td>
+                                    <label data-placement="top" data-toggle="tooltip" class="switch">
+                                        <input class="round" type="checkbox" data-toggle="modal" name="ins_chk"
+                                            value="{{ instance['Id'] }}" id="ins_checkbox" data-target="#ins_state">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+
+                    <!-- <div class="clearfix"></div>
                 <ul class="pagination pull-right">
                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
                     <li class="active"><a href="#">1</a></li>
@@ -141,140 +148,139 @@
                     <li><a href="#">4</a></li>
                     <li><a href="#">5</a></li>
                     <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                </ul>
+                </ul> -->
 
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
-            </div>
-            <div class="modal-body">
-
-                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
-                    you want
-                    to change the State?
                 </div>
 
             </div>
-            <form method="post" action="{{ url_for('user.change_ins_state')}}">
-                <div class="modal-footer ">
-                    <div hidden>
-                        <input id="instance_id" name="instance_id" type="text">
-                        <input id="instance_state" name="instance_state" type="text">
-                        <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                            class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
+                        you want
+                        to change the State?
                     </div>
 
-                    <button type="submit" class="btn btn-success"
-                            id="btn_yes"><span
-                            class="glyphicon glyphicon-ok-sign"></span>Yes
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
-                            class="glyphicon glyphicon-remove"></span> No
-                    </button>
-
                 </div>
-            </form>
+                <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                    <div class="modal-footer ">
+                        <div hidden>
+                            <input id="instance_id" name="instance_id" type="text">
+                            <input id="instance_state" name="instance_state" type="text">
+                            <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                        </div>
+
+                        <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                class="glyphicon glyphicon-ok-sign"></span>Yes
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
+                                class="glyphicon glyphicon-remove"></span> No
+                        </button>
+
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
 
 
-<script src="../static/3.3.0/js/bootstrap.min.js"></script>
-<script src="../static/jquery/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+    <script src="../static/jquery/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
 
-<script src="../static/jquery/1.9.1/jquery.min.js"></script>
-<script src="../static/3.3.0/js/bootstrap.min.js"></script>
+    <script src="../static/jquery/1.9.1/jquery.min.js"></script>
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
 
-<script>
+    <script>
 
-    $(document).ready(function () {
-
-
-        $("#mytable #checkall").click(function () {
-            if ($("#mytable #checkall").is(':checked')) {
-                $("#mytable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", true);
-                });
-
-            } else {
-                $("#mytable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", false);
-                });
-            }
-        });
+        $(document).ready(function () {
 
 
-        // changing individual instance state
-        $("#mytable #ins_checkbox").click(function () {
-            var state = $(this).closest("tr").find('td:eq(4)').text();
-            var id = $(this).closest("tr").find('td:eq(0)').text();
-            console.log(state);
-            console.log(id);
+            $("#mytable #checkall").click(function () {
+                if ($("#mytable #checkall").is(':checked')) {
+                    $("#mytable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", true);
+                    });
 
-            var s = document.getElementById("instance_id");
-            s.value = id;
-            var s = document.getElementById("instance_state");
-            s.value = state;
-
-            if ($("#btn_cancel").click(function () {
-                console.log("no button clicked");
-                console.log(state);
-                if (state === 'stopped' || state == 'stopping') {
-                    console.log(state);
-                    // revert checkbox state
-
-                    $("#ins_checkbox").prop("checked", false);
-
-
-                } else if (state === 'running' || state == 'pending') {
-                    // revert checkbox state
-                    $("#ins_checkbox").prop("checked", true);
+                } else {
+                    $("#mytable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", false);
+                    });
                 }
-            })) {
-                //ifbody
+            });
 
-            }
+
+            // changing individual instance state
+            $("#mytable #ins_checkbox").click(function () {
+                var state = $(this).closest("tr").find('td:eq(4)').text();
+                var id = $(this).closest("tr").find('td:eq(0)').text();
+                console.log(state);
+                console.log(id);
+
+                var s = document.getElementById("instance_id");
+                s.value = id;
+                var s = document.getElementById("instance_state");
+                s.value = state;
+
+                if ($("#btn_cancel").click(function () {
+                    console.log("no button clicked");
+                    console.log(state);
+                    if (state === 'stopped' || state == 'stopping') {
+                        console.log(state);
+                        // revert checkbox state
+
+                        $("#ins_checkbox").prop("checked", false);
+
+
+                    } else if (state === 'running' || state == 'pending') {
+                        // revert checkbox state
+                        $("#ins_checkbox").prop("checked", true);
+                    }
+                })) {
+                    //ifbody
+
+                }
+
+            });
+
+            // onclick cancel button
+
+
+            $("[data-toggle=tooltip]").tooltip();
+
+            // set checkboxes correct check state
+            $('#mytable tr').each(function () {
+                var state_value = $(this).find(".text-info").html();
+                if (state_value === 'stopped') {
+                    console.log($(this).find(".text-primary").html());
+                    console.log(state_value);
+                    $(this).find(".round").prop("checked", false);
+                } else {
+                    $(this).find(".round").prop("checked", true);
+                }
+            });
+
 
         });
 
-        // onclick cancel button
-
-
-        $("[data-toggle=tooltip]").tooltip();
-
-        // set checkboxes correct check state
-        $('#mytable tr').each(function () {
-            var state_value = $(this).find(".text-info").html();
-            if (state_value === 'stopped') {
-                console.log($(this).find(".text-primary").html());
-                console.log(state_value);
-                $(this).find(".round").prop("checked", false);
-            } else {
-                $(this).find(".round").prop("checked", true);
-            }
-        });
-
-
-    });
 
 
 
 
-
-</script>
+    </script>
 
 
 </body>

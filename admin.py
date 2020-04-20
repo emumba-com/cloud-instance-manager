@@ -6,7 +6,7 @@ import threading
 from flask import Blueprint, render_template, request, redirect, url_for
 from server.boto3 import *
 from models.instance import Instance
-from models.user import User
+from models.user import User, BlacklistToken
 from settings import db
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -21,39 +21,19 @@ ins_obj = Instance()
 instanceList = []
 userList = []
 
-# @admin_bp.route('/')
-# def admin1():
-#     # if is_valid_request():
-#     return render_template('test.html')
-#     # instanceList = ins_obj.get_all_instances(region_name)
-#     # userList = user_obj.get_all_users()
-    # return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
 
-
-@admin_bp.route('/instances')
+@admin_bp.route('/instances', methods=['GET'])
 def admin():
     # if is_valid_request():
-    # update_thread = threading.Thread(target=update_instance_in_db, args=(region_name, ))
     update_thread = threading.Thread(target=make_aws_call, args=())
     update_thread.start()
     return get_instances()
-    # instanceList = ins_obj.get_all_instances(region_name)
-    # userList = user_obj.get_all_users()
-    # return render_template('admin.html', instances=instanceList, users=userList, region_list=regions_list)
+    # return render_template('login.html')
 
 @admin_bp.route('/users')
 def user():
     userList = user_obj.get_all_users()
     return render_template('user-management.html', users=userList)
-
-
-def get_admin_id():
-    users = db.session.query(User)
-    for admin in users:
-        if admin.admin:
-            return admin.id
-    return "None"
-
 
 @admin_bp.route('/region', methods=['POST'])
 def get_aws_instances():
@@ -77,19 +57,6 @@ def get_aws_instances():
         return redirect(url_for('admin.admin'))
 
 
-def show_instances(region):
-    instanceList = ins_obj.get_all_instances(region)
-    userList = user_obj.get_all_users()
-    return render_template('admin.html', assignedInstances=assignedInstances, instances=instanceList, users=userList)
-
-# get all instances from db, without region based.
-def get_instances():
-    instanceList = ins_obj.get_all_instances_from_db()
-    userList = user_obj.get_all_users()
-    # sending assigned user's data..
-    assignedInstances = ins_obj.get_assigned_instances()
-    return render_template('admin.html', assignedInstances=assignedInstances, instances=instanceList, users=userList)
-
 @admin_bp.route('/adduser', methods=['GET', 'POST'])
 def register_user():
     if request.method == "POST":
@@ -108,16 +75,6 @@ def register_user():
     else:
         return redirect(url_for('admin.user'))
 
-
-def is_valid_request():
-    utoken = request.cookies.get('auth_token')
-    # get current uid
-    uid = get_admin_id()
-    if not isinstance(uid, str):
-        if User.validate_token(utoken, uid):
-            return True
-        return False
-    return False
 
 
 @admin_bp.route('/assignInstance', methods=['POST'])
@@ -181,9 +138,63 @@ def delete_user():
         return redirect(url_for('auth.auth'))
     return redirect(url_for('admin.user'))
 
+@admin_bp.route('/logout', methods=['GET'])
+def logout_admin():
+    # if is_valid_request():
+        utoken = request.cookies.get('auth_token')
+        print(utoken, "THis is utoken")
+        blacklist_token = BlacklistToken(token=utoken)
+        try:
+            # insert the token
+            print("in the Try block")
+            db.session.add(blacklist_token)
+            db.session.commit()
+            return render_template('login.html')
+        except Exception as e:
+            print(e)
+            return redirect(url_for('admin.admin'))
+    # return redirect(url_for('admin.admin'))
+
+
+
+def get_admin_id():
+    users = db.session.query(User)
+    for admin in users:
+        if admin.admin:
+            return admin.id
+    return "None"
+
+
+def show_instances(region):
+    instanceList = ins_obj.get_all_instances(region)
+    userList = user_obj.get_all_users()
+    return render_template('admin.html', assignedInstances=assignedInstances, instances=instanceList, users=userList)
+
+# get all instances from db, without region based.
+def get_instances():
+    instanceList = ins_obj.get_all_instances_from_db()
+    # userList = user_obj.get_all_users()
+    # sending assigned user's data..
+    assignedInstances = ins_obj.get_assigned_instances()
+    return render_template('admin.html', assignedInstances=assignedInstances, instances=instanceList)
+
+def is_valid_request():
+    utoken = request.cookies.get('auth_token')
+    print(utoken, " u token")
+    # get current uid
+    uid = get_admin_id()
+    print(uid, " admin ID")
+    if not isinstance(uid, str):
+        if User.validate_token(utoken, uid):
+            return True
+        return False
+    return False
+
+
 def make_aws_call():
     for region in regions_list:
         ins_list = get_instances_details(region)
+        # print(ins_list)
         store_instance_into_db(ins_list)
 
 

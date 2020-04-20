@@ -66,8 +66,23 @@ class Instance(db.Model):
     # get all instance based on region name from db
     def get_all_instances_from_db(self):
         instanceList = []
+        user_obj = User()
         all_instance = db.session.query(Instance)
+        userList = user_obj.get_all_users()
+        # print(userList, " userlist")
+        
         for instance in all_instance:
+            users = []
+            ids = instance.user_ids
+            if ids:
+                for user in userList:
+                    if user['Id'] not in ids:
+                        users.append(user)
+            else:
+                for user in userList:
+                    users.append(user)
+            # print(users)
+                
             instanceDict = {
                 "Id": instance.id,
                 "Name": instance.name,
@@ -77,6 +92,7 @@ class Instance(db.Model):
                 "PrivateIP": instance.private_ip,
                 "RegionName": instance.region_name,
                 "KeyName": instance.key_name,
+                "Users": users
             }
             instanceList.append(instanceDict)
         return instanceList
@@ -132,11 +148,11 @@ class Instance(db.Model):
 
     def un_assign_instance_from_user(self, userId, ins_Id):
         row = Instance.query.filter_by(id=ins_Id).first()
-        print("method called ...")
+        # print("method called ...")
         if not (not row.user_ids):
             userId = self.get_user_id_from_db(userId)
             if userId in row.user_ids:
-                print("Removing user from list", userId)
+                # print("Removing user from list", userId)
                 row.user_ids.remove(userId)
                 Instance.query.filter_by(id=ins_Id).update({Instance.user_ids: row.user_ids})
                 db.session.commit()

@@ -2,233 +2,397 @@
 <html lang="en">
 
 <head>
-    <title>admin</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Users</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
     <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" type="text/css" href="../static/3.3.0/css/custom.css">
+    <style>
+        /* Toggle Styles */
+
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled {
+            padding-left: 250px;
+        }
+
+        #sidebar-wrapper {
+            z-index: 1000;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            margin-left: -250px;
+            overflow-y: auto;
+            background: #000;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            position: absolute;
+            padding: 15px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+
+        /* Sidebar Styles */
+
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            width: 250px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            text-indent: 20px;
+            line-height: 40px;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: #999999;
+        }
+
+        .sidebar-nav li a:hover {
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-nav li a:active,
+        .sidebar-nav li a:focus {
+            text-decoration: none;
+        }
+
+        .sidebar-nav>.sidebar-brand {
+            height: 65px;
+            font-size: 18px;
+            line-height: 60px;
+        }
+
+        .sidebar-nav>.sidebar-brand a {
+            color: #999999;
+        }
+
+        .sidebar-nav>.sidebar-brand a:hover {
+            color: #fff;
+            background: none;
+        }
+
+        @media(min-width:768px) {
+            #wrapper {
+                padding-left: 250px;
+            }
+
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+
+            #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+
+            #page-content-wrapper {
+                padding: 20px;
+                position: relative;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                position: relative;
+                margin-right: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        AWS Bootcloud
+                    </a>
+                </li>
+                <form method="get" action="{{ url_for('admin.admin') }}">
+                    <li class="active">
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
+                            Instances</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.user') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span
+                                class="fa fa-users mr-3 notif"></span> Users</a>
+                    </li>
+                </form>
+                <li>
+                    <a href="#"><span class="fa fa-gift mr-3"></span> Gift Code</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-trophy mr-3"></span> Top Review</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-support mr-3"></span> Support</a>
+                </li>
+                <form method="get" action="{{ url_for('admin.logout_admin') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-sign-out mr-3"></span>
+                            Sign Out</a>
+                    </li>
+                </form>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
 
-    <div class="container">
-        <form method="get" action="{{ url_for('admin.admin') }}">
-            <div class="pull-left">
-                <button name="instance" value="instance" id="instance" class="btn btn-primary mt-auto" type="submit">Manage Instances
-                </button>
-            </div>
-        </form>
-    </div>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="row">
 
+                <section class="container">
+                    <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
-<div class="container">
-    <div class="container-fluid">
+                    <h1>Users Management</h1>
+                    <div class="">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="pull-right">
+                                    <div class="btn-group">
+                                        <label data-placement="top" data-toggle="tooltip">
+                                            <button class="btn btn-success btn-filter" data-title="Add User"
+                                                data-toggle="modal" data-target="#adduser">Add User
+                                            </button>
+                                        </label>
 
-        <div class="row">
+                                        <label data-placement="top" data-toggle="tooltip">
+                                            <button type="button" id="delete_user" class="btn btn-warning btn-filter"
+                                                data-toggle="modal" name="delete_user" data-target="#deleteuser">Delete
+                                                User
+                                            </button>
+                                        </label>
 
-            <section class="container">
-                <h1>Users Management</h1>
-                <div class="">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="pull-right">
-                                <div class="btn-group">
-                                    <label data-placement="top" data-toggle="tooltip">
-                                        <button class="btn btn-success btn-filter" data-title="Add User"
-                                                data-toggle="modal"
-                                                data-target="#adduser">Add User
-                                        </button>
-                                    </label>
-
-                                    <label data-placement="top" data-toggle="tooltip">
-                                        <button type="button" id="delete_user"
-                                                class="btn btn-warning btn-filter" data-toggle="modal"
-                                                name="delete_user"
-                                                data-target="#deleteuser">Delete User
-                                        </button>
-                                    </label>
-
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="table-container">
-                                <table class="table table-filter" id="usertable">
-                                    <thead>
-                                    <th><input type="checkbox" id="checkall"/></th>
-                                    <th>ID</th>
-                                    <th>User Name</th>
-                                    </thead>
-                                    <tbody>
-                                    {% for user in users %}
-                                    <tr>
-                                        <td><input type="checkbox" id="checkuser"/></td>
-                                        <td>{{ user['Id'] }}</td>
-                                        <td>{{ user['Name'] }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+                                <div class="table-container">
+                                    <table class="table table-filter" id="usertable">
+                                        <thead>
+                                            <th><input type="checkbox" id="checkall" /></th>
+                                            <th>ID</th>
+                                            <th>User Name</th>
+                                        </thead>
+                                        <tbody>
+                                            {% for user in users %}
+                                            <tr>
+                                                <td><input type="checkbox" id="checkuser" /></td>
+                                                <td>{{ user['Id'] }}</td>
+                                                <td>{{ user['Name'] }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </section>
+            </div>
+
+
+            <div class="modal fade" id="deleteuser" tabindex="-1" role="dialog" aria-labelledby="edit"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                                    class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                            <h4 class="modal-title custom_align" id="Heading">Delete User</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are
+                                you sure
+                                you want
+                                to delete this User?
+                            </div>
+                        </div>
+                        <form method="post" action="{{ url_for('admin.delete_user') }}">
+                            <div class="modal-footer ">
+                                <div>
+                                    <input id="user_id" name="user_id" type="text">
+                                    <input id="user_name" name="user_name" type="text">
+                                </div>
+                                <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                        class="glyphicon glyphicon-ok-sign"></span>Yes
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
+                                        class="glyphicon glyphicon-remove"></span> No
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
                 </div>
-            </section>
+                <!-- /.modal-dialog -->
+            </div>
+
+
+            <div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="post" action="{{ url_for('admin.register_user') }}">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
+                                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                                <h4 class="modal-title custom_align">Register new user</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <input class="form-control " type="text" id="username" name="username"
+                                        placeholder="Username">
+                                </div>
+                                <div class="form-group">
+
+                                    <input class="form-control " id="password" name="password" type="password"
+                                        placeholder="Password">
+                                </div>
+                                <div class="contact100-form-checkbox">
+                                    <input class="input-checkbox100" id="admin" type="checkbox" name="admin">
+                                    <label class="label-checkbox100">
+                                        Are you admin?
+                                    </label>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer ">
+                                <button type="submit" class="btn btn-warning btn-lg" style="width: 100%;"><span
+                                        class="glyphicon glyphicon-ok-sign"></span>ADD
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
         </div>
+
+
+
     </div>
 
-</div>
 
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+    <script src="../static/jquery/jquery-1.11.1.min.js"></script>
+    <script src="../static/jquery/1.9.1/jquery.min.js"></script>
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
 
-<div class="modal fade" id="deleteuser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <h4 class="modal-title custom_align" id="Heading">Delete User</h4>
-            </div>
-            <div class="modal-body">
+    <script>
 
-                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
-                    you want
-                    to delete this User?
-                </div>
-            </div>
-            <form method="post" action="{{ url_for('admin.delete_user') }}">
-                <div class="modal-footer ">
-                    <div>
-                        <input id="user_id" name="user_id" type="text">
-                        <input id="user_name" name="user_name" type="text">
-                    </div>
-                    <button type="submit" class="btn btn-success"
-                            id="btn_yes"><span
-                            class="glyphicon glyphicon-ok-sign"></span>Yes
-                    </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
-                            class="glyphicon glyphicon-remove"></span> No
-                    </button>
-                </div>
-            </form>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
-
-<div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="post" action="{{ url_for('admin.register_user') }}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-                            class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                    <h4 class="modal-title custom_align">Register new user</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input class="form-control " type="text" id="username" name="username" placeholder="Username">
-                    </div>
-                    <div class="form-group">
-
-                        <input class="form-control " id="password" name="password" type="password"
-                               placeholder="Password">
-                    </div>
-                    <div class="contact100-form-checkbox">
-                        <input class="input-checkbox100" id="admin" type="checkbox" name="admin">
-                        <label class="label-checkbox100">
-                            Are you admin?
-                        </label>
-                    </div>
-
-                </div>
-                <div class="modal-footer ">
-                    <button type="submit" class="btn btn-warning btn-lg" style="width: 100%;"><span
-                            class="glyphicon glyphicon-ok-sign"></span>ADD
-                    </button>
-                </div>
-            </div>
-        </form>
-
-    </div>
-</div>
-
-<script src="../static/3.3.0/js/bootstrap.min.js"></script>
-<script src="../static/jquery/jquery-1.11.1.min.js"></script>
-<script src="../static/jquery/1.9.1/jquery.min.js"></script>
-<script src="../static/3.3.0/js/bootstrap.min.js"></script>
-
-<script>
-
-
-
-    $(document).ready(function () {
-
-        // document.getElementById("reg").value = "ap-northeast-1";
-        document.getElementById('delete_user').disabled = true;
-
-
-
-        $('.btn-filter').on('click', function () {
-            var $target = $(this).data('target');
-            if ($target != 'all') {
-                $('.table tr').css('display', 'none');
-                $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
-            } else {
-                $('.table tr').css('display', 'none').fadeIn('slow');
-            }
-
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
         });
 
 
-        // ********************************************************
-        // buttons state on/off
-        // *
-        // ******************** Users *************************
 
-        $("#usertable #checkall").click(function () {
-            if ($("#usertable #checkall").is(':checked')) {
-                $("#usertable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", true);
+        $(document).ready(function () {
 
-                });
-            } else {
-                $("#usertable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", false);
-                });
-            }
-        });
+            // document.getElementById("reg").value = "ap-northeast-1";
+            document.getElementById('delete_user').disabled = true;
 
-        // changing individual instance state
-        $("#usertable #checkuser").click(function () {
-            if ($("#usertable #checkuser").is(':checked')) {
-                document.getElementById('delete_user').disabled = false;
 
-                var id = $(this).closest("tr").find('td:eq(1)').text();
-                var name = $(this).closest("tr").find('td:eq(2)').text();
-                console.log(id);
-                console.log(name);
 
-                var s = document.getElementById("user_id");
-                s.value = id;
-                var s = document.getElementById("user_name");
-                s.value = name;
-
-                if ($("#btn_cancel").click(function () {
-                    console.log("no button clicked");
-                    console.log(name);
-                })) {
+            $('.btn-filter').on('click', function () {
+                var $target = $(this).data('target');
+                if ($target != 'all') {
+                    $('.table tr').css('display', 'none');
+                    $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+                } else {
+                    $('.table tr').css('display', 'none').fadeIn('slow');
                 }
-            } else if ($("#usertable #checkuser").prop("checked") == false) {
-                document.getElementById('delete_user').disabled = true;
-                document.getElementById("user_id").value = "";
-                document.getElementById("user_name").value = "";
-            }
+
+            });
+
+
+            // ********************************************************
+            // buttons state on/off
+            // *
+            // ******************** Users *************************
+
+            $("#usertable #checkall").click(function () {
+                if ($("#usertable #checkall").is(':checked')) {
+                    $("#usertable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", true);
+
+                    });
+                } else {
+                    $("#usertable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", false);
+                    });
+                }
+            });
+
+            // changing individual instance state
+            $("#usertable #checkuser").click(function () {
+                if ($("#usertable #checkuser").is(':checked')) {
+                    document.getElementById('delete_user').disabled = false;
+
+                    var id = $(this).closest("tr").find('td:eq(1)').text();
+                    var name = $(this).closest("tr").find('td:eq(2)').text();
+                    console.log(id);
+                    console.log(name);
+
+                    var s = document.getElementById("user_id");
+                    s.value = id;
+                    var s = document.getElementById("user_name");
+                    s.value = name;
+
+                    if ($("#btn_cancel").click(function () {
+                        console.log("no button clicked");
+                        console.log(name);
+                    })) {
+                    }
+                } else if ($("#usertable #checkuser").prop("checked") == false) {
+                    document.getElementById('delete_user').disabled = true;
+                    document.getElementById("user_id").value = "";
+                    document.getElementById("user_name").value = "";
+                }
+            });
+
         });
 
-    });
 
-
-</script>
+    </script>
 
 </body>
 
