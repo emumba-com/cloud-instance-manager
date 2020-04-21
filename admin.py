@@ -35,26 +35,6 @@ def user():
     userList = user_obj.get_all_users()
     return render_template('user-management.html', users=userList)
 
-@admin_bp.route('/region', methods=['POST'])
-def get_aws_instances():
-    if request.method == "POST":
-        if is_valid_request():
-            print("requrest is valid")
-            if request.form['update'] == 'aws_call':
-                reg = request.form.get('reg')
-                # get aws instances
-                ins_list = get_instances_details(reg)
-                store_instance_into_db(ins_list)
-                print("aws call")
-                # userList = user_obj.get_all_users()
-                return show_instances(reg)
-            elif request.form['update'] == 'db_call':
-                print("db call")
-                reg = request.form.get('reg')
-                return show_instances(reg)
-        return redirect(url_for('auth.auth'))
-    else:
-        return redirect(url_for('admin.admin'))
 
 
 @admin_bp.route('/adduser', methods=['GET', 'POST'])

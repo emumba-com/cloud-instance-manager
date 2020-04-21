@@ -43,11 +43,10 @@ class User(db.Model):
         except Exception as e:
             print(e)
 
-    def unassign_instance_from_user(self, userId):
-        db.session.query(User).filter(User.ins_id == userId).delete()
-        db.session.commit()
+    # def unassign_instance_from_user(self, userId):
+    #     db.session.query(User).filter(User.ins_id == userId).delete()
+    #     db.session.commit()
 
-    
 
 
     def encode_auth_token(self, user_id):

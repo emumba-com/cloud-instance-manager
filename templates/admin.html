@@ -145,38 +145,6 @@
 
 <body>
 
-    <!-- <div class="wrapper d-flex align-items-stretch">
-        <nav id="sidebar">
-            <div class="custom-menu">
-                <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                </button>
-            </div>
-            <div class="img bg-wrap text-center py-4" style="background-image: url(../static/images/bg_1.jpg);">
-                <div class="user-logo">
-                    <div class="img" style="background-image: url(../static/images/logo.jpg);"></div>
-                    <h3>AWS Bootcloud</h3>
-                </div>
-            </div>
-            <ul class="list-unstyled components mb-5">
-                <form method="get" action="{{ url_for('admin.user') }}">
-                    <li class="active">
-                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
-                            Instances</a>
-                    </li>
-                </form>
-                <form method="get" action="{{ url_for('admin.admin') }}">
-                    <li>
-                        <a href="#" onclick="$(this).closest('form').submit()"><span
-                                class="fa fa-users mr-3 notif"></span> Users</a>
-                    </li>
-                </form>
-            </ul>
-
-        </nav>
-
-
-    </div> -->
-
 
     <div id="wrapper">
 
@@ -257,6 +225,7 @@
                                 <div class="table-container">
                                     <table class="table table-filter" id="instanceTable">
                                         <thead>
+                                            <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>State</th>
@@ -268,6 +237,7 @@
                                         <tbody>
                                             {% for instance in instances %}
                                             <tr>
+                                                <!-- <td><input type="checkbox" id="instance_id"/></td> -->
                                                 <td class="text-secondary" >{{ instance['Id'] }}</td>
                                                 <td class="text-primary">{{ instance['Name'] }}</td>
                                                 <td class="text-info">{{ instance['State'] }}</td>
@@ -451,14 +421,6 @@
             $("#wrapper").toggleClass("toggled");
         });
 
-        function myFunction() {
-            if (confirm("Are you sure to assign this instance?")) {
-                return "OK";
-            } else {
-                return "Cancel";
-            }
-        }
-
         function change_table() {
 
             var t1 = document.getElementById("instanceTable");
@@ -539,19 +501,6 @@
             });
 
         });
-
-
-        function get_region() {
-            document.getElementById('db_call').disabled = false;
-            document.getElementById('aws_call').disabled = false;
-
-            var selectBox = document.getElementById("all_regions");
-            var region = selectBox.options[selectBox.selectedIndex].value;
-            document.getElementById("reg").value = region;
-            alert(region)
-            // document.getElementById('all_regions').closest('form').submit();
-
-        }
 
         $(document).ready(function () {
 
