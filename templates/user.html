@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 
 <head>
-    <title>Login</title>
+    <title>User</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -76,125 +76,245 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled {
+            padding-left: 250px;
+        }
+
+        #sidebar-wrapper {
+            z-index: 1000;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            margin-left: -250px;
+            overflow-y: auto;
+            background: #000;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            position: absolute;
+            padding: 15px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+
+        /* Sidebar Styles */
+
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            width: 250px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            text-indent: 20px;
+            line-height: 40px;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: #999999;
+        }
+
+        .sidebar-nav li a:hover {
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-nav li a:active,
+        .sidebar-nav li a:focus {
+            text-decoration: none;
+        }
+
+        .sidebar-nav>.sidebar-brand {
+            height: 65px;
+            font-size: 18px;
+            line-height: 60px;
+        }
+
+        .sidebar-nav>.sidebar-brand a {
+            color: #999999;
+        }
+
+        .sidebar-nav>.sidebar-brand a:hover {
+            color: #fff;
+            background: none;
+        }
+
+        @media(min-width:768px) {
+            #wrapper {
+                padding-left: 250px;
+            }
+
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+
+            #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+
+            #page-content-wrapper {
+                padding: 20px;
+                position: relative;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                position: relative;
+                margin-right: 0;
+            }
+        }
     </style>
 
 </head>
 
 <body>
 
-    <div class="container">
-        <form method="get" action="{{ url_for('user.logout') }}">
-            <div class="pull-right">
-                <button name="logout" value="logout" id="logout" class="btn btn-primary mt-auto" type="submit">Logout
-                </button>
-            </div>
-        </form>
-    </div>
+    <div id="container">
+        <div id="page-content-wrapper">
+            <div class="row">
 
-
-    <div class="container">
-        <div class="row">
-
-
-            <div class="col-md-12">
-                <h3>User's Instances</h3>
-                <div class="table-responsive">
-
-
-                    <table id="mytable" class="table table-bordred table-striped">
-
-                        <thead>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Public IP</th>
-                            <th>Private IP</th>
-                            <th>State</th>
-                            <th>Region</th>
-                            <th>ON/OFF</th>
-                        </thead>
-                        <tbody>
-
-                            {% for instance in instances %}
-                            <tr>
-                                <!--                            <td><input type="checkbox" class="checkthis"/></td>-->
-                                <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
-                                <td name="">{{ instance['Name'] }}</td>
-                                <td>{{ instance['PublicIP'] }}</td>
-                                <td>{{ instance['PrivateIP'] }}</td>
-                                <td class="text-info" id="state">{{ instance['State'] }}</td>
-                                <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
-                                <td>
-                                    <label data-placement="top" data-toggle="tooltip" class="switch">
-                                        <input class="round" type="checkbox" data-toggle="modal" name="ins_chk"
-                                            value="{{ instance['Id'] }}" id="ins_checkbox" data-target="#ins_state">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </td>
-
-                            </tr>
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-
-                    <!-- <div class="clearfix"></div>
-                <ul class="pagination pull-right">
-                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                </ul> -->
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span
-                            class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                    <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
-                </div>
-                <div class="modal-body">
-
-                    <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure
-                        you want
-                        to change the State?
-                    </div>
-
-                </div>
-                <form method="post" action="{{ url_for('user.change_ins_state')}}">
-                    <div class="modal-footer ">
-                        <div hidden>
-                            <input id="instance_id" name="instance_id" type="text">
-                            <input id="instance_state" name="instance_state" type="text">
-                            <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                <section class="container">
+                    <form method="get" action="{{ url_for('user.logout') }}">
+                        <div class="pull-right">
+                            <button name="logout" value="logout" id="logout" class="btn btn-primary mt-auto"
+                                type="submit">Logout
+                            </button>
                         </div>
+                    </form>
+                    <strong>
+                        <h3>User Instances</h3>
+                    </strong>
 
-                        <button type="submit" class="btn btn-success" id="btn_yes"><span
-                                class="glyphicon glyphicon-ok-sign"></span>Yes
-                        </button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
-                                class="glyphicon glyphicon-remove"></span> No
-                        </button>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="table-container">
+                                <table class="table table-filter" id="mytable">
 
+                                    <thead>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Public IP</th>
+                                        <th>Private IP</th>
+                                        <th>State</th>
+                                        <th>Region</th>
+                                        <th>ON/OFF</th>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for instance in instances %}
+                                        <tr>
+                                            <!--                            <td><input type="checkbox" class="checkthis"/></td>-->
+                                            <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
+                                            <td name="">{{ instance['Name'] }}</td>
+                                            <td>{{ instance['PublicIP'] }}</td>
+                                            <td>{{ instance['PrivateIP'] }}</td>
+                                            <td class="text-info" id="state">{{ instance['State'] }}</td>
+                                            <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
+                                            <td>
+                                                <label data-placement="top" data-toggle="tooltip" class="switch">
+                                                    <input class="round" type="checkbox" data-toggle="modal"
+                                                        name="ins_chk" value="{{ instance['Id'] }}" id="ins_checkbox"
+                                                        data-target="#ins_state">
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
                     </div>
-                </form>
+
+
+                </section>
+
+
+
             </div>
-            <!-- /.modal-content -->
+            <div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                    aria-hidden="true"></span></button>
+                            <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span>
+                                Are you sure
+                                you want
+                                to change the State?
+                            </div>
+
+                        </div>
+                        <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                            <div class="modal-footer ">
+                                <div hidden>
+                                    <input id="instance_id" name="instance_id" type="text">
+                                    <input id="instance_state" name="instance_state" type="text">
+                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                </div>
+
+                                <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                        class="glyphicon glyphicon-ok-sign"></span>Yes
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
+                                        class="glyphicon glyphicon-remove"></span> No
+                                </button>
+
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
         </div>
-        <!-- /.modal-dialog -->
+
     </div>
+
+
+
+
+
 
 
     <script src="../static/3.3.0/js/bootstrap.min.js"></script>
@@ -236,19 +356,9 @@
                 s.value = state;
 
                 if ($("#btn_cancel").click(function () {
-                    console.log("no button clicked");
-                    console.log(state);
-                    if (state === 'stopped' || state == 'stopping') {
-                        console.log(state);
-                        // revert checkbox state
 
-                        $("#ins_checkbox").prop("checked", false);
+                    window.location.reload();
 
-
-                    } else if (state === 'running' || state == 'pending') {
-                        // revert checkbox state
-                        $("#ins_checkbox").prop("checked", true);
-                    }
                 })) {
                     //ifbody
 
