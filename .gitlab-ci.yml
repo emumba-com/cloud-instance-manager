@@ -1,5 +1,13 @@
 stages:
+    - test
     - build
+
+pyCodeStyle:
+    stage: test
+    image: cytopia/pycodestyle:latest
+    script:
+      - pycodestyle **/*.py --config=setup.cfg
+
 
 build:
     stage: build
