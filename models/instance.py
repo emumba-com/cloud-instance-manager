@@ -21,10 +21,6 @@ class Instance(db.Model):
     key_name = db.Column(db.String())
     user_ids = db.Column(db.ARRAY(db.Integer))
     region_name = db.Column(db.String())
-    # defining relationships
-
-
-    # , backref = backref('users', cascade='save-update, merge, delete, delete-orphan'
 
     def __init__(self):
         pass
@@ -45,29 +41,24 @@ class Instance(db.Model):
             db.session.add(self)
             db.session.commit()
 
-    # get all instance based on region name from db
-    def get_all_instances(self, region_name):
-        instanceList = []
-        all_instance = db.session.query(Instance)
-        for instance in all_instance:
-            if instance.region_name == region_name:
-                instanceDict = {
-                    "Id": instance.id,
-                    "Name": instance.name,
-                    "State": instance.state,
-                    "PublicIP": instance.public_ip,
-                    "PrivateIP": instance.private_ip,
-                    "RegionName": instance.region_name,
-                    "KeyName": instance.key_name,
-                }
-                instanceList.append(instanceDict)
-        return instanceList
-
-    # get all instance based on region name from db
+    # get all instance without based on region name from db
     def get_all_instances_from_db(self):
         instanceList = []
+        user_obj = User()
         all_instance = db.session.query(Instance)
+        userList = user_obj.get_all_users()
+        
         for instance in all_instance:
+            users = []
+            ids = instance.user_ids
+            if ids:
+                for user in userList:
+                    if user['Id'] not in ids:
+                        users.append(user)
+            else:
+                for user in userList:
+                    users.append(user)
+                
             instanceDict = {
                 "Id": instance.id,
                 "Name": instance.name,
@@ -77,30 +68,9 @@ class Instance(db.Model):
                 "PrivateIP": instance.private_ip,
                 "RegionName": instance.region_name,
                 "KeyName": instance.key_name,
+                "Users": users
             }
             instanceList.append(instanceDict)
-        return instanceList
-
-
-    def get_instances_with_owner(self):
-        # getting all users
-        # instances = db.session.query(Instance).filter(User.ins_id == Instance.id)
-        all_instances = db.session.query(Instance)
-        all_users = db.session.query(User)
-
-        instanceList = []
-        for user in all_users:
-            for instance in all_instances:
-                if instance.id == user.id:
-                    instanceDict = {
-                        "Id": instance.id,
-                        "Name": instance.name,
-                        "State": instance.state,
-                        "PublicIP": instance.public_ip,
-                        "PrivateIP": instance.private_ip,
-                        "Owner": user.name,
-                    }
-                    instanceList.append(instanceDict)
         return instanceList
 
     def get_user_instances(self, user_id):
@@ -132,11 +102,9 @@ class Instance(db.Model):
 
     def un_assign_instance_from_user(self, userId, ins_Id):
         row = Instance.query.filter_by(id=ins_Id).first()
-        print("method called ...")
         if not (not row.user_ids):
             userId = self.get_user_id_from_db(userId)
             if userId in row.user_ids:
-                print("Removing user from list", userId)
                 row.user_ids.remove(userId)
                 Instance.query.filter_by(id=ins_Id).update({Instance.user_ids: row.user_ids})
                 db.session.commit()
@@ -183,7 +151,7 @@ class Instance(db.Model):
     def deleteUser(self, userId):
         all_instances = Instance.query.all()
         for row in all_instances:
-            if row.user_ids is not None or len(row.user_ids) == 0:
+            if not (not row.user_ids):
                 if int(userId) in row.user_ids:
                     row.user_ids.remove(int(userId))
                     Instance.query.filter_by(id=row.id).update({Instance.user_ids: row.user_ids})

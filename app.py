@@ -6,16 +6,6 @@ from config import *
 from flask import render_template
 
 from settings import app, db
-#
-# app_settings = os.getenv(
-#     'APP_SETTINGS',
-#     'DevelopmentConfig'
-#     #'project.server.config.DevelopmentConfig'
-# )
-# app.config.from_object(app_settings)
-
-
-
 
 @app.route('/')
 def index():

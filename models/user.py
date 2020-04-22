@@ -21,11 +21,12 @@ class User(db.Model):
         userList = []
         all_users = db.session.query(User)
         for user in all_users:
-            userDict = {
-                "Id": user.id,
-                "Name": user.name,
-            }
-            userList.append(userDict)
+            if user.admin == False:
+                userDict = {
+                    "Id": user.id,
+                    "Name": user.name,
+                }
+                userList.append(userDict)
         return userList
 
     def addUser(self, username, password, admin=False):
@@ -42,11 +43,10 @@ class User(db.Model):
         except Exception as e:
             print(e)
 
-    def unassign_instance_from_user(self, userId):
-        db.session.query(User).filter(User.ins_id == userId).delete()
-        db.session.commit()
+    # def unassign_instance_from_user(self, userId):
+    #     db.session.query(User).filter(User.ins_id == userId).delete()
+    #     db.session.commit()
 
-    
 
 
     def encode_auth_token(self, user_id):

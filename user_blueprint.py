@@ -7,7 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..
 from flask import Blueprint, render_template, jsonify, json, redirect, request, url_for
 from server.boto3 import *
 from models.instance import Instance
-from models.user import User
+from models.user import User, BlacklistToken
+from settings import db
 from admin import get_instances_details, store_instance_into_db
 
 
@@ -56,6 +57,26 @@ def change_ins_state():
                 return redirect(url_for('user.user'))
 
     return redirect(url_for('user.user'))
+
+@user_bp.route('/logout', methods=['GET'])
+def logout():
+    utoken = request.cookies.get('auth_token')
+    # get current uid
+    uid = get_uid()
+    if not isinstance(uid, str):
+        if User.validate_token(utoken, uid):
+            blacklist_token = BlacklistToken(token=utoken)
+            try:
+                # insert the token
+                print("in the Try block")
+                db.session.add(blacklist_token)
+                db.session.commit()
+                return render_template('login.html')
+            except Exception as e:
+                print(e)
+                return redirect(url_for('user.user'))
+
+
 
 def get_uid():
     utoken = request.cookies.get('auth_token')
