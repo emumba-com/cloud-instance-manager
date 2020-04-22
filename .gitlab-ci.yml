@@ -17,7 +17,7 @@ pyLint:
       name: cytopia/pylint:latest
       entrypoint: [""]
     script:
-      - pycodestyle **/*.py
+      - pylint **/*.py
 
 build:
     stage: build
