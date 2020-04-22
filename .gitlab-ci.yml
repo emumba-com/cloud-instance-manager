@@ -6,7 +6,7 @@ pyCodeStyle:
     stage: test
     image: 
       name: cytopia/pycodestyle:latest
-      entrypoint: ""
+      entrypoint: [""]
     script:
       - pycodestyle **/*.py --config=setup.cfg
 
