@@ -4,7 +4,9 @@ stages:
 
 pyCodeStyle:
     stage: test
-    image: cytopia/pycodestyle:latest
+    image: 
+      name: cytopia/pycodestyle:latest
+      entrypoint: ["/bin/sh"]
     script:
       - pycodestyle **/*.py --config=setup.cfg
 
