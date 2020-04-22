@@ -11,6 +11,14 @@ pyCodeStyle:
       - pycodestyle **/*.py --config=setup.cfg
 
 
+pyLint:
+    stage: test
+    image: 
+      name: cytopia/pylint:latest
+      entrypoint: [""]
+    script:
+      - pycodestyle **/*.py
+
 build:
     stage: build
     image: docker:19.03.1
