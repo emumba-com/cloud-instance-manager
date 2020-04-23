@@ -6,9 +6,6 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-from models.user import User
-from models.instance import Instance
-
 
 @manager.command
 def create_db():

@@ -18,36 +18,31 @@ class User(db.Model):
     admin = db.Column(db.Boolean, default=False)
 
     def get_all_users(self):
-        userList = []
+        users_list = []
         all_users = db.session.query(User)
         for user in all_users:
-            if user.admin == False:
-                userDict = {
+            if not user.admin:
+                user_dict = {
                     "Id": user.id,
                     "Name": user.name,
                 }
-                userList.append(userDict)
-        return userList
+                users_list.append(user_dict)
+        return users_list
 
-    def addUser(self, username, password, admin=False):
+    def add_user(self, username, password, admin=False):
         new_user = User(
-            name =username,
-            password = bcrypt.generate_password_hash(
-                password, DevelopmentConfig().BCRYPT_LOG_ROUNDS
+            name=username,
+            password=bcrypt.generate_password_hash(
+                password,
+                DevelopmentConfig().BCRYPT_LOG_ROUNDS
             ).decode('utf-8'),
-            admin = admin
-            )
+            admin=admin
+        )
         try:
             db.session.add(new_user)
             db.session.commit()
-        except Exception as e:
-            print(e)
-
-    # def unassign_instance_from_user(self, userId):
-    #     db.session.query(User).filter(User.ins_id == userId).delete()
-    #     db.session.commit()
-
-
+        except Exception as db_exceptions:
+            print(db_exceptions)
 
     def encode_auth_token(self, user_id):
         """
@@ -65,8 +60,8 @@ class User(db.Model):
                 DevelopmentConfig().SECRET_KEY,
                 algorithm='HS256'
             )
-        except Exception as e:
-            return e
+        except Exception as token_exception:
+            return token_exception
 
     @staticmethod
     def decode_auth_token(auth_token):
@@ -80,21 +75,18 @@ class User(db.Model):
             is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
             if is_blacklisted_token:
                 return 'Token blacklisted. Please log in again.'
-            else:
-                return payload['sub']
+            return payload['sub']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
 
     @staticmethod
-    def validate_token(token, uid):
-        id = User.decode_auth_token(token)
-        if uid == id:
+    def validate_token(token, user_id):
+        token_user_id = User.decode_auth_token(token)
+        if user_id == token_user_id:
             return True
-        else:
-            return False
-
+        return False
 
 
 class BlacklistToken(db.Model):
@@ -103,7 +95,7 @@ class BlacklistToken(db.Model):
     """
     __tablename__ = 'blacklist_tokens'
     __table_args__ = {'extend_existing': True}
-    
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(db.String(500), unique=True, nullable=False)
     blacklisted_on = db.Column(db.DateTime, nullable=False)
@@ -121,8 +113,7 @@ class BlacklistToken(db.Model):
         res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
         if res:
             return True
-        else:
-            return False
+        return False
 
 
 db.create_all()
