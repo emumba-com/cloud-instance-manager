@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Users</title>
+    <title>SSH keys</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -185,7 +185,7 @@
                 <section class="container">
                     <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
-                    <h1>Users Management</h1>
+                    <h1>SSH keys</h1>
                     <div class="">
                         <div class="panel panel-default">
                             <div class="panel-body">
@@ -193,7 +193,7 @@
                                     <div class="btn-group">
                                         <label data-placement="top" data-toggle="tooltip">
                                             <button class="btn btn-success btn-filter" data-title="Add User"
-                                                data-toggle="modal" data-target="#adduser">Add User
+                                                data-toggle="modal" data-target="#adduser">Add Key
                                             </button>
                                         </label>
 
@@ -207,18 +207,18 @@
                                     </div>
                                 </div>
                                 <div class="table-container">
-                                    <table class="table table-filter table-bordered table-striped table-hovers" id="usertable">
+                                    <table class="table table-filter table-bordered table-striped table-hover" id="usertable">
                                         <thead>
                                             <th><input type="checkbox" id="checkall" /></th>
-                                            <th>ID</th>
-                                            <th>User Name</th>
+                                            <th width="15%">SSH Key Name</th>
+                                            <th width="85%">SSH Key Value</th>
                                         </thead>
                                         <tbody>
                                             {% for user in users %}
                                             <tr>
                                                 <td><input type="checkbox" id="checkuser" /></td>
-                                                <td>{{ user['Id'] }}</td>
-                                                <td>{{ user['Name'] }}</td>
+                                                <td width="15%">{{ user['Id'] }}</td>
+                                                <td width="85%">{{ user['Name'] }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -239,7 +239,7 @@
                             <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                 aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                     aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading"><strong>Delete User</strong> </h4>
+                            <h4 class="modal-title custom_align" id="Heading">Delete User</h4>
                         </div>
                         <div class="modal-body">
 
@@ -278,23 +278,30 @@
                                 <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                     aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                         aria-hidden="true"></span></button>
-                                <h4 class="modal-title custom_align"> <strong> Register new user</strong></h4>
+                                <h4 class="modal-title custom_align"><strong>Adding Key</strong> </h4>
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <input class="form-control " type="text" id="username" name="username"
-                                        placeholder="Username">
+                                    <!-- <label data-placement="top" data-toggle="tooltip"> -->
+                                    <select
+                                        style="max-width: 100%; min-width: 100%; padding-top: 0.8%; padding-bottom: 0.8%"
+                                        name="ins_btn" id="assign_ins_to">
+                                        <option value=NULL selected disabled hidden>
+                                            Assign
+                                        </option>
+                                        <option value=NULL selected>
+                                            Assign
+                                        </option>
+
+                                    </select>
+                                    </label>
+                                    <!-- <input class="form-control " type="text" id="username" name="username"
+                                        placeholder="Username"> -->
                                 </div>
                                 <div class="form-group">
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"
+                                        style="max-width: 100%; min-width: 100%;"></textarea>
 
-                                    <input class="form-control " id="password" name="password" type="password"
-                                        placeholder="Password">
-                                </div>
-                                <div class="contact100-form-checkbox">
-                                    <input class="input-checkbox100" id="admin" type="checkbox" name="admin">
-                                    <label class="label-checkbox100">
-                                        Are you admin?
-                                    </label>
                                 </div>
 
                             </div>

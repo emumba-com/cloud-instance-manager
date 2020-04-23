@@ -35,6 +35,10 @@ def user():
     userList = user_obj.get_all_users()
     return render_template('user-management.html', users=userList)
 
+@admin_bp.route('/ssh-keys')
+def sshKeys():
+    # userList = user_obj.get_all_users()
+    return render_template('ssh-keys.html')
 
 
 @admin_bp.route('/adduser', methods=['GET', 'POST'])
