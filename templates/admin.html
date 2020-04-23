@@ -156,19 +156,19 @@
                         AWS BOOTCLOUD
                     </a>
                 </li>
-                <form method="get" action="{{ url_for('admin.admin') }}">
+                <form method="get" action="{{ url_for('admin.get_admin') }}">
                     <li class="active">
                         <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
                             Instances</a>
                     </li>
                 </form>
-                <form method="get" action="{{ url_for('admin.user') }}">
+                <form method="get" action="{{ url_for('admin.get_users') }}">
                     <li>
                         <a href="#" onclick="$(this).closest('form').submit()"><span
                                 class="fa fa-users mr-3 notif"></span> Users</a>
                     </li>
                 </form>
-                <form method="get" action="{{ url_for('admin.sshKeys') }}">
+                <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
                     <li>
                         <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH keys</a>
                     </li>
@@ -198,7 +198,7 @@
         <div id="page-content-wrapper">
             <div class="row">
 
-                <form method="get" action="{{url_for ('admin.admin')}}">
+                <form method="get" action="{{url_for ('admin.get_admin')}}">
 
                     <section class="container">
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
@@ -286,7 +286,7 @@
                                             <th>Un-Assign Instance</th>
                                         </thead>
                                         <tbody>
-                                            {% for instance in assignedInstances %}
+                                            {% for instance in assigned_instances %}
                                             <tr>
                                                 <!-- <td><input type="checkbox" id="instance_id"/></td> -->
                                                 <td class="text-secondary">{{ instance['Id'] }}</td>
@@ -348,7 +348,7 @@
                         <form method="post" action="{{ url_for('admin.assign_instance_to_user') }}">
                             <div class="modal-footer ">
                                 <div>
-                                    <input id="uid" name="uid" type="text" hidden>
+                                    <input id="user_id" name="user_id" type="text" hidden>
                                     <input id="inst_id" name="inst_id" type="text" hidden>
                                 </div>
                                 <button type="submit" class="btn btn-success" id="ins_btn_yes"><span
@@ -388,7 +388,7 @@
                         <form method="post" action="{{ url_for('admin.un_assign_instance_to_user') }}">
                             <div class="modal-footer ">
                                 <div>
-                                    <input id="un_uid" name="un_uid" type="text" hidden>
+                                    <input id="un_user_id" name="un_user_id" type="text" hidden>
                                     <input id="un_inst_id" name="un_inst_id" type="text" hidden>
                                 </div>
                                 <button type="submit" class="btn btn-success" id="un_ins_btn_yes"><span
@@ -443,7 +443,7 @@
                 if (user) {
                     var ins_id = $(this).closest("tr").find('td:eq(0)').text();
                     console.log(user);
-                    var u = document.getElementById("uid");
+                    var u = document.getElementById("user_id");
                     u.value = user;
                     var s = document.getElementById("inst_id");
                     s.value = ins_id;
@@ -455,7 +455,7 @@
                     $('#assign_to').modal('show');
 
                     if ($("#ins_btn_cancel").click(function () {
-                        var u = document.getElementById("uid");
+                        var u = document.getElementById("user_id");
                         u.value = "";
                         var s = document.getElementById("inst_id");
                         s.value = "";
@@ -479,7 +479,7 @@
                 if (user) {
                     var ins_id = $(this).closest("tr").find('td:eq(0)').text();
                     console.log(user);
-                    var u = document.getElementById("un_uid");
+                    var u = document.getElementById("un_user_id");
                     u.value = user;
                     var s = document.getElementById("un_inst_id");
                     s.value = ins_id;
@@ -492,7 +492,7 @@
 
 
                     if ($("#un_ins_btn_cancel").click(function () {
-                        var u = document.getElementById("un_uid");
+                        var u = document.getElementById("un_user_id");
                         u.value = "";
                         var s = document.getElementById("un_inst_id");
                         s.value = "";

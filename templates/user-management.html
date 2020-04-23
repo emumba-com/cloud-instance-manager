@@ -142,19 +142,19 @@
                         AWS BOOTCLOUD
                     </a>
                 </li>
-                <form method="get" action="{{ url_for('admin.admin') }}">
+                <form method="get" action="{{ url_for('admin.get_admin') }}">
                     <li class="active">
                         <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
                             Instances</a>
                     </li>
                 </form>
-                <form method="get" action="{{ url_for('admin.user') }}">
+                <form method="get" action="{{ url_for('admin.get_users') }}">
                     <li>
                         <a href="#" onclick="$(this).closest('form').submit()"><span
                                 class="fa fa-users mr-3 notif"></span> Users</a>
                     </li>
                 </form>
-                <form method="get" action="{{ url_for('admin.sshKeys') }}">
+                <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
                     <li>
                         <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH keys</a>
                     </li>
