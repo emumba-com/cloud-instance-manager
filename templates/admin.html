@@ -156,13 +156,13 @@
                         AWS BOOTCLOUD
                     </a>
                 </li>
-                <form method="get" action="{{ url_for('admin.admin') }}">
+                <form method="get" action="{{ url_for('admin.get_admin') }}">
                     <li class="active">
                         <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
                             Instances</a>
                     </li>
                 </form>
-                <form method="get" action="{{ url_for('admin.user') }}">
+                <form method="get" action="{{ url_for('admin.get_users') }}">
                     <li>
                         <a href="#" onclick="$(this).closest('form').submit()"><span
                                 class="fa fa-users mr-3 notif"></span> Users</a>
@@ -195,7 +195,7 @@
         <div id="page-content-wrapper">
             <div class="row">
 
-                <form method="get" action="{{url_for ('admin.admin')}}">
+                <form method="get" action="{{url_for ('admin.get_admin')}}">
 
                     <section class="container">
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>

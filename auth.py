@@ -27,8 +27,10 @@ def login():
             if user:
                 auth_token = user_obj.encode_auth_token(user.id)
                 if bcrypt.check_password_hash(user.password, password):
+                    print("yest it is \n\n\n\n")
                     if user.admin:
-                        resp = make_response(redirect(url_for('admin.admin')))
+                        print("yest it is \n\n\n\n")
+                        resp = make_response(redirect(url_for('admin.get_admin')))
                         resp.set_cookie("auth_token", auth_token)
                         return resp
                     resp = make_response(redirect(url_for('user.user')))

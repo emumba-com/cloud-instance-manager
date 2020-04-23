@@ -46,9 +46,9 @@ def register_user():
         if is_valid_request():
             # store them into db
             user_obj.add_user(username=username, password=password, admin=admin_flag)
-            return redirect(url_for('admin.user'))
+            return redirect(url_for('admin.get_users'))
         return redirect(url_for('auth.auth'))
-    return redirect(url_for('admin.user'))
+    return redirect(url_for('admin.get_users'))
 
 
 @admin_bp.route('/assignInstance', methods=['POST'])
@@ -60,9 +60,9 @@ def assign_instance_to_user():
             user_id = get_user_id_from_db(user_id)
             # store them into db
             instance_obj.assign_instance_to_user(user_id=user_id, instance_id=insid)
-            return redirect(url_for('admin.admin'))
+            return redirect(url_for('admin.get_admin'))
         return redirect(url_for('auth.auth'))
-    return redirect(url_for('admin.admin'))
+    return redirect(url_for('admin.get_admin'))
 
 
 @admin_bp.route('/un_assignInstance', methods=['POST'])
@@ -74,9 +74,9 @@ def un_assign_instance_to_user():
         if is_valid_request():
             instance_obj.un_assign_instance_from_user(user_id=user_id, instance_id=insid)
             print("method called")
-            return redirect(url_for('admin.admin'))
+            return redirect(url_for('admin.get_admin'))
         return redirect(url_for('auth.auth'))
-    return redirect(url_for('admin.admin'))
+    return redirect(url_for('admin.get_admin'))
 
 
 @admin_bp.route('/', methods=['POST'])
@@ -86,9 +86,9 @@ def instance_management():
             if request.form['ins_btn'] == 'assigned_ins':
                 assigned_instances = instance_obj.get_assigned_instances()
                 return render_template('admin.html', instances=assigned_instances)
-            return redirect(url_for('admin.admin'))
+            return redirect(url_for('admin.get_admin'))
         return redirect(url_for('auth.auth'))
-    return redirect(url_for('admin.admin'))
+    return redirect(url_for('admin.get_admin'))
 
 
 @admin_bp.route('/users/delete', methods=['GET', 'POST'])
@@ -98,9 +98,9 @@ def delete_user():
         if is_valid_request():
             # delete user method call
             instance_obj.delete_user(user_id)
-            return redirect(url_for('admin.user'))
+            return redirect(url_for('admin.get_users'))
         return redirect(url_for('auth.auth'))
-    return redirect(url_for('admin.user'))
+    return redirect(url_for('admin.get_users'))
 
 
 @admin_bp.route('/logout', methods=['GET'])
@@ -114,7 +114,7 @@ def logout_admin():
         return render_template('login.html')
     except Exception as db_exception:
         print(db_exception)
-        return redirect(url_for('admin.admin'))
+        return redirect(url_for('admin.get_admin'))
 
 
 def get_admin_id():
