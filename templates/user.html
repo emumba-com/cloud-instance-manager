@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <title>User</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <style>
+        .btn-default.btn-on.active {
+            background-color: #5BB75B;
+            color: white;
+        }
+
+        .btn-default.btn-off.active {
+            background-color: #DA4F49;
+            color: white;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 25px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: #428bca;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(27px);
+            -ms-transform: translateX(27px);
+            transform: translateX(27px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled {
+            padding-left: 250px;
+        }
+
+        #sidebar-wrapper {
+            z-index: 1000;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            margin-left: -250px;
+            overflow-y: auto;
+            background: #000;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            position: absolute;
+            padding: 15px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+
+        /* Sidebar Styles */
+
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            width: 250px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            text-indent: 20px;
+            line-height: 40px;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: #999999;
+        }
+
+        .sidebar-nav li a:hover {
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-nav li a:active,
+        .sidebar-nav li a:focus {
+            text-decoration: none;
+        }
+
+        .sidebar-nav>.sidebar-brand {
+            height: 65px;
+            font-size: 18px;
+            line-height: 60px;
+        }
+
+        .sidebar-nav>.sidebar-brand a {
+            color: #999999;
+        }
+
+        .sidebar-nav>.sidebar-brand a:hover {
+            color: #fff;
+            background: none;
+        }
+
+        @media(min-width:768px) {
+            #wrapper {
+                padding-left: 250px;
+            }
+
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+
+            #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+
+            #page-content-wrapper {
+                padding: 20px;
+                position: relative;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                position: relative;
+                margin-right: 0;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="container">
+        <div id="page-content-wrapper">
+            <div class="row">
+
+                <section class="container">
+                    <form method="get" action="{{ url_for('user.logout') }}">
+                        <div class="pull-right">
+                            <button name="logout" value="logout" id="logout" class="btn btn-primary mt-auto"
+                                type="submit">Logout
+                            </button>
+                        </div>
+                    </form>
+                    <strong>
+                        <h3>User Instances</h3>
+                    </strong>
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="table-container">
+                                <table class="table table-filter" id="mytable">
+
+                                    <thead>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Public IP</th>
+                                        <th>Private IP</th>
+                                        <th>State</th>
+                                        <th>Region</th>
+                                        <th>ON/OFF</th>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for instance in instances %}
+                                        <tr>
+                                            <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
+                                            <td name="">{{ instance['Name'] }}</td>
+                                            <td>{{ instance['PublicIP'] }}</td>
+                                            <td>{{ instance['PrivateIP'] }}</td>
+                                            <td class="text-info" id="state">{{ instance['State'] }}</td>
+                                            <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
+                                            <td>
+                                                <label data-placement="top" data-toggle="tooltip" class="switch">
+                                                    <input class="round" type="checkbox" data-toggle="modal"
+                                                        name="ins_chk" value="{{ instance['Id'] }}" id="ins_checkbox"
+                                                        data-target="#ins_state">
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </td>
+
+                                        </tr>
+                                        {% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </section>
+
+
+
+            </div>
+            <div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                    aria-hidden="true"></span></button>
+                            <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span>
+                                Are you sure
+                                you want
+                                to change the State?
+                            </div>
+
+                        </div>
+                        <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                            <div class="modal-footer ">
+                                <div hidden>
+                                    <input id="instance_id" name="instance_id" type="text">
+                                    <input id="instance_state" name="instance_state" type="text">
+                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                </div>
+
+                                <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                        class="glyphicon glyphicon-ok-sign"></span>Yes
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
+                                        class="glyphicon glyphicon-remove"></span> No
+                                </button>
+
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+    <script src="../static/jquery/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <script src="../static/jquery/1.9.1/jquery.min.js"></script>
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+
+            $("#mytable #checkall").click(function () {
+                if ($("#mytable #checkall").is(':checked')) {
+                    $("#mytable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", true);
+                    });
+
+                } else {
+                    $("#mytable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", false);
+                    });
+                }
+            });
+
+
+            // changing individual instance state
+            $("#mytable #ins_checkbox").click(function () {
+                var state = $(this).closest("tr").find('td:eq(4)').text();
+                var id = $(this).closest("tr").find('td:eq(0)').text();
+                console.log(state);
+                console.log(id);
+
+                var s = document.getElementById("instance_id");
+                s.value = id;
+                var s = document.getElementById("instance_state");
+                s.value = state;
+
+                if ($("#btn_cancel").click(function () {
+
+                    window.location.reload();
+
+                })) {
+                    //ifbody
+
+                }
+
+            });
+
+            // onclick cancel button
+
+
+            $("[data-toggle=tooltip]").tooltip();
+
+            // set checkboxes correct check state
+            $('#mytable tr').each(function () {
+                var state_value = $(this).find(".text-info").html();
+                if (state_value === 'stopped') {
+                    console.log($(this).find(".text-primary").html());
+                    console.log(state_value);
+                    $(this).find(".round").prop("checked", false);
+                } else {
+                    $(this).find(".round").prop("checked", true);
+                }
+            });
+
+
+        });
+
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>

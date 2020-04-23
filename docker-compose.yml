@@ -1,0 +1,37 @@
+version: '3.5'
+services:
+  webapp:
+    container_name: webapp
+    restart: always
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    build: .
+    ports:
+     - 5000:5000
+    env_file: .env
+
+  database:
+    image: "postgres"
+    env_file: .env
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data/
+
+  migration:
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    env_file: .env
+    command: /bin/bash -c "python manage.py db init && python manage.py db migrate && python manage.py db upgrade"
+    depends_on: 
+      - database
+
+  dumpAdminData:
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    env_file: .env
+    command: python dump_admin_record.py
+    depends_on: 
+      - database
+      - migration
+
+
+volumes:
+  postgres-data:
