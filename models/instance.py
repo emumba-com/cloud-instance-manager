@@ -28,13 +28,9 @@ class Instance(db.Model):
         self.private_ip = private_ip
         self.key_name = key_name
         self.region_name = region_name
-        row = Instance.query.filter_by(id=instance_id).first()
-        if row:
-            db.session.merge(self)
-            db.session.commit()
-        else:
-            db.session.add(self)
-            db.session.commit()
+        row = db.session.merge(self)
+        db.session.add(row)
+        db.session.commit()
 
     def get_all_instances_from_db(self):
         instances_list = []
