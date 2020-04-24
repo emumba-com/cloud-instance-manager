@@ -17,7 +17,8 @@ pyLint:
       name: cytopia/pylint:latest
       entrypoint: [""]
     script:
-      - pylint **/*.py
+      - pylint models/*.py
+      - pylint server/*.py
       - pylint *.py
 
 build:
