@@ -114,7 +114,3 @@ class BlacklistToken(db.Model):
         if res:
             return True
         return False
-
-
-db.create_all()
-db.session.commit()
