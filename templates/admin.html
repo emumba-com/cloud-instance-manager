@@ -248,7 +248,7 @@
                                                 <td>{{ instance['PublicIP'] }}</td>
                                                 <td>{{ instance['PrivateIP'] }}</td>
                                                 <td class="text-info">{{ instance['RegionName'] }}</td>
-                                                <td>SSH Keypair</td>
+                                                <td>{{ instance['KeyName'] }}</td>
                                                 <td>
                                                     <label data-placement="top" data-toggle="tooltip">
                                                         <select name="ins_btn" id="assign_ins_to">
@@ -282,7 +282,6 @@
                                             <th>Private IP</th>
                                             <th>Region</th>
                                             <th>Owner</th>
-                                            <th>SSH Keypair</th>
                                             <th>Un-Assign Instance</th>
                                         </thead>
                                         <tbody>
@@ -296,7 +295,6 @@
                                                 <td>{{ instance['PrivateIP'] }}</td>
                                                 <td class="text-info">{{ instance['RegionName'] }}</td>
                                                 <td>{{ instance['Owner'] }}</td>
-                                                <td>SSH Keypair</td>
                                                 <td>
                                                     <label data-placement="top" data-toggle="tooltip">
                                                         <select name="ins_btn" id="un_assign_ins_to">

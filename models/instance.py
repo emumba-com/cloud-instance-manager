@@ -30,11 +30,17 @@ class Instance(db.Model):
         self.region_name = region_name
         row = Instance.query.filter_by(id=instance_id).first()
         if row:
-            db.session.merge(self)
-            db.session.commit()
+            try:
+                db.session.merge(self)
+                db.session.commit()
+            except Exception as e:
+                print(e)
         else:
-            db.session.add(self)
-            db.session.commit()
+            try:
+                db.session.add(self)
+                db.session.commit()
+            except Exception as e:
+                print(e)
 
     def get_all_instances_from_db(self):
         instances_list = []

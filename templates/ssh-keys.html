@@ -142,13 +142,13 @@
                         AWS BOOTCLOUD
                     </a>
                 </li>
-                <form method="get" action="{{ url_for('admin.admin') }}">
+                <form method="get" action="{{ url_for('admin.get_admin') }}">
                     <li class="active">
                         <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
                             Instances</a>
                     </li>
                 </form>
-                <form method="get" action="{{ url_for('admin.user') }}">
+                <form method="get" action="{{ url_for('admin.get_users') }}">
                     <li>
                         <a href="#" onclick="$(this).closest('form').submit()"><span
                                 class="fa fa-users mr-3 notif"></span> Users</a>
@@ -156,7 +156,8 @@
                 </form>
                 <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
                     <li>
-                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH keys</a>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH
+                            keys</a>
                     </li>
                 </form>
                 <li>
@@ -193,32 +194,35 @@
                                     <div class="btn-group">
                                         <label data-placement="top" data-toggle="tooltip">
                                             <button class="btn btn-success btn-filter" data-title="Add User"
-                                                data-toggle="modal" data-target="#adduser">Add Key
+                                                data-toggle="modal" data-target="#addkey">Add Key
                                             </button>
                                         </label>
 
                                         <label data-placement="top" data-toggle="tooltip">
                                             <button type="button" id="delete_user" class="btn btn-warning btn-filter"
                                                 data-toggle="modal" name="delete_user" data-target="#deleteuser">Delete
-                                                User
+                                                Key
                                             </button>
                                         </label>
 
                                     </div>
                                 </div>
                                 <div class="table-container">
-                                    <table class="table table-filter table-bordered table-striped table-hover" id="usertable">
+                                    <table class="table table-filter table-bordered table-striped table-hover"
+                                        id="usertable">
                                         <thead>
                                             <th><input type="checkbox" id="checkall" /></th>
                                             <th width="15%">SSH Key Name</th>
-                                            <th width="85%">SSH Key Value</th>
+                                            <th width="75%">SSH Key Value</th>
+                                            <th width="15%">SSH Key Format</th>
                                         </thead>
                                         <tbody>
-                                            {% for user in users %}
+                                            {% for key in keys_list %}
                                             <tr>
                                                 <td><input type="checkbox" id="checkuser" /></td>
-                                                <td width="15%">{{ user['Id'] }}</td>
-                                                <td width="85%">{{ user['Name'] }}</td>
+                                                <td width="15%">{{ key['KeyName'] }}</td>
+                                                <td width="75%">{{ key['KeyValue'] }}</td>
+                                                <td width="15%">{{ key['KeyFormat'] }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -270,7 +274,7 @@
             </div>
 
 
-            <div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+            <div class="modal fade" id="addkey" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                 <div class="modal-dialog">
                     <form method="post" action="{{ url_for('admin.register_user') }}">
                         <div class="modal-content">
@@ -289,10 +293,11 @@
                                         <option value=NULL selected disabled hidden>
                                             Assign
                                         </option>
-                                        <option value=NULL selected>
-                                            Assign
+                                        {% for key in keys_list %}
+                                        <option id="{{ key['KeyName'] }}" value="{{ key['KeyName'] }}">
+                                            {{ key['KeyName'] }}
                                         </option>
-
+                                        {% endfor %}
                                     </select>
                                     </label>
                                     <!-- <input class="form-control " type="text" id="username" name="username"
@@ -302,6 +307,19 @@
                                     <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"
                                         style="max-width: 100%; min-width: 100%;"></textarea>
 
+                                </div>
+                                <!-- Group of default radios - option 1 -->
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="defaultGroupExample1"
+                                        name="groupOfDefaultRadios" checked>
+                                    <label class="custom-control-label" for="defaultGroupExample1">.pem</label>
+                                </div>
+
+                                <!-- Group of default radios - option 2 -->
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="defaultGroupExample2"
+                                        name="groupOfDefaultRadios">
+                                    <label class="custom-control-label" for="defaultGroupExample2">.ppk</label>
                                 </div>
 
                             </div>

@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..
 
 from server.aws import get_instances_details, get_all_regions
 from models.instance import Instance
+from models.ssh_keys import SSHKeys
 from models.user import User, BlacklistToken
 from settings import db
 
@@ -16,6 +17,7 @@ region_name = os.getenv('REGION_NAME')
 # creating user obj
 user_obj = User()
 instance_obj = Instance()
+ssh_key_obj = SSHKeys()
 
 # instances_list = []
 # users_list = []
@@ -32,8 +34,8 @@ def get_admin():
 
 @admin_bp.route('/ssh-keys')
 def get_ssh_keys():
-    # userList = user_obj.get_all_users()
-    return render_template('ssh-keys.html')
+    keys_list = ssh_key_obj.get_ssh_keys_from_db()
+    return render_template('ssh-keys.html', keys_list=keys_list)
 
 
 @admin_bp.route('/users')
@@ -168,6 +170,8 @@ def store_instance_into_db(instances_list):
                                   instance['PrivateIP'],
                                   instance['KeyName'],
                                   instance['RegionName'])
+        print(instance['KeyName'], "SSH KEY Name ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
+        ssh_key_obj.add_key_name(instance['KeyName'])
 
 
 def get_instance_from_db():
