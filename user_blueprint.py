@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..
 from flask import Blueprint, render_template, redirect, request, url_for
 from server.aws import get_all_regions, start_instance, stop_instance
 from models.instance import Instance
+from models.ssh_keys import SSHKeys
 from models.user import User, BlacklistToken
 from settings import db
 from admin import get_instances_details, store_instance_into_db
@@ -14,11 +15,13 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 
 instance_obj = Instance()
 user_obj = User()
-
+ssh_key_obj = SSHKeys()
 
 @user_bp.route('/')
 def user():
     instances_list = []
+    # getting ssh keys info
+    key_list, all_keys_list = ssh_key_obj.get_ssh_keys_from_db()
     user_token = request.cookies.get('auth_token')
     # get current user_id
     user_id = get_user_id()
@@ -31,7 +34,7 @@ def user():
             for region_name in user_regions:
                 update_thread = threading.Thread(target=update_instance_in_db, args=(region_name, ))
                 update_thread.start()
-    return render_template('user.html', instances=instances_list, region_list=get_all_regions)
+    return render_template('user.html', instances=instances_list, all_keys_list=all_keys_list, region_list=get_all_regions)
 
 
 @user_bp.route('/change', methods=['POST'])

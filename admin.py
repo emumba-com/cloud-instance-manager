@@ -34,14 +34,24 @@ def get_admin():
 
 @admin_bp.route('/ssh-keys')
 def get_ssh_keys():
-    keys_list = ssh_key_obj.get_ssh_keys_from_db()
-    return render_template('ssh-keys.html', keys_list=keys_list)
+    keys_list, all_keys_list = ssh_key_obj.get_ssh_keys_from_db()
+    return render_template('ssh-keys.html', keys_list=keys_list, all_keys_list=all_keys_list)
 
 
 @admin_bp.route('/users')
 def get_users():
     users_list = user_obj.get_all_users()
     return render_template('user-management.html', users=users_list)
+
+
+@admin_bp.route('/addkey', methods=['GET', 'POST'])
+def register_key():
+    if request.method == "POST":
+        name = request.form.get('keyname')
+        value = request.form.get('keyvalue')
+        format = request.form.get('keyformat')
+        ssh_key_obj.add_ssh_key_value(name, value, format)
+    return redirect(url_for('admin.get_ssh_keys'))
 
 
 @admin_bp.route('/adduser', methods=['GET', 'POST'])
@@ -170,8 +180,7 @@ def store_instance_into_db(instances_list):
                                   instance['PrivateIP'],
                                   instance['KeyName'],
                                   instance['RegionName'])
-        print(instance['KeyName'], "SSH KEY Name ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,")
-        ssh_key_obj.add_key_name(instance['KeyName'])
+        ssh_key_obj.add_ssh_key_name(instance['KeyName'])
 
 
 def get_instance_from_db():

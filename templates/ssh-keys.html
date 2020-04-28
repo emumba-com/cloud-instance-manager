@@ -209,7 +209,7 @@
                                 </div>
                                 <div class="table-container">
                                     <table class="table table-filter table-bordered table-striped table-hover"
-                                        id="usertable">
+                                        id="keystable">
                                         <thead>
                                             <th><input type="checkbox" id="checkall" /></th>
                                             <th width="15%">SSH Key Name</th>
@@ -217,7 +217,7 @@
                                             <th width="15%">SSH Key Format</th>
                                         </thead>
                                         <tbody>
-                                            {% for key in keys_list %}
+                                            {% for key in all_keys_list %}
                                             <tr>
                                                 <td><input type="checkbox" id="checkuser" /></td>
                                                 <td width="15%">{{ key['KeyName'] }}</td>
@@ -276,7 +276,7 @@
 
             <div class="modal fade" id="addkey" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                 <div class="modal-dialog">
-                    <form method="post" action="{{ url_for('admin.register_user') }}">
+                    <form method="post" id="myform" action="{{ url_for('admin.register_key') }}">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
@@ -289,9 +289,9 @@
                                     <!-- <label data-placement="top" data-toggle="tooltip"> -->
                                     <select
                                         style="max-width: 100%; min-width: 100%; padding-top: 0.8%; padding-bottom: 0.8%"
-                                        name="ins_btn" id="assign_ins_to">
-                                        <option value=NULL selected disabled hidden>
-                                            Assign
+                                        name="drop_down" id="key_drop_down">
+                                        <option value='null' selected disabled hidden>
+                                            Key Name
                                         </option>
                                         {% for key in keys_list %}
                                         <option id="{{ key['KeyName'] }}" value="{{ key['KeyName'] }}">
@@ -304,28 +304,44 @@
                                         placeholder="Username"> -->
                                 </div>
                                 <div class="form-group">
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"
+                                    <textarea class="form-control" id="key_value_text_area" rows="10"
                                         style="max-width: 100%; min-width: 100%;"></textarea>
 
                                 </div>
                                 <!-- Group of default radios - option 1 -->
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" id="defaultGroupExample1"
-                                        name="groupOfDefaultRadios" checked>
+                                    <input type="radio" class="custom-control-input" id="radio_btn1" name="pem"
+                                        value=".pem" checked>
                                     <label class="custom-control-label" for="defaultGroupExample1">.pem</label>
                                 </div>
 
                                 <!-- Group of default radios - option 2 -->
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" id="defaultGroupExample2"
-                                        name="groupOfDefaultRadios">
+                                    <input type="radio" class="custom-control-input" id="radio_btn2" name="pkk"
+                                        value=".pkk">
                                     <label class="custom-control-label" for="defaultGroupExample2">.ppk</label>
                                 </div>
 
                             </div>
+
+                            <div>
+                                <input name="keyname" id="keyname" value="null">
+                                <input name="keyvalue" id="keyvalue">
+                                <input name="keyformat" id="keyformat" value=".pem">
+                            </div>
+
                             <div class="modal-footer ">
-                                <button type="submit" class="btn btn-warning btn-lg" style="width: 100%;"><span
-                                        class="glyphicon glyphicon-ok-sign"></span>ADD
+                                <button type="button" onclick="
+                                    var val = document.getElementById('key_value_text_area').value;
+                                    document.getElementById('keyvalue').value=val;
+                                    if (document.getElementById('keyname').value != 'null'){
+                                        document.getElementById('myform').submit(); 
+                                    }else{
+                                        alert('Please select key name from drop down!!!');
+                                    }
+                                    "
+                                    class=" btn btn-warning btn-lg"
+                                    style="width: 100%;"><span class="glyphicon glyphicon-ok-sign"></span>ADD
                                 </button>
                             </div>
                         </div>
@@ -347,6 +363,8 @@
 
     <script>
 
+
+
         $("#menu-toggle").click(function (e) {
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
@@ -355,6 +373,32 @@
 
 
         $(document).ready(function () {
+
+
+            $("#key_drop_down").change(function () {
+                var keyname = $(this).find("option:selected").val();
+                // alert(keyname)
+                document.getElementById("keyname").value = keyname;
+            });
+
+            $("#radio_btn1").click(function () {
+                var val = $('input[type="radio"]:checked').val();
+                $('#radio_btn2').prop('checked', false)
+                document.getElementById("keyformat").value = val;
+            });
+            $("#radio_btn2").click(function () {
+                $('#radio_btn1').prop('checked', false)
+                var val = $('input[type="radio"]:checked').val();
+                document.getElementById("keyformat").value = val;
+            });
+
+
+
+
+
+
+
+
 
             // document.getElementById("reg").value = "ap-northeast-1";
             document.getElementById('delete_user').disabled = true;

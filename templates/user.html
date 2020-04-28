@@ -240,12 +240,11 @@
                                             <td>{{ instance['PrivateIP'] }}</td>
                                             <td class="text-info" id="state">{{ instance['State'] }}</td>
                                             <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
-                                            <td><span> SSH Keypair </span>
-                                                <label data-placement="top" data-toggle="tooltip">
-                                                    <button class="btn btn-light btn-xs" data-toggle="modal"
-                                                        data-target="#ssh_key"><span
-                                                            class="fa fa-download"></span></button>
-                                                </label>
+                                            <td id="{{ instance['KeyName'] }}"><span> {{ instance['KeyName'] }} </span>
+                                                <button type="button" id="download_btn"
+                                                    value="{{ instance['KeyName'] }}" class="btn btn-light btn-xs"><span
+                                                        class="fa fa-download"></span></button>
+
                                             </td>
                                             <td>
                                                 <label data-placement="top" data-toggle="tooltip" class="switch">
@@ -305,7 +304,6 @@
                                 <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
                                         class="glyphicon glyphicon-remove"></span> No
                                 </button>
-
                             </div>
                         </form>
                     </div>
@@ -329,8 +327,6 @@
                         </div>
                         <div class="modal-body">
 
-                            
-
                         </div>
                         <form method="post" action="{{ url_for('user.change_ins_state')}}">
                             <div class="modal-footer ">
@@ -352,16 +348,9 @@
                 <!-- /.modal-dialog -->
             </div>
 
-
-
         </div>
 
     </div>
-
-
-
-
-
 
 
     <script src="../static/3.3.0/js/bootstrap.min.js"></script>
@@ -373,8 +362,75 @@
 
     <script>
 
+        function download(file, text) {
+            //creating an invisible element 
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8, '
+                + encodeURIComponent(text));
+            element.setAttribute('download', file);
+
+            //the above code is equivalent to 
+            // <a href="path of file" download="file name"> 
+
+            document.body.appendChild(element);
+
+            //onClick property 
+            element.click();
+
+            document.body.removeChild(element);
+        }
+        // Start file download. 
+        function get_ins_key() {
+            var json = JSON.parse('{{all_keys_list | tojson }}');
+
+            for (var i = 0; i < json.length; i++) {
+                if (json[i].KeyName == ins_key) {
+                    var text = json[i].KeyValue + " Hello this is my file";
+                    var filename = json[i].KeyName + json[i].KeyFormat;
+                    alert(text, filename)
+                    // download(filename, text);
+                    // break;
+                }
+            }
+        }
+
+        function doThings() {
+            var json = JSON.parse('{{all_keys_list | tojson }}');
+            $("#mytable #download_btn").each(function () {
+                var btn_key = (this).value;
+                for (var i = 0; i < json.length; i++) {
+                    console.log(btn_key, 'btn.key');
+                    console.log(json[i].KeyName);
+                    console.log(json[i].KeyValue);
+                    if ((json[i].KeyName == btn_key) && (json[i].KeyValue != null)) {
+                        console.log('condition met');
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                }
+            });
+
+        }
+
         $(document).ready(function () {
 
+            doThings();
+
+            $("#mytable #download_btn").click(function () {
+                var get_key = (this).value;
+                var json = JSON.parse('{{all_keys_list | tojson }}');
+                for (var i = 0; i < json.length; i++) {
+                    if (json[i].KeyName == get_key) {
+                        var text = json[i].KeyValue;
+                        var filename = json[i].KeyName + json[i].KeyFormat;
+                        alert(text, filename)
+                        download(filename, text);
+                        break;
+                    }
+                }
+
+            });
 
             $("#mytable #checkall").click(function () {
                 if ($("#mytable #checkall").is(':checked')) {
