@@ -47,10 +47,10 @@ def get_users():
 @admin_bp.route('/addkey', methods=['GET', 'POST'])
 def register_key():
     if request.method == "POST":
-        name = request.form.get('keyname')
-        value = request.form.get('keyvalue')
-        format = request.form.get('keyformat')
-        ssh_key_obj.add_ssh_key_value(name, value, format)
+        key_name = request.form.get('keyname')
+        key_value = request.form.get('keyvalue')
+        key_format = request.form.get('keyformat')
+        ssh_key_obj.add_ssh_key_value(key_name, key_value, key_format)
     return redirect(url_for('admin.get_ssh_keys'))
 
 
@@ -180,7 +180,6 @@ def store_instance_into_db(instances_list):
                                   instance['PrivateIP'],
                                   instance['KeyName'],
                                   instance['RegionName'])
-        ssh_key_obj.add_ssh_key_name(instance['KeyName'])
 
 
 def get_instance_from_db():

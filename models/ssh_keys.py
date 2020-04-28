@@ -4,6 +4,9 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 from settings import db
+from models.instance import Instance
+
+instance_obj = Instance()
 
 
 class SSHKeys(db.Model):
@@ -14,33 +17,26 @@ class SSHKeys(db.Model):
     ssh_key_name = db.Column(db.String(), primary_key=True)
     ssh_key_value = db.Column(db.String())
     ssh_key_format = db.Column(db.String())
-    
-    def add_ssh_key_name(self, key_name):
-        self.ssh_key_name = key_name
-        self.ssh_key_value = None
-        self.ssh_key_format = None
-        row = db.session.query(SSHKeys).filter(self.ssh_key_name==key_name).first()
-        if not row:
-            try:
-                print("adding")
-                db.session.add(self)
-                db.session.commit()
-            except Exception as db_exceptions:
-                print(db_exceptions)
 
     def add_ssh_key_value(self, key_name, key_value, key_format):
         self.ssh_key_name = key_name
         self.ssh_key_value = key_value
         self.ssh_key_format = key_format
-        row = SSHKeys.query.filter_by(ssh_key_name=key_name).first()
-        if row:
-            row = db.session.merge(self)
-            db.session.add(row)
-            db.session.commit()
-        
+        row = db.session.merge(self)
+        db.session.add(row)
+        db.session.commit()
+
+    def get_ssh_key_names(self):
+        ssh_keys = set({})
+        instances_list = instance_obj.get_all_instances_from_db()
+        for instance in instances_list:
+            ssh_keys.add(instance['KeyName'])
+        return list(ssh_keys)
+
     def get_ssh_keys_from_db(self):
         all_keys_list = []
-        key_list = []
+        remaining_keys_list = []
+        key_names = self.get_ssh_key_names()
         all_ssh_keys = db.session.query(SSHKeys)
         for key in all_ssh_keys:
             keys_dict = {
@@ -51,19 +47,20 @@ class SSHKeys(db.Model):
             }
             all_keys_list.append(keys_dict)
             if not key.ssh_key_value:
-                empty_key_dict = {
-                    # "KeyId": key.ssh_id,
-                    "KeyName": key.ssh_key_name,
-                }
-                key_list.append(empty_key_dict)
-        return key_list, all_keys_list
-    
-    
-    def get_key_by_name(key_name):
+                if key in key_names:
+                    key_names.remove(key)
+        for key in key_names:
+            remaining_keys_list.append(
+                {"KeyName": key}
+            )
+        return remaining_keys_list, all_keys_list
+
+
+    def get_key_by_name(self, key_name):
         row = SSHKeys.query.filter_by(ssh_key_name=key_name).first()
         key_dict = {
             "KeyName": row.ssh_key_name,
             "KeyValue": row.ssh_key_value,
             "keyFormat": row.ssh_key_format
-        } 
+        }
         return key_dict
