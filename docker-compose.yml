@@ -20,7 +20,7 @@ services:
   migration:
     image: registry.gitlab.com/emumba/devops/aws-bootcloud
     env_file: .env
-    command: /bin/bash -c "sleep 5 && python manage.py db upgrade"
+    command: /bin/bash -c "sleep 5 && python manage.py db migrate && python manage.py db upgrade"
     depends_on: 
       - database
 
