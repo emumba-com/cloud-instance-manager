@@ -18,7 +18,6 @@ class SSHKeys(db.Model):
     ssh_key_value = db.Column(db.String())
     ssh_key_format = db.Column(db.String())
 
-
     def add_ssh_key_value(self, key_name, key_value, key_format):
         self.ssh_key_name = key_name
         self.ssh_key_value = key_value
@@ -27,14 +26,12 @@ class SSHKeys(db.Model):
         db.session.add(row)
         db.session.commit()
 
-
     def get_ssh_key_names(self):
         ssh_keys = set({})
         instances_list = instance_obj.get_all_instances_from_db()
         for instance in instances_list:
             ssh_keys.add(instance['KeyName'])
         return list(ssh_keys)
-
 
     def get_ssh_keys_from_db(self):
         all_keys_list = []
