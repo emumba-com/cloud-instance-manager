@@ -21,7 +21,8 @@ ssh_key_obj = SSHKeys()
 def user():
     instances_list = []
     # getting ssh keys info
-    key_list, all_keys_list = ssh_key_obj.get_ssh_keys_from_db()
+    ssh_keys = ssh_key_obj.get_ssh_keys_from_db()
+    all_keys_list = ssh_keys[1]
     user_token = request.cookies.get('auth_token')
     # get current user_id
     user_id = get_user_id()
