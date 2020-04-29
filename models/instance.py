@@ -36,7 +36,7 @@ class Instance(db.Model):
     def get_all_instances_from_db(self):
         instances_list = []
         user_obj = User()
-        
+
         all_instance = db.session.query(Instance)
         users_list = user_obj.get_all_users()
 
@@ -50,7 +50,7 @@ class Instance(db.Model):
             else:
                 for user in users_list:
                     users.append(user)
-                    
+
             instance_dict = {
                 "Id": instance.id,
                 "Name": instance.name,
