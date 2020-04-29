@@ -17,6 +17,7 @@ instance_obj = Instance()
 user_obj = User()
 ssh_key_obj = SSHKeys()
 
+
 @user_bp.route('/')
 def user():
     instances_list = []
@@ -35,7 +36,8 @@ def user():
             for region_name in user_regions:
                 update_thread = threading.Thread(target=update_instance_in_db, args=(region_name, ))
                 update_thread.start()
-    return render_template('user.html', instances=instances_list, all_keys_list=all_keys_list, region_list=get_all_regions)
+    return render_template('user.html',
+                           instances=instances_list, all_keys_list=all_keys_list, region_list=get_all_regions)
 
 
 @user_bp.route('/change', methods=['POST'])

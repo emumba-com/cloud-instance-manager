@@ -40,10 +40,10 @@ class SSHKeys(db.Model):
         all_ssh_keys = db.session.query(SSHKeys)
         for key in all_ssh_keys:
             keys_dict = {
-                    # "KeyId": key.ssh_id,
-                    "KeyName": key.ssh_key_name,
-                    "KeyValue": key.ssh_key_value,
-                    "KeyFormat": key.ssh_key_format
+                # "KeyId": key.ssh_id,
+                "KeyName": key.ssh_key_name,
+                "KeyValue": key.ssh_key_value,
+                "KeyFormat": key.ssh_key_format
             }
             all_keys_list.append(keys_dict)
             if not key.ssh_key_value:
@@ -54,7 +54,6 @@ class SSHKeys(db.Model):
                 {"KeyName": key}
             )
         return remaining_keys_list, all_keys_list
-
 
     def get_key_by_name(self, key_name):
         row = SSHKeys.query.filter_by(ssh_key_name=key_name).first()
