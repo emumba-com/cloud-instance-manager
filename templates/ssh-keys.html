@@ -325,9 +325,9 @@
                             </div>
 
                             <div>
-                                <input name="keyname" id="keyname" value="null">
-                                <input name="keyvalue" id="keyvalue">
-                                <input name="keyformat" id="keyformat" value=".pem">
+                                <input name="keyname" id="keyname" value="null" hidden>
+                                <input name="keyvalue" id="keyvalue" hidden>
+                                <input name="keyformat" id="keyformat" value=".pem" hidden>
                             </div>
 
                             <div class="modal-footer ">
@@ -377,7 +377,6 @@
 
             $("#key_drop_down").change(function () {
                 var keyname = $(this).find("option:selected").val();
-                // alert(keyname)
                 document.getElementById("keyname").value = keyname;
             });
 
@@ -392,18 +391,8 @@
                 document.getElementById("keyformat").value = val;
             });
 
-
-
-
-
-
-
-
-
             // document.getElementById("reg").value = "ap-northeast-1";
             document.getElementById('delete_user').disabled = true;
-
-
 
             $('.btn-filter').on('click', function () {
                 var $target = $(this).data('target');

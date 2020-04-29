@@ -14,12 +14,13 @@ class SSHKeys(db.Model):
     ssh_key_name = db.Column(db.String(), primary_key=True)
     ssh_key_value = db.Column(db.String())
     ssh_key_format = db.Column(db.String())
+
     
     def add_ssh_key_name(self, key_name):
         self.ssh_key_name = key_name
         self.ssh_key_value = None
         self.ssh_key_format = None
-        row = db.session.query(SSHKeys).filter(self.ssh_key_name==key_name).first()
+        row = SSHKeys.query.filter_by(ssh_key_name=key_name).first()
         if not row:
             try:
                 print("adding")
@@ -28,16 +29,16 @@ class SSHKeys(db.Model):
             except Exception as db_exceptions:
                 print(db_exceptions)
 
+
     def add_ssh_key_value(self, key_name, key_value, key_format):
         self.ssh_key_name = key_name
         self.ssh_key_value = key_value
         self.ssh_key_format = key_format
-        row = SSHKeys.query.filter_by(ssh_key_name=key_name).first()
-        if row:
-            row = db.session.merge(self)
-            db.session.add(row)
-            db.session.commit()
-        
+        row = db.session.merge(self)
+        db.session.add(row)
+        db.session.commit()
+    
+    
     def get_ssh_keys_from_db(self):
         all_keys_list = []
         key_list = []
@@ -52,7 +53,6 @@ class SSHKeys(db.Model):
             all_keys_list.append(keys_dict)
             if not key.ssh_key_value:
                 empty_key_dict = {
-                    # "KeyId": key.ssh_id,
                     "KeyName": key.ssh_key_name,
                 }
                 key_list.append(empty_key_dict)

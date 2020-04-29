@@ -387,9 +387,6 @@
                 if (json[i].KeyName == ins_key) {
                     var text = json[i].KeyValue + " Hello this is my file";
                     var filename = json[i].KeyName + json[i].KeyFormat;
-                    alert(text, filename)
-                    // download(filename, text);
-                    // break;
                 }
             }
         }
@@ -424,7 +421,6 @@
                     if (json[i].KeyName == get_key) {
                         var text = json[i].KeyValue;
                         var filename = json[i].KeyName + json[i].KeyFormat;
-                        alert(text, filename)
                         download(filename, text);
                         break;
                     }
