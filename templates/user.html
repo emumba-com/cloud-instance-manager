@@ -421,6 +421,7 @@
                     if (json[i].KeyName == get_key) {
                         var text = json[i].KeyValue;
                         var filename = json[i].KeyName + json[i].KeyFormat;
+                        text = text.replace("/ /\n", "/\\n");
                         download(filename, text);
                         break;
                     }

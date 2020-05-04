@@ -19,9 +19,6 @@ user_obj = User()
 instance_obj = Instance()
 ssh_key_obj = SSHKeys()
 
-# instances_list = []
-# users_list = []
-
 
 @admin_bp.route('/instances', methods=['GET'])
 def get_admin():
@@ -35,7 +32,9 @@ def get_admin():
 @admin_bp.route('/ssh-keys')
 def get_ssh_keys():
     keys_list, all_keys_list = ssh_key_obj.get_ssh_keys_from_db()
-    return render_template('ssh-keys.html', keys_list=keys_list, all_keys_list=all_keys_list)
+    return render_template('ssh-keys.html',
+                           keys_list=keys_list,
+                           all_keys_list=all_keys_list)
 
 
 @admin_bp.route('/users')
@@ -147,7 +146,9 @@ def get_instances():
     instances_list = instance_obj.get_all_instances_from_db()
     # sending assigned user's data..
     assigned_instances = instance_obj.get_assigned_instances()
-    return render_template('admin.html', assigned_instances=assigned_instances, instances=instances_list)
+    return render_template('admin.html',
+                           assigned_instances=assigned_instances,
+                           instances=instances_list)
 
 
 def is_valid_request():
@@ -157,9 +158,7 @@ def is_valid_request():
     user_id = get_admin_id()
     print(user_id, " admin ID")
     if not isinstance(user_id, str):
-        if User.validate_token(user_token, user_id):
-            return True
-        return False
+        return User.validate_token(user_token, user_id)
     return False
 
 

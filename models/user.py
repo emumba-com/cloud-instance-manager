@@ -20,13 +20,9 @@ class User(db.Model):
     def get_all_users(self):
         users_list = []
         all_users = db.session.query(User)
-        for user in all_users:
-            if not user.admin:
-                user_dict = {
-                    "Id": user.id,
-                    "Name": user.name,
-                }
-                users_list.append(user_dict)
+        users_list = [{"Id": user.id,
+                       "Name": user.name}
+                      for user in all_users if not user.admin]
         return users_list
 
     def add_user(self, username, password, admin=False):
@@ -84,9 +80,7 @@ class User(db.Model):
     @staticmethod
     def validate_token(token, user_id):
         token_user_id = User.decode_auth_token(token)
-        if user_id == token_user_id:
-            return True
-        return False
+        return user_id == token_user_id
 
 
 class BlacklistToken(db.Model):
@@ -111,6 +105,4 @@ class BlacklistToken(db.Model):
     def check_blacklist(auth_token):
         # check whether auth token has been blacklisted
         res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
-        if res:
-            return True
-        return False
+        return res

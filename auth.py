@@ -43,5 +43,4 @@ def login():
             print(login_exception)
             resp = make_response(redirect(url_for('auth.auth')))
             return resp
-    else:
-        return render_template('login.html')
+    return render_template('login.html')

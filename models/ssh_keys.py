@@ -1,5 +1,6 @@
 import os
 import sys
+import pprint
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
@@ -20,7 +21,10 @@ class SSHKeys(db.Model):
 
     def add_ssh_key_value(self, key_name, key_value, key_format):
         self.ssh_key_name = key_name
+        pprint.pprint(key_value)
+        key_value = key_value.replace(">>>", "\n\n")
         self.ssh_key_value = key_value
+        pprint.pprint(key_value)
         self.ssh_key_format = key_format
         row = db.session.merge(self)
         db.session.add(row)
@@ -49,10 +53,7 @@ class SSHKeys(db.Model):
             if not key.ssh_key_value:
                 if key in key_names:
                     key_names.remove(key)
-        for key in key_names:
-            remaining_keys_list.append(
-                {"KeyName": key}
-            )
+        remaining_keys_list = [{"KeyName": key} for key in key_names]
         return remaining_keys_list, all_keys_list
 
     def get_key_by_name(self, key_name):
