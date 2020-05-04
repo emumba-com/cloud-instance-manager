@@ -365,7 +365,7 @@
         function download(file, text) {
             //creating an invisible element 
             var element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8, '
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,'
                 + encodeURIComponent(text));
             element.setAttribute('download', file);
 
@@ -385,7 +385,7 @@
 
             for (var i = 0; i < json.length; i++) {
                 if (json[i].KeyName == ins_key) {
-                    var text = json[i].KeyValue + " Hello this is my file";
+                    var text = json[i].KeyValue + "Hello this is my file";
                     var filename = json[i].KeyName + json[i].KeyFormat;
                 }
             }
@@ -421,7 +421,7 @@
                     if (json[i].KeyName == get_key) {
                         var text = json[i].KeyValue;
                         var filename = json[i].KeyName + json[i].KeyFormat;
-                        text = text.replace("/ /\n", "/\\n");
+                        text = text.replace("//\n", "/\\n");
                         download(filename, text);
                         break;
                     }

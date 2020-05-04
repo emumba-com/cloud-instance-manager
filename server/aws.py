@@ -19,9 +19,9 @@ def get_instances_details(region_name):
             instance_id = ec2_instances['Reservations'][instance_type]['Instances'][instance]['InstanceId']
             private_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PrivateIpAddress']
             state = ec2_instances['Reservations'][instance_type]['Instances'][instance]['State']['Name']
-            if state == "running":
+            try:
                 public_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PublicIpAddress']
-            else:
+            except KeyError:
                 public_ip = "None"
             tags = ec2_instances['Reservations'][instance_type]['Instances'][instance]['Tags']
             name = None

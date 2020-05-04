@@ -21,10 +21,7 @@ class SSHKeys(db.Model):
 
     def add_ssh_key_value(self, key_name, key_value, key_format):
         self.ssh_key_name = key_name
-        pprint.pprint(key_value)
-        key_value = key_value.replace(">>>", "\n\n")
         self.ssh_key_value = key_value
-        pprint.pprint(key_value)
         self.ssh_key_format = key_format
         row = db.session.merge(self)
         db.session.add(row)

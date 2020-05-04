@@ -333,7 +333,9 @@
                             <div class="modal-footer ">
                                 <button type="button" onclick="
                                     var val = document.getElementById('key_value_text_area').value;
-                                    text = val.replace(/\n\n\r?/g, '>>>');
+                                    console.log(val);
+                                    text = val.replace(/[\n\r]/g, '\\n');
+                                    console.log(text);
                                     document.getElementById('keyvalue').value=text;
                                     if (document.getElementById('keyname').value != 'null'){
                                         document.getElementById('myform').submit(); 
