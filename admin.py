@@ -87,10 +87,8 @@ def un_assign_instance_to_user():
     if request.method == "POST":
         user_id = request.form.get('un_user_id')
         insid = request.form.get('un_inst_id')
-        print("IDSS", user_id, insid)
         if is_valid_request():
             instance_obj.un_assign_instance_from_user(user_id=user_id, instance_id=insid)
-            print("method called")
             return redirect(url_for('admin.get_admin'))
         return redirect(url_for('auth.auth'))
     return redirect(url_for('admin.get_admin'))
@@ -118,6 +116,18 @@ def delete_user():
             return redirect(url_for('admin.get_users'))
         return redirect(url_for('auth.auth'))
     return redirect(url_for('admin.get_users'))
+
+
+@admin_bp.route('/delete_key', methods=['GET', 'POST'])
+def delete_key():
+    if request.method == "POST":
+        key_id = request.form['key_id']
+        if is_valid_request():
+            # delete key method call
+            ssh_key_obj.delete_key(key_id)
+            return redirect(url_for('admin.get_ssh_keys'))
+        return redirect(url_for('auth.auth'))
+    return redirect(url_for('admin.get_ssh_keys'))
 
 
 @admin_bp.route('/logout', methods=['GET'])
@@ -153,10 +163,7 @@ def get_instances():
 
 def is_valid_request():
     user_token = request.cookies.get('auth_token')
-    print(user_token, " u token")
-    # get current user_id
     user_id = get_admin_id()
-    print(user_id, " admin ID")
     if not isinstance(user_id, str):
         return User.validate_token(user_token, user_id)
     return False
@@ -166,7 +173,7 @@ def make_aws_call():
     regions_list = get_all_regions()
     for region in regions_list:
         ins_list = get_instances_details(region)
-        # print(ins_list)
+        delete_terminated_instances(ins_list, region)
         store_instance_into_db(ins_list)
 
 
@@ -181,8 +188,14 @@ def store_instance_into_db(instances_list):
                                   instance['RegionName'])
 
 
-def get_instance_from_db():
-    return Instance().get_all_instances()
+def delete_terminated_instances(aws_instances_list, region):
+    db_instances_list = Instance.query.filter_by(region_name=region)
+    db_instances_ids = [instance.id for instance in db_instances_list]
+    aws_instances_ids = [instance['Id'] for instance in aws_instances_list]
+    ins_not_exists = list(set(db_instances_ids) - set(aws_instances_ids))
+    ins_not_exists = [db_ins_id for db_ins_id in db_instances_ids if db_ins_id not in aws_instances_ids]
+    if ins_not_exists:
+        instance_obj.delete_instance_from_db(ins_not_exists)
 
 
 def get_user_id_from_db(username):

@@ -381,7 +381,7 @@
         }
         // Start file download. 
         function get_ins_key() {
-            var json = JSON.parse('{{all_keys_list | tojson }}');
+            var json = JSON.parse('{{ all_keys_list | tojson }}');
 
             for (var i = 0; i < json.length; i++) {
                 if (json[i].KeyName == ins_key) {
@@ -392,21 +392,30 @@
         }
 
         function doThings() {
-            var json = JSON.parse('{{all_keys_list | tojson }}');
-            $("#mytable #download_btn").each(function () {
-                var btn_key = (this).value;
-                for (var i = 0; i < json.length; i++) {
-                    console.log(btn_key, 'btn.key');
-                    console.log(json[i].KeyName);
-                    console.log(json[i].KeyValue);
-                    if ((json[i].KeyName == btn_key) && (json[i].KeyValue != null)) {
-                        console.log('condition met');
-                        $(this).show();
-                    } else {
-                        $(this).hide();
+            var json = JSON.parse('{{ all_keys_list | tojson }}');
+            console.log(json);
+            if (json.length == 0) {
+                $("#mytable #download_btn").each(function () {
+                    $(this).hide();
+                });
+            } else {
+                $("#mytable #download_btn").each(function () {
+                    var btn_key = (this).value;
+                    for (var i = 0; i < json.length; i++) {
+                        // console.log(json[i].KeyName);
+                        if ((json[i].KeyName == btn_key) && (json[i].KeyValue != null)) {
+                            console.log('condition met');
+                            console.log(btn_key, 'btn.key');
+                            console.log(json[i].KeyValue);
+                            $(this).show();
+                            break;
+                        } else {
+                            $(this).hide();
+                        }
                     }
-                }
-            });
+                });
+            }
+
 
         }
 
@@ -474,11 +483,11 @@
             // set checkboxes correct check state
             $('#mytable tr').each(function () {
                 var state_value = $(this).find(".text-info").html();
-                if (state_value === 'stopped') {
+                if (state_value === 'stopped' || state_value === 'stopping') {
                     console.log($(this).find(".text-primary").html());
                     console.log(state_value);
                     $(this).find(".round").prop("checked", false);
-                } else {
+                } else if(state_value === 'running' || state_value === 'pending') {
                     $(this).find(".round").prop("checked", true);
                 }
             });

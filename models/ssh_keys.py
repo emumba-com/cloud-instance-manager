@@ -61,3 +61,7 @@ class SSHKeys(db.Model):
             "keyFormat": row.ssh_key_format
         }
         return key_dict
+
+    def delete_key(self, key_id):
+        db.session.query(SSHKeys).filter(SSHKeys.ssh_key_name == key_id).delete()
+        db.session.commit()

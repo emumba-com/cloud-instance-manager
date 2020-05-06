@@ -17,8 +17,8 @@ def get_instances_details(region_name):
     for instance_type in range(len(ec2_instances['Reservations'])):
         for instance in range(len(ec2_instances['Reservations'][instance_type]['Instances'])):
             instance_id = ec2_instances['Reservations'][instance_type]['Instances'][instance]['InstanceId']
-            private_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PrivateIpAddress']
             state = ec2_instances['Reservations'][instance_type]['Instances'][instance]['State']['Name']
+            private_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PrivateIpAddress']
             try:
                 public_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PublicIpAddress']
             except KeyError:
