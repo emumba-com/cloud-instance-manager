@@ -1,5 +1,7 @@
 import os
 import sys
+import schedule
+import time
 from flask import render_template
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '.'))
@@ -19,6 +21,15 @@ app.register_blueprint(user_bp)
 def index():
     return render_template('login.html')
 
+# def hello():
+#     print("this is job")
+  
+# schedule.every(10).seconds.do(hello)
+# while True: 
+#     # Checks whether a scheduled task  
+#     # is pending to run or not 
+#     schedule.run_pending() 
+#     time.sleep(1)
 
 if __name__ == '__main__':
     db.init_app(app)

@@ -79,6 +79,11 @@ def logout():
     return redirect(url_for('user.user'))
 
 
+@user_bp.route('/bill', methods=['GET'])
+def get_user_bill():
+    return render_template('user-billing.html')
+
+
 def get_user_id():
     user_token = request.cookies.get('auth_token')
     user_id = User.decode_auth_token(user_token)

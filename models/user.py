@@ -24,6 +24,14 @@ class User(db.Model):
                        "Name": user.name}
                       for user in all_users if not user.admin]
         return users_list
+    
+    def get_all_users(self):
+        users_list = []
+        all_users = db.session.query(User)
+        users_list = [{"Id": user.id,
+                       "Name": user.name}
+                      for user in all_users if not user.admin]
+        return users_list
 
     def add_user(self, username, password, admin=False):
         new_user = User(
@@ -39,6 +47,7 @@ class User(db.Model):
             db.session.commit()
         except Exception as db_exceptions:
             print(db_exceptions)
+
 
     def encode_auth_token(self, user_id):
         """

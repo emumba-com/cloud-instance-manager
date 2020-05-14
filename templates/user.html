@@ -201,156 +201,212 @@
 
 <body>
 
-    <div id="container">
-        <div id="page-content-wrapper">
-            <div class="row">
+    <div id="wrapper">
 
-                <section class="container">
-                    <form method="get" action="{{ url_for('user.logout') }}">
-                        <div class="pull-right">
-                            <button name="logout" value="logout" id="logout" class="btn btn-primary mt-auto"
-                                type="submit">Logout
-                            </button>
-                        </div>
-                    </form>
-                    <h3 class="font-weight-bold"> <strong>User Instances</strong></h3>
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        AWS BOOTCLOUD
+                    </a>
+                </li>
+                <form method="get" action="{{ url_for('user.user') }}">
+                    <li class="active">
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
+                            Instances</a>
+                    </li>
+                </form>
+                <!-- <form method="get" action="{{ url_for('admin.get_users') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span
+                                class="fa fa-users mr-3 notif"></span> Users</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH
+                            keys</a>
+                    </li>
+                </form> -->
 
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="table-container">
-                                <table class="table table-filter table-bordered table-striped table-hover" id="mytable">
+                <form method="get" action="{{ url_for('user.get_user_bill') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-trophy mr-3"></span>
+                            Billing </a>
+                    </li>
+                </form>
+                <li>
+                    <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-support mr-3"></span> Support</a>
+                </li>
+                <form method="get" action="{{ url_for('user.logout') }}">
+                    <li>
+                        <a href="#" id="logout" onclick="$(this).closest('form').submit()"><span
+                                class="fa fa-sign-out mr-3"></span>
+                            Sign Out</a>
+                    </li>
+                </form>
 
-                                    <thead>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Public IP</th>
-                                        <th>Private IP</th>
-                                        <th>State</th>
-                                        <th>Region</th>
-                                        <th>SSH Keypair</th>
-                                        <th>ON/OFF</th>
-                                    </thead>
-                                    <tbody>
-
-                                        {% for instance in instances %}
-                                        <tr>
-                                            <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
-                                            <td name="">{{ instance['Name'] }}</td>
-                                            <td>{{ instance['PublicIP'] }}</td>
-                                            <td>{{ instance['PrivateIP'] }}</td>
-                                            <td class="text-info" id="state">{{ instance['State'] }}</td>
-                                            <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
-                                            <td id="{{ instance['KeyName'] }}"><span> {{ instance['KeyName'] }} </span>
-                                                <button type="button" id="download_btn"
-                                                    value="{{ instance['KeyName'] }}" class="btn btn-light btn-xs"><span
-                                                        class="fa fa-download"></span></button>
-
-                                            </td>
-                                            <td>
-                                                <label data-placement="top" data-toggle="tooltip" class="switch">
-                                                    <input class="round" type="checkbox" data-toggle="modal"
-                                                        name="ins_chk" value="{{ instance['Id'] }}" id="ins_checkbox"
-                                                        data-target="#ins_state">
-                                                    <span class="slider round"></span>
-                                                </label>
-                                            </td>
-
-                                        </tr>
-                                        {% endfor %}
-
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-                </section>
-
-
-
-            </div>
-            <div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
-                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
-                                    aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
-                        </div>
-                        <div class="modal-body">
-
-                            <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span>
-                                Are you sure
-                                you want
-                                to change the State?
-                            </div>
-
-                        </div>
-                        <form method="post" action="{{ url_for('user.change_ins_state')}}">
-                            <div class="modal-footer ">
-                                <div hidden>
-                                    <input id="instance_id" name="instance_id" type="text">
-                                    <input id="instance_state" name="instance_state" type="text">
-                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
-                                </div>
-
-                                <button type="submit" class="btn btn-success" id="btn_yes"><span
-                                        class="glyphicon glyphicon-ok-sign"></span>Yes
-                                </button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
-                                        class="glyphicon glyphicon-remove"></span> No
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- /.modal-content -->
-                </div>
-                <!-- /.modal-dialog -->
-            </div>
-
-
-            <div class="modal fade" id="ssh_key" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
-                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
-                                    aria-hidden="true"></span></button>
-                            <strong>
-                                <h4 class="modal-title custom_align" id="Heading"><strong>Select SSH Key format</strong>
-                                </h4>
-                            </strong>
-                        </div>
-                        <div class="modal-body">
-
-                        </div>
-                        <form method="post" action="{{ url_for('user.change_ins_state')}}">
-                            <div class="modal-footer ">
-                                <div hidden>
-                                    <input id="instance_id" name="instance_id" type="text">
-                                    <input id="instance_state" name="instance_state" type="text">
-                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
-                                </div>
-
-                                <button type="submit" class="btn btn-success" id="btn_yes"><span
-                                        class="fa fa-download"></span> Download
-                                </button>
-
-                            </div>
-                        </form>
-                    </div>
-                    <!-- /.modal-content -->
-                </div>
-                <!-- /.modal-dialog -->
-            </div>
-
+            </ul>
         </div>
+        <!-- /#sidebar-wrapper -->
 
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div id="page-content-wrapper">
+                <div class="row">
+
+                    <section class="container">
+                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+
+                        <h1>User Instances</h1>
+
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="table-container">
+                                    <table class="table table-filter table-bordered table-striped table-hover"
+                                        id="mytable">
+
+                                        <thead>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Public IP</th>
+                                            <th>Private IP</th>
+                                            <th>State</th>
+                                            <th>Region</th>
+                                            <th>SSH Keypair</th>
+                                            <th>ON/OFF</th>
+                                        </thead>
+                                        <tbody>
+
+                                            {% for instance in instances %}
+                                            <tr>
+                                                <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
+                                                <td name="">{{ instance['Name'] }}</td>
+                                                <td>{{ instance['PublicIP'] }}</td>
+                                                <td>{{ instance['PrivateIP'] }}</td>
+                                                <td class="text-info" id="state">{{ instance['State'] }}</td>
+                                                <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
+                                                <td id="{{ instance['KeyName'] }}"><span> {{ instance['KeyName'] }}
+                                                    </span>
+                                                    <button type="button" id="download_btn"
+                                                        value="{{ instance['KeyName'] }}"
+                                                        class="btn btn-light btn-xs"><span
+                                                            class="fa fa-download"></span></button>
+
+                                                </td>
+                                                <td>
+                                                    <label data-placement="top" data-toggle="tooltip" class="switch">
+                                                        <input class="round" type="checkbox" data-toggle="modal"
+                                                            name="ins_chk" value="{{ instance['Id'] }}"
+                                                            id="ins_checkbox" data-target="#ins_state">
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                </td>
+
+                                            </tr>
+                                            {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </section>
+
+
+
+                </div>
+                <div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                    aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                        aria-hidden="true"></span></button>
+                                <h4 class="modal-title custom_align" id="Heading">State Changing</h4>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span>
+                                    Are you sure
+                                    you want
+                                    to change the State?
+                                </div>
+
+                            </div>
+                            <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                                <div class="modal-footer ">
+                                    <div hidden>
+                                        <input id="instance_id" name="instance_id" type="text">
+                                        <input id="instance_state" name="instance_state" type="text">
+                                        <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                            class="glyphicon glyphicon-ok-sign"></span>Yes
+                                    </button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal"
+                                        id="btn_cancel"><span class="glyphicon glyphicon-remove"></span> No
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+
+
+                <div class="modal fade" id="ssh_key" tabindex="-1" role="dialog" aria-labelledby="edit"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                    aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                        aria-hidden="true"></span></button>
+                                <strong>
+                                    <h4 class="modal-title custom_align" id="Heading"><strong>Select SSH Key
+                                            format</strong>
+                                    </h4>
+                                </strong>
+                            </div>
+                            <div class="modal-body">
+
+                            </div>
+                            <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                                <div class="modal-footer ">
+                                    <div hidden>
+                                        <input id="instance_id" name="instance_id" type="text">
+                                        <input id="instance_state" name="instance_state" type="text">
+                                        <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                            class="fa fa-download"></span> Download
+                                    </button>
+
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+
+            </div>
+        </div>
     </div>
+
+
 
 
     <script src="../static/3.3.0/js/bootstrap.min.js"></script>
@@ -361,6 +417,11 @@
     <script src="../static/3.3.0/js/bootstrap.min.js"></script>
 
     <script>
+
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
 
         function download(file, text) {
             //creating an invisible element 
@@ -487,7 +548,7 @@
                     console.log($(this).find(".text-primary").html());
                     console.log(state_value);
                     $(this).find(".round").prop("checked", false);
-                } else if(state_value === 'running' || state_value === 'pending') {
+                } else if (state_value === 'running' || state_value === 'pending') {
                     $(this).find(".round").prop("checked", true);
                 }
             });

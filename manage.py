@@ -4,6 +4,7 @@ from settings import app, db
 import models.user
 import models.instance
 import models.ssh_keys
+import models.cost_explorer
 
 migrate = Migrate(app, db)
 manager = Manager(app)

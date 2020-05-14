@@ -156,12 +156,16 @@
                 </form>
                 <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
                     <li>
-                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH keys</a>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH
+                            keys</a>
                     </li>
                 </form>
-                <li>
-                    <a href="#"><span class="fa fa-trophy mr-3"></span> Billing</a>
-                </li>
+                <form method="get" action="{{ url_for('admin.get_admin_bill') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-trophy mr-3"></span>
+                            Billing</a>
+                    </li>
+                </form>
                 <li>
                     <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
                 </li>
@@ -207,7 +211,8 @@
                                     </div>
                                 </div>
                                 <div class="table-container">
-                                    <table class="table table-filter table-bordered table-striped table-hovers" id="usertable">
+                                    <table class="table table-filter table-bordered table-striped table-hovers"
+                                        id="usertable">
                                         <thead>
                                             <th><input type="checkbox" id="checkall" /></th>
                                             <th>ID</th>
