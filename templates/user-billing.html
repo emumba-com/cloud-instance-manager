@@ -221,17 +221,17 @@
                                         <th><input type="checkbox" id="checkall" /></th>
                                         <th width="25%">Instance ID</th>
                                         <th width="25%">Instance Name</th>
-                                        <th width="25%">Instance Daily Cost</th>
-                                        <th width="25%">Instance Monthly Cost</th>
+                                        <th width="25%">Instance Daily Cost ($)</th>
+                                        <th width="25%">Instance Monthly Cost ($)</th>
                                     </thead>
                                     <tbody>
-                                        {% for key in all_keys_list %}
+                                        {% for bill in user_bill %}
                                         <tr>
                                             <td><input type="checkbox" id="checkkey" /></td>
-                                            <td width="25%" id="key_name">{{ key['KeyName'] }}</td>
-                                            <td width="25%" id="key_value"></td>
-                                            <td width="25%">{{ key['KeyFormat'] }}</td>
-                                            <td width="25%">{{ key['KeyFormat'] }}</td>
+                                            <td width="25%" id="key_name">{{ bill['Id'] }}</td>
+                                            <td width="25%" id="key_value">{{ bill['Name'] }}</td>
+                                            <td width="25%">{{ bill['DailyBill'] }}</td>
+                                            <td width="25%">{{ bill['MonthlyBill'] }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>

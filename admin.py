@@ -1,14 +1,17 @@
 import os
 import sys
 import threading
-import schedule 
+import schedule
 import time
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
-from server.aws import get_instances_details, get_all_regions, get_untagged_instances, attach_tag_to_instances, get_instances_daily_cost, get_instances_monthly_cost
+from server.aws import (get_instances_details,
+                        get_all_regions, get_untagged_instances,
+                        attach_tag_to_instances, get_instances_daily_cost,
+                        get_instances_monthly_cost)
 from models.instance import Instance
 from models.ssh_keys import SSHKeys
 from models.user import User, BlacklistToken
@@ -22,6 +25,7 @@ region_name = os.getenv('REGION_NAME')
 user_obj = User()
 instance_obj = Instance()
 ssh_key_obj = SSHKeys()
+ce_obj = CostExplorer()
 
 
 @admin_bp.route('/instances', methods=['GET'])
@@ -152,30 +156,24 @@ def logout_admin():
 
 @admin_bp.route('/bill', methods=['GET'])
 def get_admin_bill():
-    update_thread = threading.Thread(target=fetch_instances_cost_from_aws, args=())
-    update_thread.start()
     return get_cost_from_db()
 
 
 def fetch_instances_cost_from_aws():
     monthly_cost = get_instances_monthly_cost(str(get_first_date()), str(get_today_date()))
     daily_cost = get_instances_daily_cost(str(get_yesterday_date()), str(get_today_date()))
-    print('Daily cost \n', daily_cost)
-    print('Monthly Cost\n', monthly_cost)
+    delete_terminated_instances_cost(monthly_cost)
     store_instances_cost_into_db(monthly_cost, daily_cost)
-    
+
 
 def store_instances_cost_into_db(monthly_cost, daily_cost):
-    ce_obj = CostExplorer()
     for m_cost in monthly_cost:
         ce_obj.add_monthly_bill(m_cost['CE_INS_KEY'], m_cost['CE_INS_COST'])
     for d_cost in daily_cost:
-        print(d_cost['CE_INS_KEY'], 'Key', d_cost['CE_INS_COST'], ' Cost')
         ce_obj.add_daily_bill(d_cost['CE_INS_KEY'], d_cost['CE_INS_COST'])
-        
+
 
 def get_cost_from_db():
-    ce_obj = CostExplorer()
     response = ce_obj.get_complete_bill_from_db()
     return render_template('admin-billing.html', all_instances_cost=response)
 
@@ -234,6 +232,19 @@ def delete_terminated_instances(aws_instances_list, region):
         instance_obj.delete_instance_from_db(ins_not_exists)
 
 
+def delete_terminated_instances_cost(aws_monthly_cost_list):
+    db_instances_cost_list = CostExplorer.query.all()
+    db_instances_ids = [instance.ce_instance_id for instance in db_instances_cost_list]
+    aws_instances_ids = [instance['CE_INS_KEY'] for instance in aws_monthly_cost_list]
+    print('DB instances: ', db_instances_cost_list, '\n\n')
+    print('aws instances: ', aws_instances_ids, '\n\n')
+    ins_not_exists = list(set(db_instances_ids) - set(aws_instances_ids))
+    ins_not_exists = [db_ins_id for db_ins_id in db_instances_ids if db_ins_id not in aws_instances_ids]
+    print(ins_not_exists)
+    if ins_not_exists:
+        ce_obj.delete_instance_cost_from_db(ins_not_exists)
+
+
 def get_user_id_from_db(username):
     userobj = db.session.query(User)
     for user in userobj:
@@ -245,7 +256,6 @@ def get_user_id_from_db(username):
 def tag_ec2_instance_of_region(region):
     instance_tags_list = []
     instance_tags_list = get_untagged_instances(region)
-    print(instance_tags_list, region, '\n\n\n')
     attach_tag_to_instances(instance_tags_list)
 
 
@@ -254,14 +264,14 @@ def tag_all_ec2_instances():
     for region in regions_list:
         tag_ec2_instance_of_region(region)
 
-        
-def get_today_date(): 
+
+def get_today_date():
     return datetime.utcnow().strftime('%Y-%m-%d')
 
 
 def get_first_date():
     return datetime.utcnow().replace(day=1).strftime('%Y-%m-%d')
 
-      
+
 def get_yesterday_date():
-    return (datetime.utcnow()-timedelta(days=1)).strftime('%Y-%m-%d')
+    return (datetime.utcnow() - timedelta(days=1)).strftime('%Y-%m-%d')

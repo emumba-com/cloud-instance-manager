@@ -133,8 +133,8 @@ class Instance(db.Model):
         userobj = db.session.query(User)
         for user in userobj:
             if user.name == username:
-                return user.id  
-        return None
+                return user.id
+            return None
 
     def delete_user(self, user_id):
         all_instances = Instance.query.all()
@@ -153,12 +153,10 @@ class Instance(db.Model):
         db.session.commit()
 
     def get_instance_name_by_id(self, ins_id):
-        print('instance_id \n', ins_id)
         row = Instance.query.filter_by(id=ins_id).first()
         if row:
             return row.name
         return "None"
 
-    
     def __repr__(self):
         return '<id {}>'.format(self.id)

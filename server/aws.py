@@ -60,7 +60,7 @@ def get_untagged_instances(region):
 def attach_tag_to_instances(ins_list):
     ec2 = boto3.resource('ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
     for ins in ins_list:
-        ec2.create_tags(Resources=[ins],Tags=[{'Key': 'instance_id', 'Value': ins}])
+        ec2.create_tags(Resources=[ins], Tags=[{'Key': 'instance_id', 'Value': ins}])
 
 
 def get_instances_monthly_cost(strt_date, end_date):
@@ -71,27 +71,19 @@ def get_instances_monthly_cost(strt_date, end_date):
             'End': end_date
         },
         Granularity='MONTHLY',
-        Filter={ "And": [
+        Filter={"And": [
             {'Dimensions': {
                 'Key': 'RECORD_TYPE',
-                'Values': ['Usage']
-                }
+                'Values': ['Usage']}
              },
             {'Dimensions': {
                 'Key': 'SERVICE',
-                'Values': ['Amazon Elastic Compute Cloud - Compute']
-                }
-             }
-            ]
-        },
+                'Values': ['Amazon Elastic Compute Cloud - Compute']}
+             }]},
         Metrics=['UnblendedCost'],
-        GroupBy=[
-            {
-                'Type': 'DIMENSION',
-                'Key': 'RESOURCE_ID'
-            }
-            ]
-        )
+        GroupBy=[{
+            'Type': 'DIMENSION',
+            'Key': 'RESOURCE_ID'}])
     # parsing response
     monthly_cost_list = []
     for single_ins_cost in response['ResultsByTime'][0]['Groups']:
@@ -101,8 +93,8 @@ def get_instances_monthly_cost(strt_date, end_date):
             "CE_INS_KEY": ins_key,
             "CE_INS_COST": round(float(ins_cost), 2)
         }
-        monthly_cost_list.append(cost_dic)   
-    return monthly_cost_list
+        monthly_cost_list.append(cost_dic)
+        return monthly_cost_list
 
 
 def get_instances_daily_cost(strt_date, end_date):
@@ -113,28 +105,19 @@ def get_instances_daily_cost(strt_date, end_date):
             'End': end_date
         },
         Granularity='DAILY',
-        Filter={ "And": [
+        Filter={"And": [
             {'Dimensions': {
                 'Key': 'RECORD_TYPE',
-                'Values': ['Usage']
-                }
+                'Values': ['Usage']}
              },
             {'Dimensions': {
                 'Key': 'SERVICE',
-                'Values': ['Amazon Elastic Compute Cloud - Compute']
-                }
-             }
-            ]
-        },
+                'Values': ['Amazon Elastic Compute Cloud - Compute']}
+             }]},
         Metrics=['UnblendedCost'],
-        GroupBy=[
-            {
-                'Type': 'DIMENSION',
-                'Key': 'RESOURCE_ID'
-            }
-            ]
-        )
-    print(response, 'daily cost', '\n\n\n')
+        GroupBy=[{
+            'Type': 'DIMENSION',
+            'Key': 'RESOURCE_ID'}])
     # parsing response
     daily_cost_list = []
     for single_ins_cost in response['ResultsByTime'][0]['Groups']:
@@ -142,7 +125,7 @@ def get_instances_daily_cost(strt_date, end_date):
         ins_cost = single_ins_cost['Metrics']['UnblendedCost']['Amount']
         cost_dic = {
             "CE_INS_KEY": ins_key,
-            "CE_INS_COST": ins_cost
+            "CE_INS_COST": round(float(ins_cost), 2)
         }
         daily_cost_list.append(cost_dic)
     return daily_cost_list
@@ -185,7 +168,7 @@ def stop_instance(instance_id, region_name):
 
 
 def get_all_regions():
-    ec2 = boto3.client(service_name='ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
+    ec2 = boto3.client(service_name='ec2', aw   s_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
     all_regions = ec2.describe_regions()
     regions_list = []
     for region in all_regions['Regions']:
