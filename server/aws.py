@@ -168,7 +168,7 @@ def stop_instance(instance_id, region_name):
 
 
 def get_all_regions():
-    ec2 = boto3.client(service_name='ec2', aw   s_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
+    ec2 = boto3.client(service_name='ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
     all_regions = ec2.describe_regions()
     regions_list = []
     for region in all_regions['Regions']:
