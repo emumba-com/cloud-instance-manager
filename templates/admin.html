@@ -168,9 +168,12 @@
                                 class="fa fa-users mr-3 notif"></span> Users</a>
                     </li>
                 </form>
-                <li>
-                    <a href="#"><span class="fa fa-key mr-3"></span> SSH keys</a>
-                </li>
+                <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH keys</a>
+                    </li>
+                </form>
+
                 <li>
                     <a href="#"><span class="fa fa-trophy mr-3"></span> Billing</a>
                 </li>
@@ -223,7 +226,7 @@
                                 </div>
 
                                 <div class="table-container">
-                                    <table class="table table-filter" id="instanceTable">
+                                    <table class="table table-filter table-bordered table-striped table-hover" id="instanceTable">
                                         <thead>
                                             <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
                                             <th>ID</th>
@@ -232,19 +235,20 @@
                                             <th>Public IP</th>
                                             <th>Private IP</th>
                                             <th>Region</th>
+                                            <th>SSH Keypair</th>
                                             <th>Assign Instance</th>
                                         </thead>
                                         <tbody>
                                             {% for instance in instances %}
                                             <tr>
                                                 <!-- <td><input type="checkbox" id="instance_id"/></td> -->
-                                                <td class="text-secondary" >{{ instance['Id'] }}</td>
+                                                <td class="text-secondary">{{ instance['Id'] }}</td>
                                                 <td class="text-primary">{{ instance['Name'] }}</td>
                                                 <td class="text-info">{{ instance['State'] }}</td>
                                                 <td>{{ instance['PublicIP'] }}</td>
                                                 <td>{{ instance['PrivateIP'] }}</td>
                                                 <td class="text-info">{{ instance['RegionName'] }}</td>
-                                                <!-- <td>{{ instance['Owner'] }}</td> -->
+                                                <td>{{ instance['KeyName'] }}</td>
                                                 <td>
                                                     <label data-placement="top" data-toggle="tooltip">
                                                         <select name="ins_btn" id="assign_ins_to">
@@ -268,7 +272,7 @@
 
 
                                 <div class="table-container">
-                                    <table class="table table-filter" id="instanceTable2">
+                                    <table class="table table-filter table-bordered table-striped table-hover" id="instanceTable2">
                                         <thead>
                                             <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
                                             <th>ID</th>
@@ -290,9 +294,7 @@
                                                 <td>{{ instance['PublicIP'] }}</td>
                                                 <td>{{ instance['PrivateIP'] }}</td>
                                                 <td class="text-info">{{ instance['RegionName'] }}</td>
-                                                <!-- Show owners in the table c -->
                                                 <td>{{ instance['Owner'] }}</td>
-                                                <!-- <td>{{ instance['Owner'] }}</td> -->
                                                 <td>
                                                     <label data-placement="top" data-toggle="tooltip">
                                                         <select name="ins_btn" id="un_assign_ins_to">
@@ -330,7 +332,7 @@
                             <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                 aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                     aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading1">Assign Instance</h4>
+                            <h4 class="modal-title custom_align" id="Heading1"> <strong> Assign Instance</strong></h4>
                         </div>
                         <div class="modal-body">
 
@@ -370,7 +372,7 @@
                             <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                 aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                     aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading1">Assign Instance</h4>
+                            <h4 class="modal-title custom_align" id="Heading1"><strong>Un Assign Instance </strong> </h4>
                         </div>
                         <div class="modal-body">
 
