@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..
 
 from server.aws import get_instances_details, get_all_regions
 from models.instance import Instance
+from models.ssh_keys import SSHKeys
 from models.user import User, BlacklistToken
 from settings import db
 
@@ -16,9 +17,7 @@ region_name = os.getenv('REGION_NAME')
 # creating user obj
 user_obj = User()
 instance_obj = Instance()
-
-# instances_list = []
-# users_list = []
+ssh_key_obj = SSHKeys()
 
 
 @admin_bp.route('/instances', methods=['GET'])
@@ -30,10 +29,28 @@ def get_admin():
     # return render_template('login.html')
 
 
+@admin_bp.route('/ssh-keys')
+def get_ssh_keys():
+    keys_list, all_keys_list = ssh_key_obj.get_ssh_keys_from_db()
+    return render_template('ssh-keys.html',
+                           keys_list=keys_list,
+                           all_keys_list=all_keys_list)
+
+
 @admin_bp.route('/users')
 def get_users():
     users_list = user_obj.get_all_users()
     return render_template('user-management.html', users=users_list)
+
+
+@admin_bp.route('/addkey', methods=['GET', 'POST'])
+def register_key():
+    if request.method == "POST":
+        key_name = request.form.get('keyname')
+        key_value = request.form.get('keyvalue')
+        key_format = request.form.get('keyformat')
+        ssh_key_obj.add_ssh_key_value(key_name, key_value, key_format)
+    return redirect(url_for('admin.get_ssh_keys'))
 
 
 @admin_bp.route('/adduser', methods=['GET', 'POST'])
@@ -70,10 +87,8 @@ def un_assign_instance_to_user():
     if request.method == "POST":
         user_id = request.form.get('un_user_id')
         insid = request.form.get('un_inst_id')
-        print("IDSS", user_id, insid)
         if is_valid_request():
             instance_obj.un_assign_instance_from_user(user_id=user_id, instance_id=insid)
-            print("method called")
             return redirect(url_for('admin.get_admin'))
         return redirect(url_for('auth.auth'))
     return redirect(url_for('admin.get_admin'))
@@ -103,6 +118,18 @@ def delete_user():
     return redirect(url_for('admin.get_users'))
 
 
+@admin_bp.route('/delete_key', methods=['GET', 'POST'])
+def delete_key():
+    if request.method == "POST":
+        key_id = request.form['key_id']
+        if is_valid_request():
+            # delete key method call
+            ssh_key_obj.delete_key(key_id)
+            return redirect(url_for('admin.get_ssh_keys'))
+        return redirect(url_for('auth.auth'))
+    return redirect(url_for('admin.get_ssh_keys'))
+
+
 @admin_bp.route('/logout', methods=['GET'])
 def logout_admin():
     # if is_valid_request():
@@ -129,19 +156,16 @@ def get_instances():
     instances_list = instance_obj.get_all_instances_from_db()
     # sending assigned user's data..
     assigned_instances = instance_obj.get_assigned_instances()
-    return render_template('admin.html', assigned_instances=assigned_instances, instances=instances_list)
+    return render_template('admin.html',
+                           assigned_instances=assigned_instances,
+                           instances=instances_list)
 
 
 def is_valid_request():
     user_token = request.cookies.get('auth_token')
-    print(user_token, " u token")
-    # get current user_id
     user_id = get_admin_id()
-    print(user_id, " admin ID")
     if not isinstance(user_id, str):
-        if User.validate_token(user_token, user_id):
-            return True
-        return False
+        return User.validate_token(user_token, user_id)
     return False
 
 
@@ -149,7 +173,7 @@ def make_aws_call():
     regions_list = get_all_regions()
     for region in regions_list:
         ins_list = get_instances_details(region)
-        # print(ins_list)
+        delete_terminated_instances(ins_list, region)
         store_instance_into_db(ins_list)
 
 
@@ -164,8 +188,14 @@ def store_instance_into_db(instances_list):
                                   instance['RegionName'])
 
 
-def get_instance_from_db():
-    return Instance().get_all_instances()
+def delete_terminated_instances(aws_instances_list, region):
+    db_instances_list = Instance.query.filter_by(region_name=region)
+    db_instances_ids = [instance.id for instance in db_instances_list]
+    aws_instances_ids = [instance['Id'] for instance in aws_instances_list]
+    ins_not_exists = list(set(db_instances_ids) - set(aws_instances_ids))
+    ins_not_exists = [db_ins_id for db_ins_id in db_instances_ids if db_ins_id not in aws_instances_ids]
+    if ins_not_exists:
+        instance_obj.delete_instance_from_db(ins_not_exists)
 
 
 def get_user_id_from_db(username):

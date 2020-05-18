@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Users</title>
+    <title>SSH keys</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -156,7 +156,8 @@
                 </form>
                 <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
                     <li>
-                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH keys</a>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH
+                            keys</a>
                     </li>
                 </form>
                 <li>
@@ -185,7 +186,7 @@
                 <section class="container">
                     <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
-                    <h1>Users Management</h1>
+                    <h1>SSH keys</h1>
                     <div class="">
                         <div class="panel panel-default">
                             <div class="panel-body">
@@ -193,32 +194,35 @@
                                     <div class="btn-group">
                                         <label data-placement="top" data-toggle="tooltip">
                                             <button class="btn btn-success btn-filter" data-title="Add User"
-                                                data-toggle="modal" data-target="#adduser">Add User
+                                                data-toggle="modal" data-target="#addkey">Add Key
                                             </button>
                                         </label>
 
                                         <label data-placement="top" data-toggle="tooltip">
-                                            <button type="button" id="delete_user" class="btn btn-warning btn-filter"
-                                                data-toggle="modal" name="delete_user" data-target="#deleteuser">Delete
-                                                User
+                                            <button type="button" id="delete_key" class="btn btn-warning btn-filter"
+                                                data-toggle="modal" name="delete_key" data-target="#deletekey">Delete
+                                                Key
                                             </button>
                                         </label>
 
                                     </div>
                                 </div>
                                 <div class="table-container">
-                                    <table class="table table-filter table-bordered table-striped table-hovers" id="usertable">
+                                    <table class="table table-filter table-bordered table-striped table-hover"
+                                        id="keystable">
                                         <thead>
                                             <th><input type="checkbox" id="checkall" /></th>
-                                            <th>ID</th>
-                                            <th>User Name</th>
+                                            <th width="15%">SSH Key Name</th>
+                                            <th width="75%">SSH Key Value</th>
+                                            <th width="15%">SSH Key Format</th>
                                         </thead>
                                         <tbody>
-                                            {% for user in users %}
+                                            {% for key in all_keys_list %}
                                             <tr>
-                                                <td><input type="checkbox" id="checkuser" /></td>
-                                                <td>{{ user['Id'] }}</td>
-                                                <td>{{ user['Name'] }}</td>
+                                                <td><input type="checkbox" id="checkkey" /></td>
+                                                <td width="15%" id="key_name">{{ key['KeyName'] }}</td>
+                                                <td width="75%" id="key_value"></td>
+                                                <td width="15%">{{ key['KeyFormat'] }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -231,7 +235,7 @@
             </div>
 
 
-            <div class="modal fade" id="deleteuser" tabindex="-1" role="dialog" aria-labelledby="edit"
+            <div class="modal fade" id="deletekey" tabindex="-1" role="dialog" aria-labelledby="edit"
                 aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -239,21 +243,20 @@
                             <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                 aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                     aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading"><strong>Delete User</strong> </h4>
+                            <h4 class="modal-title custom_align" id="Heading">Delete Key</h4>
                         </div>
                         <div class="modal-body">
 
                             <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are
                                 you sure
                                 you want
-                                to delete "<span id="del_user"></span>"?
+                                to delete "<span id="del_key"></span>"?
                             </div>
                         </div>
-                        <form method="post" action="{{ url_for('admin.delete_user') }}">
+                        <form method="post" action="{{ url_for('admin.delete_key') }}">
                             <div class="modal-footer ">
                                 <div>
-                                    <input id="user_id" name="user_id" type="text" hidden>
-                                    <input id="user_name" name="user_name" type="text" hidden>
+                                    <input id="key_id" name="key_id" type="text" hidden>
                                 </div>
                                 <button type="submit" class="btn btn-success" id="btn_yes"><span
                                         class="glyphicon glyphicon-ok-sign"></span>Yes
@@ -270,36 +273,75 @@
             </div>
 
 
-            <div class="modal fade" id="adduser" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+            <div class="modal fade" id="addkey" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                 <div class="modal-dialog">
-                    <form method="post" action="{{ url_for('admin.register_user') }}">
+                    <form method="post" id="myform" action="{{ url_for('admin.register_key') }}">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                     aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                         aria-hidden="true"></span></button>
-                                <h4 class="modal-title custom_align"> <strong> Register new user</strong></h4>
+                                <h4 class="modal-title custom_align"><strong>Adding Key</strong> </h4>
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <input class="form-control " type="text" id="username" name="username"
-                                        placeholder="Username">
+                                    <!-- <label data-placement="top" data-toggle="tooltip"> -->
+                                    <select
+                                        style="max-width: 100%; min-width: 100%; padding-top: 0.8%; padding-bottom: 0.8%"
+                                        name="drop_down" id="key_drop_down">
+                                        <option value='null' selected disabled hidden>
+                                            Key Name
+                                        </option>
+                                        {% for key in keys_list %}
+                                        <option id="{{ key['KeyName'] }}" value="{{ key['KeyName'] }}">
+                                            {{ key['KeyName'] }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    </label>
+                                    <!-- <input class="form-control " type="text" id="username" name="username"
+                                        placeholder="Username"> -->
                                 </div>
                                 <div class="form-group">
+                                    <textarea class="form-control" id="key_value_text_area" rows="10"
+                                        style="max-width: 100%; min-width: 100%; white-space: pre-line;"></textarea>
 
-                                    <input class="form-control " id="password" name="password" type="password"
-                                        placeholder="Password">
                                 </div>
-                                <div class="contact100-form-checkbox">
-                                    <input class="input-checkbox100" id="admin" type="checkbox" name="admin">
-                                    <label class="label-checkbox100">
-                                        Are you admin?
-                                    </label>
+                                <!-- Group of default radios - option 1 -->
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="radio_btn1" name="pem"
+                                        value=".pem" checked>
+                                    <label class="custom-control-label" for="defaultGroupExample1">.pem</label>
+                                </div>
+
+                                <!-- Group of default radios - option 2 -->
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="radio_btn2" name="pkk"
+                                        value=".pkk">
+                                    <label class="custom-control-label" for="defaultGroupExample2">.ppk</label>
                                 </div>
 
                             </div>
+
+                            <div>
+                                <input name="keyname" id="keyname" value="null" hidden>
+                                <input name="keyvalue" id="keyvalue" hidden>
+                                <input name="keyformat" id="keyformat" value=".pem" hidden>
+                            </div>
+
                             <div class="modal-footer ">
-                                <button type="submit" class="btn btn-warning btn-lg" style="width: 100%;"><span
+                                <button type="button" onclick="
+                                    var val = document.getElementById('key_value_text_area').value;
+                                    console.log(val);
+                                    var text = val.replace(/[\n\r]/g, '\\n');
+                                    console.log(text);
+                                    document.getElementById('keyvalue').value=text;
+                                    if (document.getElementById('keyname').value != 'null'){
+                                        document.getElementById('myform').submit(); 
+                                    }else{
+                                        alert('Please select key name from drop down!!!');
+                                    }
+                                    " class=" btn btn-warning btn-lg" style="width: 100%;"><span
                                         class="glyphicon glyphicon-ok-sign"></span>ADD
                                 </button>
                             </div>
@@ -327,14 +369,41 @@
             $("#wrapper").toggleClass("toggled");
         });
 
-
+        function doThings() {
+            var json = JSON.parse('{{all_keys_list | tojson }}');
+            $("#keystable #key_value").each(function () {
+                var id = $(this).closest("tr").find('td:eq(1)').text();
+                for (var i = 0; i < json.length; i++) {
+                    console.log(json[i].KeyName);
+                    if ((json[i].KeyName == id) && (json[i].KeyValue != null)) {
+                        $(this).html("Key exists !!!");
+                    } else if ((json[i].KeyName == id) && (json[i].KeyValue == null)) {
+                        $(this).html("Key does not exist !!!");
+                    }
+                }
+            });
+        }
 
         $(document).ready(function () {
+            doThings()
+            $("#key_drop_down").change(function () {
+                var keyname = $(this).find("option:selected").val();
+                document.getElementById("keyname").value = keyname;
+            });
+
+            $("#radio_btn1").click(function () {
+                var val = $('input[type="radio"]:checked').val();
+                $('#radio_btn2').prop('checked', false)
+                document.getElementById("keyformat").value = val;
+            });
+            $("#radio_btn2").click(function () {
+                $('#radio_btn1').prop('checked', false)
+                var val = $('input[type="radio"]:checked').val();
+                document.getElementById("keyformat").value = val;
+            });
 
             // document.getElementById("reg").value = "ap-northeast-1";
-            document.getElementById('delete_user').disabled = true;
-
-
+            document.getElementById('delete_key').disabled = true;
 
             $('.btn-filter').on('click', function () {
                 var $target = $(this).data('target');
@@ -346,53 +415,43 @@
                 }
 
             });
-
-
             // ********************************************************
             // buttons state on/off
             // *
             // ******************** Users *************************
-
-            $("#usertable #checkall").click(function () {
-                if ($("#usertable #checkall").is(':checked')) {
-                    $("#usertable input[type=checkbox]").each(function () {
+        
+            $("#keystable #checkall").click(function () {
+                if ($("#keystable #checkall").is(':checked')) {
+                    $("#keystable input[type=checkbox]").each(function () {
                         $(this).prop("checked", true);
 
                     });
                 } else {
-                    $("#usertable input[type=checkbox]").each(function () {
+                    $("#keystable input[type=checkbox]").each(function () {
                         $(this).prop("checked", false);
                     });
                 }
             });
 
-            // changing individual instance state
-            $("#usertable #checkuser").click(function () {
-                if ($("#usertable #checkuser").is(':checked')) {
-                    document.getElementById('delete_user').disabled = false;
+            // changing individual key state
+            $("#keystable #checkkey").click(function () {
+                if ($("#keystable #checkkey").is(':checked')) {
+                    document.getElementById('delete_key').disabled = false;
 
                     var id = $(this).closest("tr").find('td:eq(1)').text();
-                    var name = $(this).closest("tr").find('td:eq(2)').text();
                     console.log(id);
-                    console.log(name);
 
-                    var s = document.getElementById("user_id");
+                    var s = document.getElementById("key_id");
                     s.value = id;
-                    var s = document.getElementById("user_name");
-                    s.value = name;
-
-                    document.getElementById("del_user").textContent = name;
-
+                    document.getElementById("del_key").textContent = id;
                     if ($("#btn_cancel").click(function () {
                         console.log("no button clicked");
-                        console.log(name);
                         window.location.reload();
                     })) {
                     }
-                } else if ($("#usertable #checkuser").prop("checked") == false) {
-                    document.getElementById('delete_user').disabled = true;
-                    document.getElementById("user_id").value = "";
-                    document.getElementById("user_name").value = "";
+                } else if ($("#keystable #checkkey").prop("checked") == false) {
+                    document.getElementById('delete_key').disabled = true;
+                    document.getElementById("key_id").value = "";
                 }
             });
 
