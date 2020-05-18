@@ -2,11 +2,12 @@ import os
 import sys
 import threading
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-
+from pprint import pprint as pp
 from flask import Blueprint, render_template, redirect, request, url_for
 from server.aws import get_all_regions, start_instance, stop_instance
 from models.instance import Instance
 from models.ssh_keys import SSHKeys
+from models.cost_explorer import CostExplorer
 from models.user import User, BlacklistToken
 from settings import db
 from admin import get_instances_details, store_instance_into_db
@@ -16,6 +17,7 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 instance_obj = Instance()
 user_obj = User()
 ssh_key_obj = SSHKeys()
+ce_obj = CostExplorer()
 
 
 @user_bp.route('/')
@@ -77,6 +79,32 @@ def logout():
             except Exception as db_exception:
                 print(db_exception)
     return redirect(url_for('user.user'))
+
+
+@user_bp.route('/bill', methods=['GET'])
+def get_user_bill():
+    user_instances_cost = []
+    user_id = get_user_id()
+    instances_list = instance_obj.get_user_instances(user_id)
+    all_instances_cost = ce_obj.get_complete_bill_from_db()
+    pp(all_instances_cost)
+    for ins in instances_list:
+        cost_exist = True
+        for cost in all_instances_cost:
+            print(cost)
+            if ins['Id'] == cost['Id']:
+                user_instances_cost.append(cost)
+                cost_exist = False
+                break
+        if cost_exist:
+            ins_no_cost = {
+                "Id": ins['Id'],
+                "Name": ins['Name'],
+                "DailyBill": '0.0',
+                "MonthlyBill": '0.0'
+            }
+            user_instances_cost.append(ins_no_cost)
+    return render_template('user-billing.html', user_bill=user_instances_cost)
 
 
 def get_user_id():
