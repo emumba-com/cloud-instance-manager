@@ -160,30 +160,35 @@
                             keys</a>
                     </li>
                 </form>
-<<<<<<< HEAD
-                <li>
+                <<<<<<< HEAD <<<<<<< HEAD <li>
                     <a href="#"><span class="fa fa-trophy mr-3"></span> Billing</a>
-                </li>
-=======
-                <form method="get" action="{{ url_for('admin.get_admin_bill') }}">
-                    <li>
-                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-trophy mr-3"></span>
-                            Billing</a>
                     </li>
-                </form>
->>>>>>> master
-                <li>
-                    <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
-                </li>
-                <li>
-                    <a href="#"><span class="fa fa-support mr-3"></span> Support</a>
-                </li>
-                <form method="get" action="{{ url_for('admin.logout_admin') }}">
-                    <li>
-                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-sign-out mr-3"></span>
-                            Sign Out</a>
-                    </li>
-                </form>
+                    =======
+                    =======
+                    >>>>>>> dev
+                    <form method="get" action="{{ url_for('admin.get_admin_bill') }}">
+                        <li>
+                            <a href="#" onclick="$(this).closest('form').submit()"><span
+                                    class="fa fa-trophy mr-3"></span>
+                                Billing</a>
+                        </li>
+                    </form>
+                    <<<<<<< HEAD>>>>>>> master
+                        =======
+                        >>>>>>> dev
+                        <li>
+                            <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
+                        </li>
+                        <li>
+                            <a href="#"><span class="fa fa-support mr-3"></span> Support</a>
+                        </li>
+                        <form method="get" action="{{ url_for('admin.logout_admin') }}">
+                            <li>
+                                <a href="#" onclick="$(this).closest('form').submit()"><span
+                                        class="fa fa-sign-out mr-3"></span>
+                                    Sign Out</a>
+                            </li>
+                        </form>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -428,11 +433,6 @@
             // buttons state on/off
             // *
             // ******************** Users *************************
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> master
             $("#keystable #checkall").click(function () {
                 if ($("#keystable #checkall").is(':checked')) {
                     $("#keystable input[type=checkbox]").each(function () {
