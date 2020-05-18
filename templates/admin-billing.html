@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Admin Cost Explorer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" type="text/css" href="../static/3.3.0/css/custom.css">
+    <style>
+        /* Toggle Styles */
+
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled {
+            padding-left: 250px;
+        }
+
+        #sidebar-wrapper {
+            z-index: 1000;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            margin-left: -250px;
+            overflow-y: auto;
+            background: #000;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            position: absolute;
+            padding: 15px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+
+        /* Sidebar Styles */
+
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            width: 250px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            text-indent: 20px;
+            line-height: 40px;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: #999999;
+        }
+
+        .sidebar-nav li a:hover {
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-nav li a:active,
+        .sidebar-nav li a:focus {
+            text-decoration: none;
+        }
+
+        .sidebar-nav>.sidebar-brand {
+            height: 65px;
+            font-size: 18px;
+            line-height: 60px;
+        }
+
+        .sidebar-nav>.sidebar-brand a {
+            color: #999999;
+        }
+
+        .sidebar-nav>.sidebar-brand a:hover {
+            color: #fff;
+            background: none;
+        }
+
+        @media(min-width:768px) {
+            #wrapper {
+                padding-left: 250px;
+            }
+
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+
+            #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+
+            #page-content-wrapper {
+                padding: 20px;
+                position: relative;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                position: relative;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        AWS BOOTCLOUD
+                    </a>
+                </li>
+                <form method="get" action="{{ url_for('admin.get_admin') }}">
+                    <li class="active">
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
+                            Instances</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.get_users') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span
+                                class="fa fa-users mr-3 notif"></span> Users</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH
+                            keys</a>
+                    </li>
+                </form>
+
+                <form method="get" action="{{ url_for('admin.get_admin_bill') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-trophy mr-3"></span>
+                            Billing</a>
+                    </li>
+                </form>
+                <li>
+                    <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-support mr-3"></span> Support</a>
+                </li>
+                <form method="get" action="{{ url_for('admin.logout_admin') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-sign-out mr-3"></span>
+                            Sign Out</a>
+                    </li>
+                </form>
+
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="row">
+
+                <section class="container">
+                    <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+
+                    <h1>Cost Explorer</h1>
+                    <div class="">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <!-- <div class="pull-right">
+                                    <div class="btn-group">
+                                        <label data-placement="top" data-toggle="tooltip">
+                                            <button class="btn btn-success btn-filter"  data-title="Add User"
+                                                data-toggle="modal" data-target="#addkey">Add Key
+                                            </button>
+                                        </label>
+
+                                        <label data-placement="top" data-toggle="tooltip">
+                                            <button type="button" id="delete_key" class="btn btn-warning btn-filter"
+                                                data-toggle="modal" name="delete_key" data-target="#deletekey">Delete
+                                                Key
+                                            </button>
+                                        </label>
+
+                                    </div> -->
+                            </div>
+                            <div class="table-container">
+                                <table class="table table-filter table-bordered table-striped table-hover"
+                                    id="keystable">
+                                    <thead>
+                                        <th><input type="checkbox" id="checkall" /></th>
+                                        <th width="25%">Instance ID</th>
+                                        <th width="25%">Instance Name</th>
+                                        <th width="25%">Instance Today's Cost ($)</th>
+                                        <th width="25%">Instance Monthly Cost ($)</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for instance_cost in all_instances_cost %}
+                                        <tr>
+                                            <td><input type="checkbox" id="checkkey" /></td>
+                                            <td width="25%" id="key_name">{{ instance_cost['Id'] }}</td>
+                                            <td width="25%" id="key_value">{{ instance_cost['Name'] }}</td>
+                                            <td width="25%">{{ instance_cost['DailyBill'] }}</td>
+                                            <td width="25%">{{ instance_cost['MonthlyBill'] }} </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            </section>
+        </div>
+
+
+        <div class="modal fade" id="deletekey" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                            aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                aria-hidden="true"></span></button>
+                        <h4 class="modal-title custom_align" id="Heading">Delete Key</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are
+                            you sure
+                            you want
+                            to delete "<span id="del_key"></span>"?
+                        </div>
+                    </div>
+                    <form method="post" action="{{ url_for('admin.delete_key') }}">
+                        <div class="modal-footer ">
+                            <div>
+                                <input id="key_id" name="key_id" type="text" hidden>
+                            </div>
+                            <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                    class="glyphicon glyphicon-ok-sign"></span>Yes
+                            </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
+                                    class="glyphicon glyphicon-remove"></span> No
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+
+        <div class="modal fade" id="addkey" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="post" id="myform" action="{{ url_for('admin.register_key') }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                    aria-hidden="true"></span></button>
+                            <h4 class="modal-title custom_align"><strong>Adding Key</strong> </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <!-- <label data-placement="top" data-toggle="tooltip"> -->
+                                <select
+                                    style="max-width: 100%; min-width: 100%; padding-top: 0.8%; padding-bottom: 0.8%"
+                                    name="drop_down" id="key_drop_down">
+                                    <option value='null' selected disabled hidden>
+                                        Key Name
+                                    </option>
+                                    {% for key in keys_list %}
+                                    <option id="{{ key['KeyName'] }}" value="{{ key['KeyName'] }}">
+                                        {{ key['KeyName'] }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                </label>
+                                <!-- <input class="form-control " type="text" id="username" name="username"
+                                        placeholder="Username"> -->
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control" id="key_value_text_area" rows="10"
+                                    style="max-width: 100%; min-width: 100%; white-space: pre-line;"></textarea>
+
+                            </div>
+                            <!-- Group of default radios - option 1 -->
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" id="radio_btn1" name="pem" value=".pem"
+                                    checked>
+                                <label class="custom-control-label" for="defaultGroupExample1">.pem</label>
+                            </div>
+
+                            <!-- Group of default radios - option 2 -->
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" id="radio_btn2" name="pkk"
+                                    value=".pkk">
+                                <label class="custom-control-label" for="defaultGroupExample2">.ppk</label>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <input name="keyname" id="keyname" value="null" hidden>
+                            <input name="keyvalue" id="keyvalue" hidden>
+                            <input name="keyformat" id="keyformat" value=".pem" hidden>
+                        </div>
+
+                        <div class="modal-footer ">
+                            <button type="button" onclick="
+                                    var val = document.getElementById('key_value_text_area').value;
+                                    console.log(val);
+                                    var text = val.replace(/[\n\r]/g, '\\n');
+                                    console.log(text);
+                                    document.getElementById('keyvalue').value=text;
+                                    if (document.getElementById('keyname').value != 'null'){
+                                        document.getElementById('myform').submit(); 
+                                    }else{
+                                        alert('Please select key name from drop down!!!');
+                                    }
+                                    " class=" btn btn-warning btn-lg" style="width: 100%;"><span
+                                    class="glyphicon glyphicon-ok-sign"></span>ADD
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    </div>
+
+
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+    <script src="../static/jquery/jquery-1.11.1.min.js"></script>
+    <script src="../static/jquery/1.9.1/jquery.min.js"></script>
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+
+    <script>
+
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+        function doThings() {
+            $("#keystable #key_value").each(function () {
+                var id = $(this).closest("tr").find('td:eq(1)').text();
+                for (var i = 0; i < json.length; i++) {
+                    console.log(json[i].KeyName);
+                    if ((json[i].KeyName == id) && (json[i].KeyValue != null)) {
+                        $(this).html("Key exists !!!");
+                    } else if ((json[i].KeyName == id) && (json[i].KeyValue == null)) {
+                        $(this).html("Key does not exist !!!");
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // doThings()
+            $("#key_drop_down").change(function () {
+                var keyname = $(this).find("option:selected").val();
+                document.getElementById("keyname").value = keyname;
+            });
+
+            $("#radio_btn1").click(function () {
+                var val = $('input[type="radio"]:checked').val();
+                $('#radio_btn2').prop('checked', false)
+                document.getElementById("keyformat").value = val;
+            });
+            $("#radio_btn2").click(function () {
+                $('#radio_btn1').prop('checked', false)
+                var val = $('input[type="radio"]:checked').val();
+                document.getElementById("keyformat").value = val;
+            });
+
+            // document.getElementById("reg").value = "ap-northeast-1";
+            document.getElementById('delete_key').disabled = true;
+
+            $('.btn-filter').on('click', function () {
+                var $target = $(this).data('target');
+                if ($target != 'all') {
+                    $('.table tr').css('display', 'none');
+                    $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+                } else {
+                    $('.table tr').css('display', 'none').fadeIn('slow');
+                }
+
+            });
+            // ********************************************************
+            // buttons state on/off
+            // *
+            // ******************** Users *************************
+
+            $("#keystable #checkall").click(function () {
+                if ($("#keystable #checkall").is(':checked')) {
+                    $("#keystable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", true);
+
+                    });
+                } else {
+                    $("#keystable input[type=checkbox]").each(function () {
+                        $(this).prop("checked", false);
+                    });
+                }
+            });
+
+            // changing individual key state
+            $("#keystable #checkkey").click(function () {
+                if ($("#keystable #checkkey").is(':checked')) {
+                    document.getElementById('delete_key').disabled = false;
+
+                    var id = $(this).closest("tr").find('td:eq(1)').text();
+                    console.log(id);
+
+                    var s = document.getElementById("key_id");
+                    s.value = id;
+                    document.getElementById("del_key").textContent = id;
+                    if ($("#btn_cancel").click(function () {
+                        console.log("no button clicked");
+                        window.location.reload();
+                    })) {
+                    }
+                } else if ($("#keystable #checkkey").prop("checked") == false) {
+                    document.getElementById('delete_key').disabled = true;
+                    document.getElementById("key_id").value = "";
+                }
+            });
+
+        });
+
+
+    </script>
+
+</body>
+
+</html>
