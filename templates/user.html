@@ -5,6 +5,7 @@
     <title>User</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
     <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <style>
         .btn-default.btn-on.active {
@@ -212,14 +213,12 @@
                             </button>
                         </div>
                     </form>
-                    <strong>
-                        <h3>User Instances</h3>
-                    </strong>
+                    <h3 class="font-weight-bold"> <strong>User Instances</strong></h3>
 
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="table-container">
-                                <table class="table table-filter" id="mytable">
+                                <table class="table table-filter table-bordered table-striped table-hover" id="mytable">
 
                                     <thead>
                                         <th>ID</th>
@@ -228,6 +227,7 @@
                                         <th>Private IP</th>
                                         <th>State</th>
                                         <th>Region</th>
+                                        <th>SSH Keypair</th>
                                         <th>ON/OFF</th>
                                     </thead>
                                     <tbody>
@@ -240,6 +240,12 @@
                                             <td>{{ instance['PrivateIP'] }}</td>
                                             <td class="text-info" id="state">{{ instance['State'] }}</td>
                                             <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
+                                            <td id="{{ instance['KeyName'] }}"><span> {{ instance['KeyName'] }} </span>
+                                                <button type="button" id="download_btn"
+                                                    value="{{ instance['KeyName'] }}" class="btn btn-light btn-xs"><span
+                                                        class="fa fa-download"></span></button>
+
+                                            </td>
                                             <td>
                                                 <label data-placement="top" data-toggle="tooltip" class="switch">
                                                     <input class="round" type="checkbox" data-toggle="modal"
@@ -298,6 +304,41 @@
                                 <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_cancel"><span
                                         class="glyphicon glyphicon-remove"></span> No
                                 </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+
+
+            <div class="modal fade" id="ssh_key" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                    aria-hidden="true"></span></button>
+                            <strong>
+                                <h4 class="modal-title custom_align" id="Heading"><strong>Select SSH Key format</strong>
+                                </h4>
+                            </strong>
+                        </div>
+                        <div class="modal-body">
+
+                        </div>
+                        <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                            <div class="modal-footer ">
+                                <div hidden>
+                                    <input id="instance_id" name="instance_id" type="text">
+                                    <input id="instance_state" name="instance_state" type="text">
+                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                </div>
+
+                                <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                        class="fa fa-download"></span> Download
+                                </button>
 
                             </div>
                         </form>
@@ -306,14 +347,10 @@
                 </div>
                 <!-- /.modal-dialog -->
             </div>
+
         </div>
 
     </div>
-
-
-
-
-
 
 
     <script src="../static/3.3.0/js/bootstrap.min.js"></script>
@@ -325,8 +362,81 @@
 
     <script>
 
+        function download(file, text) {
+            //creating an invisible element 
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,'
+                + encodeURIComponent(text));
+            element.setAttribute('download', file);
+
+            //the above code is equivalent to 
+            // <a href="path of file" download="file name"> 
+
+            document.body.appendChild(element);
+
+            //onClick property 
+            element.click();
+
+            document.body.removeChild(element);
+        }
+        // Start file download. 
+        function get_ins_key() {
+            var json = JSON.parse('{{ all_keys_list | tojson }}');
+
+            for (var i = 0; i < json.length; i++) {
+                if (json[i].KeyName == ins_key) {
+                    var text = json[i].KeyValue + "Hello this is my file";
+                    var filename = json[i].KeyName + json[i].KeyFormat;
+                }
+            }
+        }
+
+        function doThings() {
+            var json = JSON.parse('{{ all_keys_list | tojson }}');
+            console.log(json);
+            if (json.length == 0) {
+                $("#mytable #download_btn").each(function () {
+                    $(this).hide();
+                });
+            } else {
+                $("#mytable #download_btn").each(function () {
+                    var btn_key = (this).value;
+                    for (var i = 0; i < json.length; i++) {
+                        // console.log(json[i].KeyName);
+                        if ((json[i].KeyName == btn_key) && (json[i].KeyValue != null)) {
+                            console.log('condition met');
+                            console.log(btn_key, 'btn.key');
+                            console.log(json[i].KeyValue);
+                            $(this).show();
+                            break;
+                        } else {
+                            $(this).hide();
+                        }
+                    }
+                });
+            }
+
+
+        }
+
         $(document).ready(function () {
 
+            doThings();
+
+            $("#mytable #download_btn").click(function () {
+                var get_key = (this).value;
+                var json = JSON.parse('{{all_keys_list | tojson }}');
+                for (var i = 0; i < json.length; i++) {
+                    if (json[i].KeyName == get_key) {
+                        var text = json[i].KeyValue;
+                        var filename = json[i].KeyName + json[i].KeyFormat;
+                        text = text.replace("//\n", "/\\n");
+                        download(filename, text);
+                        break;
+                    }
+                }
+
+            });
 
             $("#mytable #checkall").click(function () {
                 if ($("#mytable #checkall").is(':checked')) {
@@ -373,11 +483,11 @@
             // set checkboxes correct check state
             $('#mytable tr').each(function () {
                 var state_value = $(this).find(".text-info").html();
-                if (state_value === 'stopped') {
+                if (state_value === 'stopped' || state_value === 'stopping') {
                     console.log($(this).find(".text-primary").html());
                     console.log(state_value);
                     $(this).find(".round").prop("checked", false);
-                } else {
+                } else if(state_value === 'running' || state_value === 'pending') {
                     $(this).find(".round").prop("checked", true);
                 }
             });

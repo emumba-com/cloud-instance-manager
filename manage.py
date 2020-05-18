@@ -3,6 +3,7 @@ from flask_script import Manager
 from settings import app, db
 import models.user
 import models.instance
+import models.ssh_keys
 
 migrate = Migrate(app, db)
 manager = Manager(app)

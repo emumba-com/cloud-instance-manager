@@ -13,6 +13,8 @@ disable=
     R0903, # too few public methods
     R0201, # no self use, Method could be a function
     W0611, # Unused import
+    E0611, # No-name-in-module
+    
 
 [BASIC]
 const-rgx=.*
