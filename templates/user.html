@@ -363,50 +363,48 @@
                     </div>
                     <!-- /.modal-dialog -->
                 </div>
-
-
-                <div class="modal fade" id="ssh_key" tabindex="-1" role="dialog" aria-labelledby="edit"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-sm">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
-                                    aria-hidden="true"><span class="glyphicon glyphicon-remove"
-                                        aria-hidden="true"></span></button>
-                                <strong>
-                                    <h4 class="modal-title custom_align" id="Heading"><strong>Select SSH Key
-                                            format</strong>
-                                    </h4>
-                                </strong>
-                            </div>
-                            <div class="modal-body">
-
-                            </div>
-                            <form method="post" action="{{ url_for('user.change_ins_state')}}">
-                                <div class="modal-footer ">
-                                    <div hidden>
-                                        <input id="instance_id" name="instance_id" type="text">
-                                        <input id="instance_state" name="instance_state" type="text">
-                                        <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
-                                    </div>
-
-                                    <button type="submit" class="btn btn-success" id="btn_yes"><span
-                                            class="fa fa-download"></span> Download
-                                    </button>
-
-                                </div>
-                            </form>
-                        </div>
-                        <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
-
+                <!-- /.modal-dialog -->
             </div>
+
+
+            <div class="modal fade" id="ssh_key" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                    aria-hidden="true"></span></button>
+                            <strong>
+                                <h4 class="modal-title custom_align" id="Heading"><strong>Select SSH Key format</strong>
+                                </h4>
+                            </strong>
+                        </div>
+                        <div class="modal-body">
+
+                        </div>
+                        <form method="post" action="{{ url_for('user.change_ins_state')}}">
+                            <div class="modal-footer ">
+                                <div hidden>
+                                    <input id="instance_id" name="instance_id" type="text">
+                                    <input id="instance_state" name="instance_state" type="text">
+                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                </div>
+
+                                <button type="submit" class="btn btn-success" id="btn_yes"><span
+                                        class="fa fa-download"></span> Download
+                                </button>
+
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+
         </div>
+
     </div>
-
-
 
 
     <script src="../static/3.3.0/js/bootstrap.min.js"></script>
