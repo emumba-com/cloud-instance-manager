@@ -168,12 +168,20 @@
                                 class="fa fa-users mr-3 notif"></span> Users</a>
                     </li>
                 </form>
-                <li>
-                    <a href="#"><span class="fa fa-key mr-3"></span> SSH keys</a>
-                </li>
-                <li>
-                    <a href="#"><span class="fa fa-trophy mr-3"></span> Billing</a>
-                </li>
+                <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH
+                            keys</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.get_admin_bill') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-trophy mr-3"></span>
+                            Billing
+                        </a>
+                    </li>
+                </form>
+
                 <li>
                     <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
                 </li>
@@ -195,131 +203,156 @@
         <div id="page-content-wrapper">
             <div class="row">
 
-                <form method="get" action="{{url_for ('admin.get_admin')}}">
+                <section class="container">
 
-                    <section class="container">
+                    <form method="get" action="{{url_for ('admin.get_admin')}}">
+
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
                         <h1>Instance Management</h1>
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="pull-right">
-                                    <div class="btn-group">
 
-                                        <!-- hidden form-->
-                                        <div hidden>
-                                            <input id="instance" name="instance" type="text">
+                        <div>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="pull-right">
+                                        <div class="btn-group">
+
+                                            <!-- hidden form-->
+                                            <div hidden>
+                                                <input id="instance" name="instance" type="text">
+                                            </div>
+
+                                            <button type="submit" name="ins_btn" id="all_ins" value="all_ins"
+                                                class="btn btn-success btn-filter">All
+                                                Instances
+                                            </button>
+
+                                            <button type="button" onclick="change_table()" name="ins_btn"
+                                                id="assigned_ins" value="assigned_ins"
+                                                class="btn btn-warning btn-filter">Assigned Instance
+                                            </button>
                                         </div>
-
-                                        <button type="submit" name="ins_btn" id="all_ins" value="all_ins"
-                                            class="btn btn-success btn-filter">All
-                                            Instances
-                                        </button>
-
-                                        <button type="button" onclick="change_table()" name="ins_btn" id="assigned_ins"
-                                            value="assigned_ins" class="btn btn-warning btn-filter">Assigned Instance
-                                        </button>
                                     </div>
+
+                                    <div class="table-container">
+                                        <table class="table table-filter table-bordered table-striped table-hover"
+                                            id="instanceTable">
+                                            <thead>
+                                                <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>State</th>
+                                                <th>Public IP</th>
+                                                <th>Private IP</th>
+                                                <th>Region</th>
+                                                <th>SSH Keypair</th>
+                                                <th>Assign Instance</th>
+                                            </thead>
+                                            <tbody>
+                                                {% for instance in instances %}
+                                                <tr>
+                                                    <!-- <td><input type="checkbox" id="instance_id"/></td> -->
+                                                    <td class="text-secondary">{{ instance['Id'] }}</td>
+                                                    <td class="text-primary">{{ instance['Name'] }}</td>
+                                                    <td class="text-info">{{ instance['State'] }}</td>
+                                                    <td>{{ instance['PublicIP'] }}</td>
+                                                    <td>{{ instance['PrivateIP'] }}</td>
+                                                    <td class="text-info">{{ instance['RegionName'] }}</td>
+                                                    <td>{{ instance['KeyName'] }}</td>
+                                                    <td>
+                                                        <label data-placement="top" data-toggle="tooltip">
+                                                            <select name="ins_btn" id="assign_ins_to">
+                                                                <option value=NULL selected disabled hidden>
+                                                                    Assign
+                                                                </option>
+                                                                {% for user in instance['Users'] %}
+                                                                <option id="{{ user['Id'] }}"
+                                                                    value="{{ user['Name'] }}">
+                                                                    {{ user['Name'] }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+
+                                    <div class="table-container">
+                                        <table class="table table-filter table-bordered table-striped table-hover"
+                                            id="instanceTable2">
+                                            <thead>
+                                                <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>State</th>
+                                                <th>Public IP</th>
+                                                <th>Private IP</th>
+                                                <th>Region</th>
+                                                <th>Owner</th>
+                                                <th>Un-Assign Instance</th>
+                                            </thead>
+                                            <tbody>
+                                                {% for instance in assigned_instances %}
+                                                <tr>
+                                                    <!-- <td><input type="checkbox" id="instance_id"/></td> -->
+                                                    <td class="text-secondary">{{ instance['Id'] }}</td>
+                                                    <td class="text-primary">{{ instance['Name'] }}</td>
+                                                    <td class="text-info">{{ instance['State'] }}</td>
+                                                    <td>{{ instance['PublicIP'] }}</td>
+                                                    <td>{{ instance['PrivateIP'] }}</td>
+                                                    <td class="text-info">{{ instance['RegionName'] }}</td>
+                                                    <td>
+                                                        {% set owners = instance['Owner'] %}
+                                                        {% set len = instance['Owner']|length %}
+                                                        {% set i = namespace(value=1) %}
+                                                        {% for owner in owners %}
+                                                            {% if i.value < len %}
+                                                                {{ owner }} ,
+                                                                {% set i.value = i.value + 1 %}
+                                                            {% else %}
+                                                                {{ owner }}
+                                                                {% set i.value = i.value + 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>
+                                                        <label data-placement="top" data-toggle="tooltip">
+                                                            <select name="ins_btn" id="un_assign_ins_to">
+                                                                <option value=NULL selected disabled hidden>Un
+                                                                    Assign
+                                                                </option>
+                                                                {% for user in instance['Owner'] %}
+                                                                <option id="{{ user }}" value="{{ user }}">
+                                                                    {{ user }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
                                 </div>
-
-                                <div class="table-container">
-                                    <table class="table table-filter" id="instanceTable">
-                                        <thead>
-                                            <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>State</th>
-                                            <th>Public IP</th>
-                                            <th>Private IP</th>
-                                            <th>Region</th>
-                                            <th>Assign Instance</th>
-                                        </thead>
-                                        <tbody>
-                                            {% for instance in instances %}
-                                            <tr>
-                                                <!-- <td><input type="checkbox" id="instance_id"/></td> -->
-                                                <td class="text-secondary" >{{ instance['Id'] }}</td>
-                                                <td class="text-primary">{{ instance['Name'] }}</td>
-                                                <td class="text-info">{{ instance['State'] }}</td>
-                                                <td>{{ instance['PublicIP'] }}</td>
-                                                <td>{{ instance['PrivateIP'] }}</td>
-                                                <td class="text-info">{{ instance['RegionName'] }}</td>
-                                                <!-- <td>{{ instance['Owner'] }}</td> -->
-                                                <td>
-                                                    <label data-placement="top" data-toggle="tooltip">
-                                                        <select name="ins_btn" id="assign_ins_to">
-                                                            <option value=NULL selected disabled hidden>
-                                                                Assign
-                                                            </option>
-                                                            {% for user in instance['Users'] %}
-                                                            <option id="{{ user['Id'] }}" value="{{ user['Name'] }}">
-                                                                {{ user['Name'] }}
-                                                            </option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </label>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-
-
-                                <div class="table-container">
-                                    <table class="table table-filter" id="instanceTable2">
-                                        <thead>
-                                            <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>State</th>
-                                            <th>Public IP</th>
-                                            <th>Private IP</th>
-                                            <th>Region</th>
-                                            <th>Owner</th>
-                                            <th>Un-Assign Instance</th>
-                                        </thead>
-                                        <tbody>
-                                            {% for instance in assigned_instances %}
-                                            <tr>
-                                                <!-- <td><input type="checkbox" id="instance_id"/></td> -->
-                                                <td class="text-secondary">{{ instance['Id'] }}</td>
-                                                <td class="text-primary">{{ instance['Name'] }}</td>
-                                                <td class="text-info">{{ instance['State'] }}</td>
-                                                <td>{{ instance['PublicIP'] }}</td>
-                                                <td>{{ instance['PrivateIP'] }}</td>
-                                                <td class="text-info">{{ instance['RegionName'] }}</td>
-                                                <!-- Show owners in the table c -->
-                                                <td>{{ instance['Owner'] }}</td>
-                                                <!-- <td>{{ instance['Owner'] }}</td> -->
-                                                <td>
-                                                    <label data-placement="top" data-toggle="tooltip">
-                                                        <select name="ins_btn" id="un_assign_ins_to">
-                                                            <option value=NULL selected disabled hidden>Un
-                                                                Assign
-                                                            </option>
-                                                            {% for user in instance['Owner'] %}
-                                                            <option id="{{ user }}" value="{{ user }}">
-                                                                {{ user }}
-                                                            </option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </label>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-
-                                </div>
-
                             </div>
-                        </div>
-            </div>
-            </section>
 
-            </form>
+                        </div>
+
+
+                    </form>
+                </section>
+            </div>
+
+
+
 
             <!--# assign instances-->
             <div class="modal fade" id="assign_to" tabindex="-1" role="dialog" aria-labelledby="edit"
@@ -330,7 +363,7 @@
                             <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                 aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                     aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading1">Assign Instance</h4>
+                            <h4 class="modal-title custom_align" id="Heading1"> <strong> Assign Instance</strong></h4>
                         </div>
                         <div class="modal-body">
 
@@ -370,7 +403,8 @@
                             <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                 aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                     aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading1">Assign Instance</h4>
+                            <h4 class="modal-title custom_align" id="Heading1"><strong>Un Assign Instance </strong>
+                            </h4>
                         </div>
                         <div class="modal-body">
 
@@ -405,8 +439,6 @@
         <!-- /#wrapper -->
         <!-- Menu Toggle Script -->
     </div>
-    </div>
-
 
 
     <script src="../static/3.3.0/js/bootstrap.min.js"></script>

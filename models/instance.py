@@ -29,16 +29,14 @@ class Instance(db.Model):
         self.key_name = key_name
         self.region_name = region_name
         row = Instance.query.filter_by(id=instance_id).first()
-        if row:
-            db.session.merge(self)
-            db.session.commit()
-        else:
-            db.session.add(self)
-            db.session.commit()
+        row = db.session.merge(self)
+        db.session.add(row)
+        db.session.commit()
 
     def get_all_instances_from_db(self):
         instances_list = []
         user_obj = User()
+
         all_instance = db.session.query(Instance)
         users_list = user_obj.get_all_users()
 
@@ -52,7 +50,6 @@ class Instance(db.Model):
             else:
                 for user in users_list:
                     users.append(user)
-
             instance_dict = {
                 "Id": instance.id,
                 "Name": instance.name,
@@ -137,7 +134,7 @@ class Instance(db.Model):
         for user in userobj:
             if user.name == username:
                 return user.id
-        return None
+            return None
 
     def delete_user(self, user_id):
         all_instances = Instance.query.all()
@@ -149,6 +146,17 @@ class Instance(db.Model):
                     db.session.commit()
         db.session.query(User).filter(User.id == user_id).delete()
         db.session.commit()
+
+    def delete_instance_from_db(self, ins_list):
+        for row in ins_list:
+            db.session.query(Instance).filter(Instance.id == row).delete()
+        db.session.commit()
+
+    def get_instance_name_by_id(self, ins_id):
+        row = Instance.query.filter_by(id=ins_id).first()
+        if row:
+            return row.name
+        return "None"
 
     def __repr__(self):
         return '<id {}>'.format(self.id)

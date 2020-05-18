@@ -1,6 +1,7 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
+from pprint import pprint
 
 # Loading secret keys set in .env
 access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
@@ -16,13 +17,17 @@ def get_instances_details(region_name):
     for instance_type in range(len(ec2_instances['Reservations'])):
         for instance in range(len(ec2_instances['Reservations'][instance_type]['Instances'])):
             instance_id = ec2_instances['Reservations'][instance_type]['Instances'][instance]['InstanceId']
-            private_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PrivateIpAddress']
             state = ec2_instances['Reservations'][instance_type]['Instances'][instance]['State']['Name']
-            if state == "running":
+            private_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PrivateIpAddress']
+            try:
                 public_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PublicIpAddress']
-            else:
+            except KeyError:
                 public_ip = "None"
-            name = ec2_instances['Reservations'][instance_type]['Instances'][instance]['Tags'][0]['Value']
+            tags = ec2_instances['Reservations'][instance_type]['Instances'][instance]['Tags']
+            name = None
+            for tag in tags:
+                if 'Name' in tag["Key"]:
+                    name = tag["Value"]
             key_name = ec2_instances['Reservations'][instance_type]['Instances'][instance]['KeyName']
 
             instance_dict = {
@@ -36,6 +41,94 @@ def get_instances_details(region_name):
             }
             instance_detail.append(instance_dict)
     return instance_detail
+
+
+def get_untagged_instances(region):
+    un_tagged_instances = []
+    ec2 = boto3.client('ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key,
+                       region_name=region)
+    ec2_instances = ec2.describe_instances()
+    for instance_type in range(len(ec2_instances['Reservations'])):
+        for instance in range(len(ec2_instances['Reservations'][instance_type]['Instances'])):
+            instance_id = ec2_instances['Reservations'][instance_type]['Instances'][instance]['InstanceId']
+            tags = ec2_instances['Reservations'][instance_type]['Instances'][instance]['Tags']
+            if not any(d.get('instance_id', None) == instance_id for d in tags):
+                un_tagged_instances.append(instance_id)
+    return un_tagged_instances
+
+
+def attach_tag_to_instances(ins_list):
+    ec2 = boto3.resource('ec2', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
+    for ins in ins_list:
+        ec2.create_tags(Resources=[ins], Tags=[{'Key': 'instance_id', 'Value': ins}])
+
+
+def get_instances_monthly_cost(strt_date, end_date):
+    ec2_ce = boto3.client('ce', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
+    response = ec2_ce.get_cost_and_usage_with_resources(
+        TimePeriod={
+            'Start': strt_date,
+            'End': end_date
+        },
+        Granularity='MONTHLY',
+        Filter={"And": [
+            {'Dimensions': {
+                'Key': 'RECORD_TYPE',
+                'Values': ['Usage']}
+             },
+            {'Dimensions': {
+                'Key': 'SERVICE',
+                'Values': ['Amazon Elastic Compute Cloud - Compute']}
+             }]},
+        Metrics=['UnblendedCost'],
+        GroupBy=[{
+            'Type': 'DIMENSION',
+            'Key': 'RESOURCE_ID'}])
+    # parsing response
+    monthly_cost_list = []
+    for single_ins_cost in response['ResultsByTime'][0]['Groups']:
+        ins_key = single_ins_cost['Keys'][0]
+        ins_cost = single_ins_cost['Metrics']['UnblendedCost']['Amount']
+        cost_dic = {
+            "CE_INS_KEY": ins_key,
+            "CE_INS_COST": round(float(ins_cost), 2)
+        }
+        monthly_cost_list.append(cost_dic)
+    return monthly_cost_list
+
+
+def get_instances_daily_cost(strt_date, end_date):
+    ec2_ce = boto3.client('ce', aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)
+    response = ec2_ce.get_cost_and_usage_with_resources(
+        TimePeriod={
+            'Start': strt_date,
+            'End': end_date
+        },
+        Granularity='DAILY',
+        Filter={"And": [
+            {'Dimensions': {
+                'Key': 'RECORD_TYPE',
+                'Values': ['Usage']}
+             },
+            {'Dimensions': {
+                'Key': 'SERVICE',
+                'Values': ['Amazon Elastic Compute Cloud - Compute']}
+             }]},
+        Metrics=['UnblendedCost'],
+        GroupBy=[{
+            'Type': 'DIMENSION',
+            'Key': 'RESOURCE_ID'}])
+    # parsing response
+    daily_cost_list = []
+    for single_ins_cost in response['ResultsByTime'][0]['Groups']:
+        ins_key = single_ins_cost['Keys'][0]
+        ins_cost = single_ins_cost['Metrics']['UnblendedCost']['Amount']
+        cost_dic = {
+            "CE_INS_KEY": ins_key,
+            "CE_INS_COST": round(float(ins_cost), 2)
+        }
+        daily_cost_list.append(cost_dic)
+    return daily_cost_list
 
 
 def start_instance(instance_id, region_name):
