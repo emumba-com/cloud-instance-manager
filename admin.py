@@ -265,7 +265,7 @@ def tag_all_ec2_instances():
 def get_today_date():
     return datetime.utcnow().strftime('%Y-%m-%d')
 
-    
+
 def get_first_date():
     return datetime.utcnow().replace(day=4).strftime('%Y-%m-%d')
 
