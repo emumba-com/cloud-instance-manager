@@ -100,8 +100,8 @@ def get_user_bill():
             ins_no_cost = {
                 "Id": ins['Id'],
                 "Name": ins['Name'],
-                "DailyBill": 'None',
-                "MonthlyBill": 'None'
+                "DailyBill": '0.0',
+                "MonthlyBill": '0.0'
             }
             user_instances_cost.append(ins_no_cost)
     return render_template('user-billing.html', user_bill=user_instances_cost)

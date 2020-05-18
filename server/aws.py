@@ -94,7 +94,7 @@ def get_instances_monthly_cost(strt_date, end_date):
             "CE_INS_COST": round(float(ins_cost), 2)
         }
         monthly_cost_list.append(cost_dic)
-        return monthly_cost_list
+    return monthly_cost_list
 
 
 def get_instances_daily_cost(strt_date, end_date):

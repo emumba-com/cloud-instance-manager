@@ -236,11 +236,8 @@ def delete_terminated_instances_cost(aws_monthly_cost_list):
     db_instances_cost_list = CostExplorer.query.all()
     db_instances_ids = [instance.ce_instance_id for instance in db_instances_cost_list]
     aws_instances_ids = [instance['CE_INS_KEY'] for instance in aws_monthly_cost_list]
-    print('DB instances: ', db_instances_cost_list, '\n\n')
-    print('aws instances: ', aws_instances_ids, '\n\n')
     ins_not_exists = list(set(db_instances_ids) - set(aws_instances_ids))
     ins_not_exists = [db_ins_id for db_ins_id in db_instances_ids if db_ins_id not in aws_instances_ids]
-    print(ins_not_exists)
     if ins_not_exists:
         ce_obj.delete_instance_cost_from_db(ins_not_exists)
 
@@ -268,9 +265,9 @@ def tag_all_ec2_instances():
 def get_today_date():
     return datetime.utcnow().strftime('%Y-%m-%d')
 
-
+    
 def get_first_date():
-    return datetime.utcnow().replace(day=1).strftime('%Y-%m-%d')
+    return datetime.utcnow().replace(day=4).strftime('%Y-%m-%d')
 
 
 def get_yesterday_date():

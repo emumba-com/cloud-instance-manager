@@ -306,7 +306,20 @@
                                                     <td>{{ instance['PublicIP'] }}</td>
                                                     <td>{{ instance['PrivateIP'] }}</td>
                                                     <td class="text-info">{{ instance['RegionName'] }}</td>
-                                                    <td>{{ instance['Owner'] }}</td>
+                                                    <td>
+                                                        {% set owners = instance['Owner'] %}
+                                                        {% set len = instance['Owner']|length %}
+                                                        {% set i = namespace(value=1) %}
+                                                        {% for owner in owners %}
+                                                            {% if i.value < len %}
+                                                                {{ owner }} ,
+                                                                {% set i.value = i.value + 1 %}
+                                                            {% else %}
+                                                                {{ owner }}
+                                                                {% set i.value = i.value + 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </td>
                                                     <td>
                                                         <label data-placement="top" data-toggle="tooltip">
                                                             <select name="ins_btn" id="un_assign_ins_to">
