@@ -311,13 +311,13 @@
                                                         {% set len = instance['Owner']|length %}
                                                         {% set i = namespace(value=1) %}
                                                         {% for owner in owners %}
-                                                            {% if i.value < len %}
-                                                                {{ owner }} ,
-                                                                {% set i.value = i.value + 1 %}
-                                                            {% else %}
-                                                                {{ owner }}
-                                                                {% set i.value = i.value + 1 %}
-                                                            {% endif %}
+                                                        {% if i.value < len %}
+                                                        {{ owner }} ,
+                                                        {% set i.value = i.value + 1 %}
+                                                        {% else %}
+                                                        {{ owner }}
+                                                        {% set i.value = i.value + 1 %}
+                                                        {% endif %}
                                                         {% endfor %}
                                                     </td>
                                                     <td>
