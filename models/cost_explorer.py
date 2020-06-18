@@ -5,52 +5,55 @@ import pprint
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 from models.instance import Instance
 from settings import db
+from sqlalchemy import func
+from datetime import datetime, timedelta
+from sqlalchemy.schema import PrimaryKeyConstraint
+
 
 ins_obj = Instance()
 
 
 class CostExplorer(db.Model):
     __tablename__ = 'cost_explorer'
-    __table_args__ = {'extend_existing': True}
 
-    ce_instance_id = db.Column(db.String(), primary_key=True)
+    ce_instance_id = db.Column(db.String())
+    ce_date = db.Column(db.String())
     ce_instance_name = db.Column(db.String())
-    ce_instance_monthly_bill = db.Column(db.Float())
+    ce_month = db.Column(db.String())
     ce_instance_daily_bill = db.Column(db.Float())
+    __table_args__ = (
+        PrimaryKeyConstraint('ce_instance_id', 'ce_date'),
+        {},
+    )
 
-    def add_monthly_bill(self, instance_id, monthly_bill):
+    def add_daily_bill(self, instance_id, current_month, today_date, daily_bill):
         self.ce_instance_id = instance_id
-        self.ce_instance_monthly_bill = monthly_bill
+        self.ce_month = current_month
+        self.ce_date = today_date
+        self.ce_instance_daily_bill = daily_bill
         instance_name = ins_obj.get_instance_name_by_id(instance_id)
         self.ce_instance_name = instance_name
-        row = CostExplorer.query.filter_by(ce_instance_id=instance_id).first()
         row = db.session.merge(self)
         db.session.add(row)
         db.session.commit()
 
-    def add_daily_bill(self, instance_id, daily_bill):
-        self.ce_instance_id = instance_id
-        self.ce_instance_daily_bill = daily_bill
-        instance_name = ins_obj.get_instance_name_by_id(instance_id)
-        self.ce_instance_name = instance_name
-        CostExplorer.query.filter_by(ce_instance_id=instance_id).update(
-            {CostExplorer.ce_instance_daily_bill: daily_bill})
-        db.session.commit()
-
     def get_complete_bill_from_db(self):
+        c_month = datetime.utcnow().month
+        c_date = (datetime.utcnow() - timedelta(days=1)).strftime('%Y-%m-%d')
         instances_bill_list = []
-        complete_bill_list = CostExplorer.query.all()
+        complete_bill_list = CostExplorer.query.filter_by(ce_month=str(c_month)).\
+            with_entities(CostExplorer.ce_instance_id, func.sum(CostExplorer.ce_instance_daily_bill)).\
+                group_by(CostExplorer.ce_instance_id).all()
         for row in complete_bill_list:
-            instance_name = ins_obj.get_instance_name_by_id(row.ce_instance_id)
-            if row.ce_instance_daily_bill is None:
-                row.ce_instance_daily_bill = 0.0
-            if row.ce_instance_monthly_bill is None:
-                row.ce_instance_monthly_bill = 0.0
+            instance_name = ins_obj.get_instance_name_by_id(row[0])
+            result = CostExplorer.query.filter_by(ce_instance_id=row[0]).filter_by(ce_date=str(c_date)).first()
+            if row[1] is None:
+                row[1] = 0.0
             bill_dict = {
-                "Id": row.ce_instance_id,
+                "Id": row[0],
                 "Name": instance_name,
-                "DailyBill": row.ce_instance_daily_bill,
-                "MonthlyBill": row.ce_instance_monthly_bill
+                "DailyBill": result.ce_instance_daily_bill,
+                "MonthlyBill": row[1]
             }
             instances_bill_list.append(bill_dict)
         return instances_bill_list
