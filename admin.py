@@ -1,7 +1,6 @@
 import os
 import sys
 import threading
-import schedule
 import time
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for
@@ -30,13 +29,9 @@ ce_obj = CostExplorer()
 
 @admin_bp.route('/instances', methods=['GET'])
 def get_admin():
-    # my_thread = threading.Thread(target=tag_all_ec2_instances, args=())
-    # my_thread.start()
-    # if is_valid_request():
     update_thread = threading.Thread(target=make_aws_call, args=())
     update_thread.start()
     return get_instances()
-    # return render_template('login.html')
 
 
 @admin_bp.route('/ssh-keys')
@@ -160,17 +155,14 @@ def get_admin_bill():
 
 
 def fetch_instances_cost_from_aws():
-    monthly_cost = get_instances_monthly_cost(str(get_first_date()), str(get_today_date()))
     daily_cost = get_instances_daily_cost(str(get_yesterday_date()), str(get_today_date()))
-    delete_terminated_instances_cost(monthly_cost)
-    store_instances_cost_into_db(monthly_cost, daily_cost)
+    store_instances_cost_into_db(daily_cost, str(get_today_date()))
 
 
-def store_instances_cost_into_db(monthly_cost, daily_cost):
-    for m_cost in monthly_cost:
-        ce_obj.add_monthly_bill(m_cost['CE_INS_KEY'], m_cost['CE_INS_COST'])
+def store_instances_cost_into_db(daily_cost, today_date):
+    month = datetime.utcnow().month
     for d_cost in daily_cost:
-        ce_obj.add_daily_bill(d_cost['CE_INS_KEY'], d_cost['CE_INS_COST'])
+        ce_obj.add_daily_bill(d_cost['CE_INS_KEY'], month, today_date, d_cost['CE_INS_COST'])
 
 
 def get_cost_from_db():
@@ -267,7 +259,7 @@ def get_today_date():
 
 
 def get_first_date():
-    return datetime.utcnow().replace(day=4).strftime('%Y-%m-%d')
+    return datetime.utcnow().replace(day=1).strftime('%Y-%m-%d')
 
 
 def get_yesterday_date():

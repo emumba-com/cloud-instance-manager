@@ -130,11 +130,11 @@ class Instance(db.Model):
         return None
 
     def get_user_id_from_db(self, username):
-        userobj = db.session.query(User)
+        userobj = User.query.all()
         for user in userobj:
             if user.name == username:
                 return user.id
-            return None
+        return None
 
     def delete_user(self, user_id):
         all_instances = Instance.query.all()
