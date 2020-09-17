@@ -4,7 +4,6 @@ services:
     container_name: webapp
     restart: always
     image: registry.gitlab.com/emumba/devops/aws-bootcloud
-    build: .
     ports:
      - 5000:5000
     env_file: .env
