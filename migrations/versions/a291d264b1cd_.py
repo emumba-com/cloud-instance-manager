@@ -27,7 +27,7 @@ def upgrade():
     )
     op.create_table('cost_explorer',
     sa.Column('ce_instance_id', sa.String(), nullable=False),
-    sa.Column('ce_date', sa.String(), nullable=False),
+    sa.Column('ce_date', sa.String(), nullable=True),
     sa.Column('ce_instance_name', sa.String(), nullable=True),
     sa.Column('ce_month', sa.String(), nullable=True),
     sa.Column('ce_instance_daily_bill', sa.Float(), nullable=True),
