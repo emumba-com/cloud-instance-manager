@@ -47,15 +47,12 @@ class CostExplorer(db.Model):
         for row in complete_bill_list:
             instance_name = ins_obj.get_instance_name_by_id(row[0])
             result = CostExplorer.query.filter_by(ce_instance_id=row[0]).filter_by(ce_date=str(c_date)).first()
-            daily_bill = 0.0
-            if result:
-                daily_bill = result.ce_instance_daily_bill
             if row[1] is None:
                 row[1] = 0.0
             bill_dict = {
                 "Id": row[0],
                 "Name": instance_name,
-                "DailyBill": daily_bill,
+                "DailyBill": result.ce_instance_daily_bill,
                 "MonthlyBill": row[1]
             }
             instances_bill_list.append(bill_dict)
