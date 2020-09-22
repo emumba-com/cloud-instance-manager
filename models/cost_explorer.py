@@ -17,7 +17,7 @@ class CostExplorer(db.Model):
     __tablename__ = 'cost_explorer'
 
     ce_instance_id = db.Column(db.String())
-    ce_date = db.Column(db.String())
+    ce_date = db.Column(db.String(), nullable=True)
     ce_instance_name = db.Column(db.String(), nullable=True)
     ce_month = db.Column(db.String())
     ce_instance_daily_bill = db.Column(db.Float())
