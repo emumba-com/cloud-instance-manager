@@ -1,7 +1,6 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-from pprint import pprint
 
 # Loading secret keys set in .env
 access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
@@ -18,16 +17,23 @@ def get_instances_details(region_name):
         for instance in range(len(ec2_instances['Reservations'][instance_type]['Instances'])):
             instance_id = ec2_instances['Reservations'][instance_type]['Instances'][instance]['InstanceId']
             state = ec2_instances['Reservations'][instance_type]['Instances'][instance]['State']['Name']
-            private_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PrivateIpAddress']
+            try:
+                private_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PrivateIpAddress']
+            except KeyError:
+                private_ip = "None"
             try:
                 public_ip = ec2_instances['Reservations'][instance_type]['Instances'][instance]['PublicIpAddress']
             except KeyError:
                 public_ip = "None"
-            tags = ec2_instances['Reservations'][instance_type]['Instances'][instance]['Tags']
-            name = None
-            for tag in tags:
-                if 'Name' in tag["Key"]:
-                    name = tag["Value"]
+            try:
+                tags = ec2_instances['Reservations'][instance_type]['Instances'][instance]['Tags']
+                name = None
+                for tag in tags:
+                    if 'Name' in tag["Key"]:
+                        name = tag["Value"]
+            except KeyError:
+                tags = "None"
+                name = "None"
             key_name = ec2_instances['Reservations'][instance_type]['Instances'][instance]['KeyName']
 
             instance_dict = {

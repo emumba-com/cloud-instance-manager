@@ -2,7 +2,6 @@ import os
 import sys
 import threading
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-from pprint import pprint as pp
 from flask import Blueprint, render_template, redirect, request, url_for
 from server.aws import get_all_regions, start_instance, stop_instance
 from models.instance import Instance
@@ -87,11 +86,9 @@ def get_user_bill():
     user_id = get_user_id()
     instances_list = instance_obj.get_user_instances(user_id)
     all_instances_cost = ce_obj.get_complete_bill_from_db()
-    pp(all_instances_cost)
     for ins in instances_list:
         cost_exist = True
         for cost in all_instances_cost:
-            print(cost)
             if ins['Id'] == cost['Id']:
                 user_instances_cost.append(cost)
                 cost_exist = False
