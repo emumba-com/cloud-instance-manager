@@ -1,6 +1,5 @@
 import os
 import sys
-import pprint
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 from models.instance import Instance
@@ -17,8 +16,8 @@ class CostExplorer(db.Model):
     __tablename__ = 'cost_explorer'
 
     ce_instance_id = db.Column(db.String())
-    ce_date = db.Column(db.String())
-    ce_instance_name = db.Column(db.String())
+    ce_date = db.Column(db.String(), nullable=True)
+    ce_instance_name = db.Column(db.String(), nullable=True)
     ce_month = db.Column(db.String())
     ce_instance_daily_bill = db.Column(db.Float())
     __table_args__ = (
@@ -47,11 +46,12 @@ class CostExplorer(db.Model):
         for row in complete_bill_list:
             instance_name = ins_obj.get_instance_name_by_id(row[0])
             result = CostExplorer.query.filter_by(ce_instance_id=row[0]).filter_by(ce_date=str(c_date)).first()
-            daily_bill = 0.0
-            if result:
-                daily_bill = result.ce_instance_daily_bill
             if row[1] is None:
                 row[1] = 0.0
+            if result is None:
+                daily_bill = 0.0
+            else:
+                daily_bill = result.ce_instance_daily_bill
             bill_dict = {
                 "Id": row[0],
                 "Name": instance_name,
