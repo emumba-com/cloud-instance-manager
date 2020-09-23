@@ -1,7 +1,6 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-from pprint import pprint
 
 # Loading secret keys set in .env
 access_key_id = os.getenv('AWS_ACCESS_KEY_ID')

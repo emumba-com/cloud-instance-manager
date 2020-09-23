@@ -1,6 +1,5 @@
 import os
 import sys
-import pprint
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 from models.instance import Instance
@@ -45,10 +44,8 @@ class CostExplorer(db.Model):
             with_entities(CostExplorer.ce_instance_id, func.sum(CostExplorer.ce_instance_daily_bill)).\
                 group_by(CostExplorer.ce_instance_id).all()
         for row in complete_bill_list:
-            print(row)
             instance_name = ins_obj.get_instance_name_by_id(row[0])
             result = CostExplorer.query.filter_by(ce_instance_id=row[0]).filter_by(ce_date=str(c_date)).first()
-            print(result)
             if row[1] is None:
                 row[1] = 0.0
             if result is None:
