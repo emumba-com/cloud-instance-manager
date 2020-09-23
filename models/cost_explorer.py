@@ -45,14 +45,20 @@ class CostExplorer(db.Model):
             with_entities(CostExplorer.ce_instance_id, func.sum(CostExplorer.ce_instance_daily_bill)).\
                 group_by(CostExplorer.ce_instance_id).all()
         for row in complete_bill_list:
+            print(row)
             instance_name = ins_obj.get_instance_name_by_id(row[0])
             result = CostExplorer.query.filter_by(ce_instance_id=row[0]).filter_by(ce_date=str(c_date)).first()
+            print(result)
             if row[1] is None:
                 row[1] = 0.0
+            if result is None:
+                daily_bill = 0.0
+            else:
+                daily_bill = result.ce_instance_daily_bill
             bill_dict = {
                 "Id": row[0],
                 "Name": instance_name,
-                "DailyBill": result.ce_instance_daily_bill,
+                "DailyBill": daily_bill,
                 "MonthlyBill": row[1]
             }
             instances_bill_list.append(bill_dict)
