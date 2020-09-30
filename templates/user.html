@@ -290,7 +290,7 @@
                                                 <td>{{ instance['PublicIP'] }}</td>
                                                 <td>{{ instance['PrivateIP'] }}</td>
                                                 <td class="text-info" id="state">{{ instance['State'] }}</td>
-                                                <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
+                                                <td class="text-info" id="{{ instance['RegionName'] }}">{{ instance['RegionName'] }}</td>
                                                 <td id="{{ instance['KeyName'] }}"><span> {{ instance['KeyName'] }}
                                                     </span>
                                                     <button type="button" id="download_btn"
@@ -347,7 +347,7 @@
                                     <div hidden>
                                         <input id="instance_id" name="instance_id" type="text">
                                         <input id="instance_state" name="instance_state" type="text">
-                                        <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                        <input id="region_name" name="region_name" type="text">
                                     </div>
 
                                     <button type="submit" class="btn btn-success" id="btn_yes"><span
@@ -387,7 +387,7 @@
                                 <div hidden>
                                     <input id="instance_id" name="instance_id" type="text">
                                     <input id="instance_state" name="instance_state" type="text">
-                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                    <input id="region_name" name="region_name" type="text">
                                 </div>
 
                                 <button type="submit" class="btn btn-success" id="btn_yes"><span
@@ -408,7 +408,7 @@
                 <div hidden>
                     <input id="instance_id" name="instance_id" type="text">
                     <input id="instance_state" name="instance_state" type="text">
-                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                    <input id="region_name" name="region_name" type="text">
                 </div>
 
             </div>
@@ -522,6 +522,7 @@
             $("#mytable #ins_checkbox").click(function () {
                 var state = $(this).closest("tr").find('td:eq(4)').text();
                 var id = $(this).closest("tr").find('td:eq(0)').text();
+                var region = $(this).closest("tr").find('td:eq(5)').text();
                 console.log(state);
                 console.log(id);
 
@@ -529,6 +530,8 @@
                 s.value = id;
                 var s = document.getElementById("instance_state");
                 s.value = state;
+                var s = document.getElementById("region_name");
+                s.value = region;
 
                 if ($("#btn_cancel").click(function () {
 
