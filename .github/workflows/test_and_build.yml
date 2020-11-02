@@ -59,8 +59,11 @@ jobs:
           tag: latest
           registry: ghcr.io
           githubOrg: emumba-com
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}  
+          username: imtiaz-emumba
+          password: ${{ secrets.CR_PAT }} 
+      - name: print variables
+        run: echo "actor ${{ github.actor }}"
+
       # - name: Build and push docker image to GCR
       #   run: |
       #     docker build -t ghcr.io/${{ github.repository }}:latest .
