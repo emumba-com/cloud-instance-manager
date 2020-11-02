@@ -47,32 +47,53 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
-      - name: print variables
-        run: |
-          echo "actor ${{ github.owner }}"
-          echo "actor ${{ github.repository }}"
-          echo "actor ${{ github.repository_owner }}"
-          
+      
       - name: Build and push docker image to GCR
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:latest .
-          docker push ghcr.io/${{ github.repository }}:latest
+          docker login registry.gitlab.com -u emumba1519 -p eMumba1519
+          docker build -t registry.gitlab.com/emumba/devops/aws-bootcloud:github .
+          docker push registry.gitlab.com/emumba/devops/aws-bootcloud:github
 
-      - name: Build and push docker image to GCR
-        uses: mr-smithers-excellent/docker-build-push@v4
-        with:
-          image: aws-bootcloud/aws-bootcloud
-          tag: latest
-          registry: ghcr.io
-          githubOrg: emumba-com
-          username: imtiaz-emumba
-          password: ${{ secrets.CR_PAT }} 
+      
+      
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      # - name: Build and Push to Dockerhub
+      #   uses: mr-smithers-excellent/docker-build-push@v4
+      #   with:
+      #     image: ${{ github.repository }}
+      #     tag: latest
+      #     registry: docker.io
+      #     username: ${{ secrets.DOCKERHUB_USER }}
+      #     password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.repository_owner }}
+      #     password: ${{ secrets.CR_PAT }}
+      # - name: print variables
+      #   run: |
+      #     echo "actor ${{ github.repository }}"
+          
+      # - name: Build and push docker image to GCR
+      #   run: |
+      #     docker build -t ghcr.io/${{ github.repository }}:latest .
+      #     docker push ghcr.io/${{ github.repository }}:latest
+
+      # - name: Build and push docker image to GCR
+      #   uses: mr-smithers-excellent/docker-build-push@v4
+      #   with:
+      #     image: aws-bootcloud/aws-bootcloud
+      #     tag: latest
+      #     registry: ghcr.io
+      #     githubOrg: emumba-com
+      #     username: imtiaz-emumba
+      #     password: ${{ secrets.CR_PAT }} 
       
 
       
