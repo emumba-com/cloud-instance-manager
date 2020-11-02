@@ -5,6 +5,7 @@ on:
       - dev
       - master
       - main
+      - github-cicd
 jobs:
   pyCodeStyle:
     runs-on: ubuntu-latest
@@ -52,6 +53,17 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
+      - name: print variables
+        run: |
+          echo "actor ${{ github.owner }}"
+          echo "actor ${{ github.repository }}"
+          echo "actor ${{ github.repository_owner }}"
+          
+      - name: Build and push docker image to GCR
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:latest .
+          docker push ghcr.io/${{ github.repository }}:latest
+
       - name: Build and push docker image to GCR
         uses: mr-smithers-excellent/docker-build-push@v4
         with:
@@ -61,10 +73,6 @@ jobs:
           githubOrg: emumba-com
           username: imtiaz-emumba
           password: ${{ secrets.CR_PAT }} 
-      - name: print variables
-        run: echo "actor ${{ github.actor }}"
+      
 
-      # - name: Build and push docker image to GCR
-      #   run: |
-      #     docker build -t ghcr.io/${{ github.repository }}:latest .
-      #     docker push ${{ github.repository }}:latest
+      
