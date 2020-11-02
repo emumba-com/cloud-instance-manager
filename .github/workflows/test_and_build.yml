@@ -50,9 +50,9 @@ jobs:
       
       - name: Build and push docker image to GCR
         run: | 
-          docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
-          docker build -t $CI_REGISTRY/emumba/devops/aws-bootcloud:github .
-          docker push $CI_REGISTRY/emumba/devops/aws-bootcloud:github
+          docker login ${{ secrets.CI_REGISTRY}} -u ${{ secrets.CI_REGISTRY_USER }} -p ${{ secrets.CI_REGISTRY_PASSWORD }}
+          docker build -t ${{ secrets.CI_REGISTRY }}/emumba/devops/aws-bootcloud:github .
+          docker push ${{ secrets.CI_REGISTRY }}/emumba/devops/aws-bootcloud:github
 
       
       # - name: Login to DockerHub
