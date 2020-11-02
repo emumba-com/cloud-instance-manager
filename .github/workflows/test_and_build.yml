@@ -7,9 +7,9 @@ on:
       - main
 jobs:
   pyCodeStyle:
+    runs-on: ubuntu-latest
     container:
       image: cytopia/pycodestyle:latest
-      entrypoint: [""]
     steps:
       - name: Checkout to branch
         uses: actions/checkout@v2
@@ -21,9 +21,9 @@ jobs:
 
   
   pyLint:
+    runs-on: ubuntu-latest
     container:
       image: cytopia/pylint:latest
-      entrypoint: [""]
     needs: ['pyCodeStyle']
     steps:
       - name: Checkout to branch
