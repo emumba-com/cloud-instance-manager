@@ -49,12 +49,11 @@ jobs:
           ref: ${{ github.ref }}
       
       - name: Build and push docker image to GCR
-        run: |
-          docker login registry.gitlab.com -u imtiaz1519 -p eMumba1519
-          docker build -t registry.gitlab.com/emumba/devops/aws-bootcloud:github .
-          docker push registry.gitlab.com/emumba/devops/aws-bootcloud:github
+        run: | 
+          docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+          docker build -t $CI_REGISTRY/emumba/devops/aws-bootcloud:github .
+          docker push $CI_REGISTRY/emumba/devops/aws-bootcloud:github
 
-      
       
       # - name: Login to DockerHub
       #   uses: docker/login-action@v1
