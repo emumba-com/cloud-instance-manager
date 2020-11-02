@@ -53,6 +53,14 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
       - name: Build and push docker image to GCR
-        run: |
-          docker build -t ${{ github.repository }}:latest .
-          docker push ${{ github.repository }}:latest
+        uses: mr-smithers-excellent/docker-build-push@v4
+        with:
+          image: aws-bootcloud/aws-bootcloud:latest
+          registry: ghcr.io
+          githubOrg: emumba-com
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}  
+      # - name: Build and push docker image to GCR
+      #   run: |
+      #     docker build -t ${{ github.repository }}:latest .
+      #     docker push ${{ github.repository }}:latest
