@@ -50,7 +50,7 @@ jobs:
       
       - name: Build and push docker image to GCR
         run: |
-          docker login registry.gitlab.com -u emumba1519 -p eMumba1519
+          docker login registry.gitlab.com -u imtiaz1519 -p eMumba1519
           docker build -t registry.gitlab.com/emumba/devops/aws-bootcloud:github .
           docker push registry.gitlab.com/emumba/devops/aws-bootcloud:github
 
