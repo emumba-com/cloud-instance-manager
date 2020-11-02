@@ -1,0 +1,58 @@
+name: AWS Bootcloud workflow
+on:
+  push:
+    branches:
+      - dev
+      - master
+      - main
+jobs:
+  pyCodeStyle:
+    container:
+      image: cytopia/pycodestyle:latest
+      entrypoint: [""]
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - name: Run Pycode Style commands
+        run: pycodestyle --config=setup.cfg
+
+  
+  pyLint:
+    container:
+      image: cytopia/pylint:latest
+      entrypoint: [""]
+    needs: ['pyCodeStyle']
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - name: Run pyLint Style commands
+        run: |
+          pylint models/*.py
+          pylint server/*.py
+          pylint *.py
+      
+  build:
+    runs-on: ubuntu-latest
+    needs: ['pyCodeStyle', 'pyLint']
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+      - name: Build and push docker image to GCR
+        run: |
+          docker build -t ${{ github.repository }}:latest .
+          docker push ${{ github.repository }}:latest
