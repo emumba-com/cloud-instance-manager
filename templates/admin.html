@@ -211,7 +211,7 @@
 
                         <h1>Instance Management</h1>
 
-                        <div>
+                        <div class="" style="width:100%;">
                             <div class="panel panel-default">
                                 <div class="panel-body">
                                     <div class="pull-right">
@@ -238,19 +238,21 @@
                                         <table class="table table-filter table-bordered table-striped table-hover"
                                             id="instanceTable">
                                             <thead>
-                                                <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
-                                                <th>ID</th>
-                                                <th>Name</th>
-                                                <th>State</th>
-                                                <th>Public IP</th>
-                                                <th>Private IP</th>
-                                                <th>Region</th>
-                                                <th>SSH Keypair</th>
-                                                <th>Assign Instance</th>
+                                                <tr  class="d-flex">
+                                                    <th style="width:20%">ID</th>
+                                                    <th style="width:20%" >Name</th>
+                                                    <th style="width:8%">State</th>
+                                                    <th style="width:10%">Public IP</th>
+                                                    <th style="width:10%" >Private IP</th>
+                                                    <th style="width:12%">Region</th>
+                                                    <th style="width:10%">SSH Keypair</th>
+                                                    <th style="width:20%">Assign Instance</th>
+                                                </tr>
+                                                
                                             </thead>
                                             <tbody>
                                                 {% for instance in instances %}
-                                                <tr>
+                                                <tr  class="d-flex">
                                                     <!-- <td><input type="checkbox" id="instance_id"/></td> -->
                                                     <td class="text-secondary">{{ instance['Id'] }}</td>
                                                     <td class="text-primary">{{ instance['Name'] }}</td>
@@ -286,15 +288,17 @@
                                         <table class="table table-filter table-bordered table-striped table-hover"
                                             id="instanceTable2">
                                             <thead>
-                                                <!-- <th><input type="checkbox" id="checkinstance"/></th> -->
-                                                <th>ID</th>
-                                                <th>Name</th>
-                                                <th>State</th>
-                                                <th>Public IP</th>
-                                                <th>Private IP</th>
-                                                <th>Region</th>
-                                                <th>Owner</th>
-                                                <th>Un-Assign Instance</th>
+                                                <tr class="d-flex">
+                                                    <th style="width:20%">ID</th>
+                                                    <th style="width:20%">Name</th>
+                                                    <th style="width:10%">State</th>
+                                                    <th style="width:10%">Public IP</th>
+                                                    <th style="width:10%">Private IP</th>
+                                                    <th style="width:10%">Region</th>
+                                                    <th style="width:10%">Owner</th>
+                                                    <th style="width:20%">Un-Assign Instance</th>
+                                                </tr>
+                                                
                                             </thead>
                                             <tbody>
                                                 {% for instance in assigned_instances %}

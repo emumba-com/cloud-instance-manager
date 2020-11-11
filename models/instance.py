@@ -158,5 +158,12 @@ class Instance(db.Model):
             return row.name
         return "None"
 
+    def get_instances_ids(self):
+        all_instance = db.session.query(Instance)
+        ids = []
+        for instance in all_instance:
+            ids.append(instance.id)
+        return ids
+
     def __repr__(self):
         return '<id {}>'.format(self.id)
