@@ -192,7 +192,7 @@
                     <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
                     <h1>SSH keys</h1>
-                    <div class="">
+                    <div class=""  style="width:50%;">
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div class="pull-right">
@@ -216,18 +216,19 @@
                                     <table class="table table-filter table-bordered table-striped table-hover"
                                         id="keystable">
                                         <thead>
-                                            <th><input type="checkbox" id="checkall" /></th>
-                                            <th width="15%">SSH Key Name</th>
-                                            <th width="75%">SSH Key Value</th>
-                                            <th width="15%">SSH Key Format</th>
+                                            <tr class="d-flex">
+                                                <th style="width:1%" ><input type="checkbox" id="checkall" /></th>
+                                                <th style="width:40%">Key Name</th>
+                                                <th style="width:9%">Key Format</th>
+                                            </tr>
+                                            
                                         </thead>
                                         <tbody>
                                             {% for key in all_keys_list %}
-                                            <tr>
-                                                <td><input type="checkbox" id="checkkey" /></td>
-                                                <td width="15%" id="key_name">{{ key['KeyName'] }}</td>
-                                                <td width="75%" id="key_value"></td>
-                                                <td width="15%">{{ key['KeyFormat'] }}</td>
+                                            <tr  class="d-flex">
+                                                <td style="width:1%" ><input type="checkbox" id="checkkey" /></td>
+                                                <td style="width:40%" id="key_name">{{ key['KeyName'] }}</td>
+                                                <td style="width:9%" >{{ key['KeyFormat'] }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
