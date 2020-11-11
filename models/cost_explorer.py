@@ -26,15 +26,18 @@ class CostExplorer(db.Model):
     )
 
     def add_daily_bill(self, instance_id, current_month, today_date, daily_bill):
-        self.ce_instance_id = instance_id
-        self.ce_month = current_month
-        self.ce_date = today_date
-        self.ce_instance_daily_bill = daily_bill
-        instance_name = ins_obj.get_instance_name_by_id(instance_id)
-        self.ce_instance_name = instance_name
-        row = db.session.merge(self)
-        db.session.add(row)
-        db.session.commit()
+        ids = ins_obj.get_instances_ids()
+        if instance_id in ids:
+            print(instance_id)
+            self.ce_instance_id = instance_id
+            self.ce_month = current_month
+            self.ce_date = today_date
+            self.ce_instance_daily_bill = daily_bill
+            instance_name = ins_obj.get_instance_name_by_id(instance_id)
+            self.ce_instance_name = instance_name
+            row = db.session.merge(self)
+            db.session.add(row)
+            db.session.commit()
 
     def get_complete_bill_from_db(self):
         c_month = datetime.utcnow().month
@@ -52,11 +55,13 @@ class CostExplorer(db.Model):
                 daily_bill = 0.0
             else:
                 daily_bill = result.ce_instance_daily_bill
+            d_bill_roundoff = round(float(daily_bill), 2)
+            m_bill_roundoff = round(float(row[1]), 2)
             bill_dict = {
                 "Id": row[0],
                 "Name": instance_name,
-                "DailyBill": daily_bill,
-                "MonthlyBill": row[1]
+                "DailyBill": d_bill_roundoff,
+                "MonthlyBill": m_bill_roundoff
             }
             instances_bill_list.append(bill_dict)
         return instances_bill_list
