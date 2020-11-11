@@ -3,6 +3,7 @@ services:
   webapp:
     container_name: webapp
     restart: always
+    build: .
     image: registry.gitlab.com/emumba/devops/aws-bootcloud
     ports:
      - 5000:5000  

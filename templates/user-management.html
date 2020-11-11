@@ -185,13 +185,14 @@
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
-            <div class="row">
+            <div class="row ">
 
                 <section class="container">
                     <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
+                    <!-- margin-left: auto;margin-right: auto;" -->
                     <h1>Users Management</h1>
-                    <div class="">
+                    <div class="" style="width:50%;">
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <div class="pull-right">
@@ -211,21 +212,25 @@
 
                                     </div>
                                 </div>
-                                <div class="table-container">
 
-                                    <table class="table table-filter table-bordered table-striped table-hovers"
+                                <div class="table-container" >
+
+                                    <table class="table table-responsive table-filter table-bordered table-striped table-hovers "
                                         id="usertable">
+                                    
                                         <thead>
-                                            <th><input type="checkbox" id="checkall" /></th>
-                                            <th>ID</th>
-                                            <th>User Name</th>
+                                            <tr class="d-flex">
+                                                <th  style="width:1%" ><input type="checkbox" id="checkall" /></th>
+                                                <th style="width:49%" >User Name</th>
+                                            </tr>    
                                         </thead>
+                                        
                                         <tbody>
                                             {% for user in users %}
-                                            <tr>
-                                                <td><input type="checkbox" id="checkuser" /></td>
-                                                <td>{{ user['Id'] }}</td>
-                                                <td>{{ user['Name'] }}</td>
+                                            <tr  class="d-flex">
+                                                <td style="width:1%" ><input type="checkbox" id="checkuser" /></td>
+                                                <td hidden style="width: 1;"> {{ user['Id'] }} </td>
+                                                <td style="width:49%" >{{ user['Name'] }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
