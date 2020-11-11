@@ -208,7 +208,7 @@
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     <a href="#">
-                        AWS BOOTCLOUD
+                        <span style="color:FFFFFF;" > AWS BOOTCLOUD</span>
                     </a>
                 </li>
                 <form method="get" action="{{ url_for('user.user') }}">
@@ -264,63 +264,64 @@
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
                         <h1>User Instances</h1>
+                        <div class="" style="width:100%;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="table-container">
+                                        <table class="table table-filter table-bordered table-striped table-hover"
+                                            id="mytable">
 
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="table-container">
-                                    <table class="table table-filter table-bordered table-striped table-hover"
-                                        id="mytable">
+                                            <thead>
+                                                <tr class="d-flex">
+                                                    <th style="width:20%" >ID</th>
+                                                    <th style="width:20%">Name</th>
+                                                    <th style="width:10%" >Public IP</th>
+                                                    <th style="width:10%" >Private IP</th>
+                                                    <th style="width:8%">State</th>
+                                                    <th style="width:12%">Region</th>
+                                                    <th style="width:10%">SSH Keypair</th>
+                                                    <th style="width:20%">ON/OFF</th>
+                                                </tr>
+                                                
+                                            </thead>
+                                            <tbody>
 
-                                        <thead>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Public IP</th>
-                                            <th>Private IP</th>
-                                            <th>State</th>
-                                            <th>Region</th>
-                                            <th>SSH Keypair</th>
-                                            <th>ON/OFF</th>
-                                        </thead>
-                                        <tbody>
+                                                {% for instance in instances %}
+                                                <tr>
+                                                    <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
+                                                    <td name="">{{ instance['Name'] }}</td>
+                                                    <td>{{ instance['PublicIP'] }}</td>
+                                                    <td>{{ instance['PrivateIP'] }}</td>
+                                                    <td class="text-info" id="state">{{ instance['State'] }}</td>
+                                                    <td class="text-info" id="{{ instance['RegionName'] }}">{{ instance['RegionName'] }}</td>
+                                                    <td id="{{ instance['KeyName'] }}"><span> {{ instance['KeyName'] }}
+                                                        </span>
+                                                        <button type="button" id="download_btn"
+                                                            value="{{ instance['KeyName'] }}"
+                                                            class="btn btn-light btn-xs"><span
+                                                                class="fa fa-download"></span></button>
 
-                                            {% for instance in instances %}
-                                            <tr>
-                                                <td class="text-primary" id="ins_ID">{{ instance['Id'] }}</td>
-                                                <td name="">{{ instance['Name'] }}</td>
-                                                <td>{{ instance['PublicIP'] }}</td>
-                                                <td>{{ instance['PrivateIP'] }}</td>
-                                                <td class="text-info" id="state">{{ instance['State'] }}</td>
-                                                <td class="text-info" id="region">{{ instance['RegionName'] }}</td>
-                                                <td id="{{ instance['KeyName'] }}"><span> {{ instance['KeyName'] }}
-                                                    </span>
-                                                    <button type="button" id="download_btn"
-                                                        value="{{ instance['KeyName'] }}"
-                                                        class="btn btn-light btn-xs"><span
-                                                            class="fa fa-download"></span></button>
+                                                    </td>
+                                                    <td >
+                                                        <label  data-placement="top" data-toggle="tooltip" class="switch">
+                                                            <input style="margin-left:auto; margin-right:auto;"  class="round" type="checkbox" data-toggle="modal"
+                                                                name="ins_chk" value="{{ instance['Id'] }}"
+                                                                id="ins_checkbox" data-target="#ins_state">
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
 
-                                                </td>
-                                                <td>
-                                                    <label data-placement="top" data-toggle="tooltip" class="switch">
-                                                        <input class="round" type="checkbox" data-toggle="modal"
-                                                            name="ins_chk" value="{{ instance['Id'] }}"
-                                                            id="ins_checkbox" data-target="#ins_state">
-                                                        <span class="slider round"></span>
-                                                    </label>
-                                                </td>
+                                                </tr>
+                                                {% endfor %}
 
-                                            </tr>
-                                            {% endfor %}
-
-                                        </tbody>
-                                    </table>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-
                     </section>
-
-
 
                 </div>
                 <div class="modal fade" id="ins_state" tabindex="-1" role="dialog" aria-labelledby="edit"
@@ -347,7 +348,7 @@
                                     <div hidden>
                                         <input id="instance_id" name="instance_id" type="text">
                                         <input id="instance_state" name="instance_state" type="text">
-                                        <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                        <input id="region_name" name="region_name" type="text">
                                     </div>
 
                                     <button type="submit" class="btn btn-success" id="btn_yes"><span
@@ -387,7 +388,7 @@
                                 <div hidden>
                                     <input id="instance_id" name="instance_id" type="text">
                                     <input id="instance_state" name="instance_state" type="text">
-                                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                                    <input id="region_name" name="region_name" type="text">
                                 </div>
 
                             </div>
@@ -404,7 +405,7 @@
                 <div hidden>
                     <input id="instance_id" name="instance_id" type="text">
                     <input id="instance_state" name="instance_state" type="text">
-                    <input id="region_name" name="region_name" value="ap-northeast-1" type="text">
+                    <input id="region_name" name="region_name" type="text">
                 </div>
 
             </div>
@@ -518,6 +519,7 @@
             $("#mytable #ins_checkbox").click(function () {
                 var state = $(this).closest("tr").find('td:eq(4)').text();
                 var id = $(this).closest("tr").find('td:eq(0)').text();
+                var region = $(this).closest("tr").find('td:eq(5)').text();
                 console.log(state);
                 console.log(id);
 
@@ -525,6 +527,8 @@
                 s.value = id;
                 var s = document.getElementById("instance_state");
                 s.value = state;
+                var s = document.getElementById("region_name");
+                s.value = region;
 
                 if ($("#btn_cancel").click(function () {
 
