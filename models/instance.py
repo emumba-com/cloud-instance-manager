@@ -157,7 +157,7 @@ class Instance(db.Model):
         if row:
             return row.name
         return "None"
-    
+
     def get_instances_ids(self):
         all_instance = db.session.query(Instance)
         ids = []
