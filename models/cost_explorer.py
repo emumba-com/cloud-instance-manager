@@ -28,7 +28,6 @@ class CostExplorer(db.Model):
     def add_daily_bill(self, instance_id, current_month, today_date, daily_bill):
         ids = ins_obj.get_instances_ids()
         if instance_id in ids:
-            print(instance_id)
             self.ce_instance_id = instance_id
             self.ce_month = current_month
             self.ce_date = today_date
