@@ -19,7 +19,6 @@ Following are the features of AWS Bootcloud:
 For deployment, **AWS BootCloud** can be setup in two different ways.
 
 ## 1. Installation on local machine:
-============
 ### I. Dependencies:
 To be able to run **AWS BooCloud** on your local environment you have to meet the following dependencies:  
 #### (i). Install Python3 and relevant dependencies
