@@ -1,0 +1,21 @@
+[MASTER]
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    C0301, # line too long
+    C0411, # wrong import order
+    C0413, # wrong import position
+    E0401, # import errors
+    R0913, # too many arguments
+    W0703, # too general exception
+    E1101, # instance of scoped session has no member
+    R0903, # too few public methods
+    R0201, # no self use, Method could be a function
+    W0611, # Unused import
+    E0611, # No-name-in-module
+    
+
+[BASIC]
+const-rgx=.*
+good-names=id

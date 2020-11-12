@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Admin</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link href="../static/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" type="text/css" href="../static/3.3.0/css/custom.css">
+
+    <style>
+        /* Toggle Styles */
+
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled {
+            padding-left: 250px;
+        }
+
+        #sidebar-wrapper {
+            z-index: 1000;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            margin-left: -250px;
+            overflow-y: auto;
+            background: #000;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            position: absolute;
+            padding: 15px;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+
+        /* Sidebar Styles */
+
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            width: 250px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            text-indent: 20px;
+            line-height: 40px;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: #999999;
+        }
+
+        .sidebar-nav li a:hover {
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-nav li a:active,
+        .sidebar-nav li a:focus {
+            text-decoration: none;
+        }
+
+        .sidebar-nav>.sidebar-brand {
+            height: 65px;
+            font-size: 18px;
+            line-height: 60px;
+        }
+
+        .sidebar-nav>.sidebar-brand a {
+            color: #999999;
+        }
+
+        .sidebar-nav>.sidebar-brand a:hover {
+            color: #fff;
+            background: none;
+        }
+
+        @media(min-width:768px) {
+            #wrapper {
+                padding-left: 250px;
+            }
+
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+
+            #sidebar-wrapper {
+                width: 250px;
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+
+            #page-content-wrapper {
+                padding: 20px;
+                position: relative;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                position: relative;
+                margin-right: 0;
+            }
+        }
+
+        select {
+            width: 150px;
+            margin: 10px;
+        }
+
+        select:focus {
+            min-width: 150px;
+            width: auto;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        AWS BOOTCLOUD
+                    </a>
+                </li>
+                <form method="get" action="{{ url_for('admin.get_admin') }}">
+                    <li class="active">
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-amazon mr-3"></span>
+                            Instances</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.get_users') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span
+                                class="fa fa-users mr-3 notif"></span> Users</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.get_ssh_keys') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-key mr-3"></span> SSH
+                            keys</a>
+                    </li>
+                </form>
+                <form method="get" action="{{ url_for('admin.get_admin_bill') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-trophy mr-3"></span>
+                            Billing
+                        </a>
+                    </li>
+                </form>
+
+                <li>
+                    <a href="#"><span class="fa fa-cog mr-3"></span> Settings</a>
+                </li>
+                <li>
+                    <a href="#"><span class="fa fa-support mr-3"></span> Support</a>
+                </li>
+                <form method="get" action="{{ url_for('admin.logout_admin') }}">
+                    <li>
+                        <a href="#" onclick="$(this).closest('form').submit()"><span class="fa fa-sign-out mr-3"></span>
+                            Sign Out</a>
+                    </li>
+                </form>
+
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="row">
+
+                <section class="container">
+
+                    <form method="get" action="{{url_for ('admin.get_admin')}}">
+
+                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+
+                        <h1>Instance Management</h1>
+
+                        <div class="" style="width:100%;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="pull-right">
+                                        <div class="btn-group">
+
+                                            <!-- hidden form-->
+                                            <div hidden>
+                                                <input id="instance" name="instance" type="text">
+                                            </div>
+
+                                            <button type="submit" name="ins_btn" id="all_ins" value="all_ins"
+                                                class="btn btn-success btn-filter">All
+                                                Instances
+                                            </button>
+
+                                            <button type="button" onclick="change_table()" name="ins_btn"
+                                                id="assigned_ins" value="assigned_ins"
+                                                class="btn btn-warning btn-filter">Assigned Instance
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-container">
+                                        <table class="table table-filter table-bordered table-striped table-hover"
+                                            id="instanceTable">
+                                            <thead>
+                                                <tr  class="d-flex">
+                                                    <th style="width:20%">ID</th>
+                                                    <th style="width:20%" >Name</th>
+                                                    <th style="width:8%">State</th>
+                                                    <th style="width:10%">Public IP</th>
+                                                    <th style="width:10%" >Private IP</th>
+                                                    <th style="width:12%">Region</th>
+                                                    <th style="width:10%">SSH Keypair</th>
+                                                    <th style="width:20%">Assign Instance</th>
+                                                </tr>
+                                                
+                                            </thead>
+                                            <tbody>
+                                                {% for instance in instances %}
+                                                <tr  class="d-flex">
+                                                    <!-- <td><input type="checkbox" id="instance_id"/></td> -->
+                                                    <td class="text-secondary">{{ instance['Id'] }}</td>
+                                                    <td class="text-primary">{{ instance['Name'] }}</td>
+                                                    <td class="text-info">{{ instance['State'] }}</td>
+                                                    <td>{{ instance['PublicIP'] }}</td>
+                                                    <td>{{ instance['PrivateIP'] }}</td>
+                                                    <td class="text-info">{{ instance['RegionName'] }}</td>
+                                                    <td>{{ instance['KeyName'] }}</td>
+                                                    <td>
+                                                        <label data-placement="top" data-toggle="tooltip">
+                                                            <select name="ins_btn" id="assign_ins_to">
+                                                                <option value=NULL selected disabled hidden>
+                                                                    Assign
+                                                                </option>
+                                                                {% for user in instance['Users'] %}
+                                                                <option id="{{ user['Id'] }}"
+                                                                    value="{{ user['Name'] }}">
+                                                                    {{ user['Name'] }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+
+                                    <div class="table-container">
+                                        <table class="table table-filter table-bordered table-striped table-hover"
+                                            id="instanceTable2">
+                                            <thead>
+                                                <tr class="d-flex">
+                                                    <th style="width:20%">ID</th>
+                                                    <th style="width:20%">Name</th>
+                                                    <th style="width:10%">State</th>
+                                                    <th style="width:10%">Public IP</th>
+                                                    <th style="width:10%">Private IP</th>
+                                                    <th style="width:10%">Region</th>
+                                                    <th style="width:10%">Owner</th>
+                                                    <th style="width:20%">Un-Assign Instance</th>
+                                                </tr>
+                                                
+                                            </thead>
+                                            <tbody>
+                                                {% for instance in assigned_instances %}
+                                                <tr>
+                                                    <!-- <td><input type="checkbox" id="instance_id"/></td> -->
+                                                    <td class="text-secondary">{{ instance['Id'] }}</td>
+                                                    <td class="text-primary">{{ instance['Name'] }}</td>
+                                                    <td class="text-info">{{ instance['State'] }}</td>
+                                                    <td>{{ instance['PublicIP'] }}</td>
+                                                    <td>{{ instance['PrivateIP'] }}</td>
+                                                    <td class="text-info">{{ instance['RegionName'] }}</td>
+                                                    <td>
+                                                        {% set owners = instance['Owner'] %}
+                                                        {% set len = instance['Owner']|length %}
+                                                        {% set i = namespace(value=1) %}
+                                                        {% for owner in owners %}
+                                                        {% if i.value < len %}
+                                                        {{ owner }} ,
+                                                        {% set i.value = i.value + 1 %}
+                                                        {% else %}
+                                                        {{ owner }}
+                                                        {% set i.value = i.value + 1 %}
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>
+                                                        <label data-placement="top" data-toggle="tooltip">
+                                                            <select name="ins_btn" id="un_assign_ins_to">
+                                                                <option value=NULL selected disabled hidden>Un
+                                                                    Assign
+                                                                </option>
+                                                                {% for user in instance['Owner'] %}
+                                                                <option id="{{ user }}" value="{{ user }}">
+                                                                    {{ user }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </form>
+                </section>
+            </div>
+
+
+
+
+            <!--# assign instances-->
+            <div class="modal fade" id="assign_to" tabindex="-1" role="dialog" aria-labelledby="edit"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                    aria-hidden="true"></span></button>
+                            <h4 class="modal-title custom_align" id="Heading1"> <strong> Assign Instance</strong></h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span>
+                                Are
+                                you sure
+                                you want
+                                to Assign "<span id="ins_value"></span>" to "<span id="user_value"></span>"?
+                            </div>
+                        </div>
+                        <form method="post" action="{{ url_for('admin.assign_instance_to_user') }}">
+                            <div class="modal-footer ">
+                                <div>
+                                    <input id="user_id" name="user_id" type="text" hidden>
+                                    <input id="inst_id" name="inst_id" type="text" hidden>
+                                </div>
+                                <button type="submit" class="btn btn-success" id="ins_btn_yes"><span
+                                        class="glyphicon glyphicon-ok-sign"></span>Yes
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal"
+                                    id="ins_btn_cancel"><span class="glyphicon glyphicon-remove"></span> No
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+
+            <!-- Un assign instance from user -->
+            <div class="modal fade" id="un_assign" tabindex="-1" role="dialog" aria-labelledby="edit"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
+                                aria-hidden="true"><span class="glyphicon glyphicon-remove"
+                                    aria-hidden="true"></span></button>
+                            <h4 class="modal-title custom_align" id="Heading1"><strong>Un Assign Instance </strong>
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span>
+                                Are
+                                you sure
+                                you want
+                                to Un-Assign "<span id="ins_val"></span>" From "<span id="user_val"></span>"?
+                            </div>
+                        </div>
+                        <form method="post" action="{{ url_for('admin.un_assign_instance_to_user') }}">
+                            <div class="modal-footer ">
+                                <div>
+                                    <input id="un_user_id" name="un_user_id" type="text" hidden>
+                                    <input id="un_inst_id" name="un_inst_id" type="text" hidden>
+                                </div>
+                                <button type="submit" class="btn btn-success" id="un_ins_btn_yes"><span
+                                        class="glyphicon glyphicon-ok-sign"></span>Yes
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal"
+                                    id="un_ins_btn_cancel"><span class="glyphicon glyphicon-remove"></span> No
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+        <!-- /#wrapper -->
+        <!-- Menu Toggle Script -->
+    </div>
+
+
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+    <script src="../static/jquery/jquery-1.11.1.min.js"></script>
+    <script src="../static/jquery/1.9.1/jquery.min.js"></script>
+    <script src="../static/3.3.0/js/bootstrap.min.js"></script>
+
+    <script>
+
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+        function change_table() {
+
+            var t1 = document.getElementById("instanceTable");
+            var t2 = document.getElementById("instanceTable2");
+
+            t1.style.display = 'none';
+            t2.style.display = '';
+        }
+
+
+        $(function () {
+            $("#instanceTable #assign_ins_to").change(function () {
+                var user = $(this).find("option:selected").val();
+                // var user = $(this).options[selectBox.selectedIndex].value;
+
+                if (user) {
+                    var ins_id = $(this).closest("tr").find('td:eq(0)').text();
+                    console.log(user);
+                    var u = document.getElementById("user_id");
+                    u.value = user;
+                    var s = document.getElementById("inst_id");
+                    s.value = ins_id;
+
+                    var ins_name = $(this).closest("tr").find('td:eq(1)').text();
+                    document.getElementById("user_value").textContent = user;
+                    document.getElementById("ins_value").textContent = ins_name;
+
+                    $('#assign_to').modal('show');
+
+                    if ($("#ins_btn_cancel").click(function () {
+                        var u = document.getElementById("user_id");
+                        u.value = "";
+                        var s = document.getElementById("inst_id");
+                        s.value = "";
+                        window.location.reload();
+                    })) {
+                        //ifbody
+
+                    }
+                }
+
+
+
+            });
+        });
+
+        $(function () {
+            $("#instanceTable2 #un_assign_ins_to").change(function () {
+                var user = $(this).find("option:selected").val();
+                // var user = $(this).options[selectBox.selectedIndex].value;
+
+                if (user) {
+                    var ins_id = $(this).closest("tr").find('td:eq(0)').text();
+                    console.log(user);
+                    var u = document.getElementById("un_user_id");
+                    u.value = user;
+                    var s = document.getElementById("un_inst_id");
+                    s.value = ins_id;
+
+                    var ins_name = $(this).closest("tr").find('td:eq(1)').text();
+                    document.getElementById("user_val").textContent = user;
+                    document.getElementById("ins_val").textContent = ins_name;
+
+                    $('#un_assign').modal('show');
+
+
+                    if ($("#un_ins_btn_cancel").click(function () {
+                        var u = document.getElementById("un_user_id");
+                        u.value = "";
+                        var s = document.getElementById("un_inst_id");
+                        s.value = "";
+                        window.location.reload();
+                    })) {
+                        //ifbody
+
+                    }
+                }
+            });
+
+        });
+
+        $(document).ready(function () {
+
+            document.getElementById("instanceTable2").style.display = 'none';
+
+            document.getElementById('db_call').disabled = true;
+            document.getElementById('aws_call').disabled = true;
+
+            //
+            // ********************* changing state of db-call/aws-call button **********
+
+
+            $('.btn-filter').on('click', function () {
+                var $target = $(this).data('target');
+                if ($target != 'all') {
+                    $('.table tr').css('display', 'none');
+                    $('.table tr[data-status="' + $target + '"]').fadeIn('slow');
+                } else {
+                    $('.table tr').css('display', 'none').fadeIn('slow');
+                }
+
+            });
+        });
+
+
+    </script>
+
+
+
+</body>
+
+</html>
