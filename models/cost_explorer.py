@@ -55,8 +55,11 @@ class CostExplorer(db.Model):
                 daily_bill = 0.0
             else:
                 daily_bill = result.ce_instance_daily_bill
+<<<<<<< HEAD
             d_bill_roundoff = round(float(daily_bill), 2)
             m_bill_roundoff = round(float(row[1]), 2)
+=======
+>>>>>>> 6a13ae50b7ade24b90cf427446761f20862bd610
             bill_dict = {
                 "Id": row[0],
                 "Name": instance_name,
