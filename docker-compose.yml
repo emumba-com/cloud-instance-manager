@@ -3,7 +3,7 @@ services:
   webapp:
     container_name: webapp
     restart: always
-    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud:github
     ports:
      - 5000:5000  
     env_file: .env
@@ -18,7 +18,7 @@ services:
     
 
   migration:
-    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud:github
     env_file: .env
     command: /bin/bash -c "sleep 5 && python manage.py db upgrade"
     depends_on: 
@@ -27,7 +27,7 @@ services:
     
 
   dumpAdminData:
-    image: registry.gitlab.com/emumba/devops/aws-bootcloud
+    image: registry.gitlab.com/emumba/devops/aws-bootcloud:github
     env_file: .env
     command: /bin/bash -c "sleep 6 && python dump_admin_record.py"
     depends_on: 
