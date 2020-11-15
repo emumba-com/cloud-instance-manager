@@ -1,0 +1,55 @@
+name: Cloud Instane Manager workflow
+on:
+  push:
+    branches:
+      - dev
+      - master
+      - main
+      - github-cicd
+jobs:
+  pyCodeStyle:
+    runs-on: ubuntu-latest
+    container:
+      image: cytopia/pycodestyle:latest
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - name: Run Pycode Style commands
+        run: pycodestyle --config=setup.cfg
+
+  
+  pyLint:
+    runs-on: ubuntu-latest
+    container:
+      image: cytopia/pylint:latest
+    needs: ['pyCodeStyle']
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - name: Run pyLint Style commands
+        run: |
+          pylint models/*.py
+          pylint server/*.py
+          pylint *.py
+      
+  build:
+    runs-on: ubuntu-latest
+    needs: ['pyCodeStyle', 'pyLint']
+    steps:
+      - name: Checkout to branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      
+      - name: Build and push docker image to Gitlab Container Registry
+        run: | 
+          docker login ${{ secrets.CI_REGISTRY}} -u ${{ secrets.CI_REGISTRY_USER }} -p ${{ secrets.CI_REGISTRY_PASSWORD }}
+          docker build -t ${{ secrets.CI_REGISTRY }}/emumba/devops/aws-bootcloud:github .
+          docker push ${{ secrets.CI_REGISTRY }}/emumba/devops/aws-bootcloud:github
