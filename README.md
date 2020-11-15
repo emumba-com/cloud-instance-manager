@@ -1,11 +1,11 @@
 
-# AWS Bootcloud
+# Cloud Instance Manager
 
-**AWS Bootcloud** is web based managed solution that allows admins to provision and manage Amazon EC2 Instances quite easily and efficiently. In other words, it is a wrapper on AWS for managing EC2 instances.
+**Cloud Instance Manager** is web based managed solution that allows admins to provision and manage Amazon EC2 Instances quite easily and efficiently. In other words, it is a wrapper on AWS for managing EC2 instances.
 
 It provides an easy to use interface through which admins can create users, assigns & un-assign instances to users and upload ssh keys. Users can start and stop assigned instances on demand and view usage bill.
 
-Following are the features of AWS Bootcloud:
+Following are the features of Cloud Instance Manager:
 
 - Separate Interfaces for Admin and User
 - Users management
@@ -14,13 +14,13 @@ Following are the features of AWS Bootcloud:
 - View Bills
 - Simple deployment
 
-# Steps to run AWS Bootcloud
+# Steps to run Cloud Instance Manager
 
-For deployment, **AWS BootCloud** can be setup in two different ways.
+For deployment, **Cloud Instance Manager** can be setup in two different ways.
 
 ## 1. Installation on local machine:
 ### I. Dependencies:
-To be able to run **AWS BooCloud** on your local environment you have to meet the following dependencies:  
+To be able to run **Cloud Instance Manager** on your local environment you have to meet the following dependencies:  
 #### (i). Install Python3 and relevant dependencies
 ```
 sudo apt update
@@ -53,7 +53,7 @@ postgres=# grant all privileges on database <db_name> to <pg_username>;
 	```
 * Install pip dependency requirements
    `pip3 install -r requirement.txt`
-* Rename `.env-sample` to `.env` in `$ /PROJECT_ROOT/aws-bootcloud/`
+* Rename `.env-sample` to `.env` in `$ /PROJECT_ROOT/cloud-instance-manager/`
 * Paste value against each environment variable in `.env` file.
 ```
 AWS_ACCESS_KEY_ID=<aws_access_key_id>
@@ -74,22 +74,21 @@ DATABASE_URL=postgres://<pg_username>:<pg_pass>@localhost:5432/<db_name>
 * RUN  `flask run`
 
 
-AWS Bootcloud server should now up on `localhost:5000`
+Cloud Instance Manager server should now up on `localhost:5000`
 
 ============
 
-## 2. Dockerized Version of AWS BootCloud
+## 2. Dockerized Version of Cloud Instance Manager
 ============
 ### I. Dependencies:
-To be able to run **AWS BooCloud** you have to meet following dependencies:  
-
+To be able to run **Cloud Instance Manager** you have to meet following dependencies:  
 -  [Install Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 -  [Install docker-compose](https://docs.docker.com/compose/install/)
 
 ### II. Configurations:
 - Make sure to clone this repository first.
 - Switch to project root directory.
-- Rename `.env-sample` to `.env` in `$ /PROJECT_ROOT/aws-bootcloud/`
+- Rename `.env-sample` to `.env` in `$ /PROJECT_ROOT/cloud-instance-manager/`
 - Paste value against each environment variable in `.env` file.
 ```
 AWS_ACCESS_KEY_ID=<aws_access_key_id>
@@ -106,6 +105,6 @@ DATABASE_URL=postgres://<pg_username>:<pg_pass>@database:5432/<db_db_name>
 - RUN `sudo docker-compose build`
 - RUN `sudo docker-compose up -d`
 
-AWS Bootcloud server should now up on `<server-IP>:5000`
+Cloud Instance Manager should now up on `<server-IP>:5000`
 
 =============
