@@ -19,7 +19,6 @@ Following are the features of Cloud Instance Manager:
 For deployment, **Cloud Instance Manager** can be set up in two different ways.
 
 ## 1. Installation on local machine:
-============
 ### I. Dependencies:
 To be able to run **Cloud Instance Manager** on your local environment you have to meet the following dependencies:  
 #### (i). Install Python3 and relevant dependencies
