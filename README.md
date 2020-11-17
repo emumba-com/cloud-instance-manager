@@ -1,9 +1,9 @@
 
 # Cloud Instance Manager
 
-**Cloud Instance Manager** is web based managed solution that allows admins to provision and manage Amazon EC2 Instances quite easily and efficiently. In other words, it is a wrapper on AWS for managing EC2 instances.
+**Cloud Instance Manager** is a web-based managed solution that allows admins to provision and manages Amazon EC2 Instances quite easily and efficiently. In other words, it is a wrapper on AWS for managing EC2 instances.
 
-It provides an easy to use interface through which admins can create users, assigns & un-assign instances to users and upload ssh keys. Users can start and stop assigned instances on demand and view usage bill.
+It provides an easy to use interface through which admins can create users, assigns & un-assign instances to users, and upload ssh keys. Users can start and stop assigned instances on-demand and view usage bill.
 
 Following are the features of Cloud Instance Manager:
 
@@ -16,7 +16,7 @@ Following are the features of Cloud Instance Manager:
 
 # Steps to run Cloud Instance Manager
 
-For deployment, **Cloud Instance Manager** can be setup in two different ways.
+For deployment, **Cloud Instance Manager** can be set up in two different ways.
 
 ## 1. Installation on local machine:
 ### I. Dependencies:
@@ -46,11 +46,11 @@ postgres=# grant all privileges on database <db_name> to <pg_username>;
 ### II. Configurations:
 * Make sure to clone this repository first.
 * Switch to project root directory.
-* Create virtual environment
-	```
-	python3 -m venv venv
-	source venv/bin/activate
-	```
+* Create a virtual environment
+    ```
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
 * Install pip dependency requirements
    `pip3 install -r requirement.txt`
 * Rename `.env-sample` to `.env` in `$ /PROJECT_ROOT/cloud-instance-manager/`
@@ -78,7 +78,7 @@ Cloud Instance Manager server should now up on `localhost:5000`
 
 ============
 
-## 2. Dockerized Version of Cloud Instance Manager
+## 2. Dockerized version of Cloud Instance Manager
 ============
 ### I. Dependencies:
 To be able to run **Cloud Instance Manager** you have to meet following dependencies:  
@@ -87,7 +87,7 @@ To be able to run **Cloud Instance Manager** you have to meet following dependen
 
 ### II. Configurations:
 - Make sure to clone this repository first.
-- Switch to project root directory.
+- Switch to the project root directory.
 - Rename `.env-sample` to `.env` in `$ /PROJECT_ROOT/cloud-instance-manager/`
 - Paste value against each environment variable in `.env` file.
 ```
