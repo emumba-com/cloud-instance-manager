@@ -296,7 +296,7 @@
                                                     <th style="width:10%">Private IP</th>
                                                     <th style="width:10%">Region</th>
                                                     <th style="width:10%">Owner</th>
-                                                    <th style="width:20%">Un-Assign Instance</th>
+                                                    <th style="width:20%">Unassign Instance</th>
                                                 </tr>
                                                 
                                             </thead>
@@ -407,7 +407,7 @@
                             <button type="button" class="close" onclick="history.go(0)" data-dismiss="modal"
                                 aria-hidden="true"><span class="glyphicon glyphicon-remove"
                                     aria-hidden="true"></span></button>
-                            <h4 class="modal-title custom_align" id="Heading1"><strong>Un Assign Instance </strong>
+                            <h4 class="modal-title custom_align" id="Heading1"><strong>Unassign Instance </strong>
                             </h4>
                         </div>
                         <div class="modal-body">
@@ -416,7 +416,7 @@
                                 Are
                                 you sure
                                 you want
-                                to Un-Assign "<span id="ins_val"></span>" From "<span id="user_val"></span>"?
+                                to Unassign "<span id="ins_val"></span>" From "<span id="user_val"></span>"?
                             </div>
                         </div>
                         <form method="post" action="{{ url_for('admin.un_assign_instance_to_user') }}">

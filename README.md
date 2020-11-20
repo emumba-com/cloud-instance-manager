@@ -3,7 +3,7 @@
 
 **Cloud Instance Manager** is a web-based managed solution that allows admins to provision and manages Amazon EC2 Instances quite easily and efficiently. In other words, it is a wrapper on AWS for managing EC2 instances.
 
-It provides an easy to use interface through which admins can create users, assigns & un-assign instances to users, and upload ssh keys. Users can start and stop assigned instances on-demand and view usage bill.
+It provides an easy to use interface through which admins can create users, assigns & unassign instances to users, and upload ssh keys. Users can start and stop assigned instances on-demand and view usage bill.
 
 Following are the features of Cloud Instance Manager:
 
