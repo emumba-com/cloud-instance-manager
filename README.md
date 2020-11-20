@@ -68,6 +68,18 @@ DATABASE_URL=postgres://<pg_username>:<pg_pass>@localhost:5432/<db_name>
 * Run database migrations
 `python3 manage.py db upgrade`
 
+* Open `dump_admin_record.py` file from project root directory.
+* Update admin's credentials into `dump_admin_record.py`
+```
+#!/usr/bin/env python3
+from models.user import User
+user_obj = User()
+user_obj.add_user('<testadmin>', '<admin>', True)
+```
+* Run `dump_admin_record.py` script.
+   `python3 dump_admin_record.py`
+
+
 ### III. Running application locally
 * RUN `export FLASK_APP=app.py`
 * RUN `export FLASK_ENV=development`
@@ -100,6 +112,18 @@ POSTGRES_PASSWORD=<pg_pass>
 POSTGRES_DB=<pg_db_name>
 DATABASE_URL=postgres://<pg_username>:<pg_pass>@database:5432/<db_db_name>
 ```
+
+* Open `dump_admin_record.py` file from project root directory.
+* Update admin's credentials into `dump_admin_record.py`
+```
+#!/usr/bin/env python3
+from models.user import User
+user_obj = User()
+user_obj.add_user('<testadmin>', '<admin>', True)
+```
+* Run `dump_admin_record.py` script.
+   `python3 dump_admin_record.py`
+
 
 ### III. Steps to Spin Up Deployment:
 - RUN `sudo docker-compose build`
